@@ -20,4 +20,7 @@ Part III  : https://drive.google.com/file/d/1T2mfK91UhtWpSsy22prUDyVyyG3po20L/vi
 
 Part IV   : https://drive.google.com/file/d/1Kxr6XeRxtEN-jqdw9XVx8dAhxnvB2KeL/view?usp=sharing
 
-[![image-2023-06-01-114541151.png](https://i.postimg.cc/XJ87HNTS/image-2023-06-01-114541151.png)](https://postimg.cc/XGrbXWjQ)
+Fix Autoloader & Loader : https://drive.google.com/file/d/1tmqRrpQRJ9SOLxKPoQXf1h4cZZwJZmJn/view?usp=sharing
+* Replace 3 files with this files.
+
+[![image-2023-06-01-171621350.png](https://i.postimg.cc/vZggwpMk/image-2023-06-01-171621350.png)](https://postimg.cc/Bj3Qx7jB)
