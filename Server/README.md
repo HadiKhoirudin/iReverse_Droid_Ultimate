@@ -2,7 +2,7 @@
 iReverse Droid Ultimate for Mediatek &amp; Qualcomm Mobile.
 
 Running from localhost data :
-* Download and run iReverse-Server-run.exe
+* Run iReverse-Server-run.exe
 * Go to Folder ~/Project/Sources/bin/x86/Debug/
 * Run iREVERSE DROID ULTIMATE.exe
 
