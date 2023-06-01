@@ -12,7 +12,7 @@ Running from localhost data :
 
 Part I    : https://drive.google.com/file/d/1baqBn7-_zA0Hl76LDArVnrcnuufv7vZV/view?usp=sharing
 
-Part II   : * File still uploading to Google Drive...
+Part II   : https://drive.google.com/file/d/18reH_XLhlLN1BQOyGR8fcQ5sxoxmZNxG/view?usp=sharing
 
 Part III  : * File still uploading to Google Drive...
 
