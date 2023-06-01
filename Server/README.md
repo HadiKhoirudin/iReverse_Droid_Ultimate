@@ -9,6 +9,10 @@ Running from localhost data :
 * login with
 * username : hadikit 
 * password : 1
-* File still uploading to Google Drive... 8GB
+
+Part I    : https://drive.google.com/file/d/1baqBn7-_zA0Hl76LDArVnrcnuufv7vZV/view?usp=sharing
+Part II   : * File still uploading to Google Drive...
+Part III  : * File still uploading to Google Drive...
+Part IV   : * File still uploading to Google Drive...
 
 [![image-2023-06-01-114541151.png](https://i.postimg.cc/XJ87HNTS/image-2023-06-01-114541151.png)](https://postimg.cc/XGrbXWjQ)
