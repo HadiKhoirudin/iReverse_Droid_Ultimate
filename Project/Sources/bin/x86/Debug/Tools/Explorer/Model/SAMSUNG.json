@@ -1,0 +1,15 @@
+[
+{"Devices":"Samsung Galaxy A01 Core","Models":"SM-A013F","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A01 Core","Models":"SM-A013G","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A02","Models":"SM-A022F","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A03s","Models":"SM-A037F","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A10s","Models":"SM-A107F","Platform":"MT6762","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A12","Models":"SM-A125F","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A22","Models":"SM-A225F","Platform":"MT6769","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A31","Models":"SM-A315F","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A31","Models":"SM-A315G","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A32","Models":"SM-A325F","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A32","Models":"SM-A325M","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy A41","Models":"SM-A415F","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Samsung Galaxy M01 Core","Models":"SM-M013F","Platform":"MT6739","Conn":"auth","Broom":"brom"}
+]

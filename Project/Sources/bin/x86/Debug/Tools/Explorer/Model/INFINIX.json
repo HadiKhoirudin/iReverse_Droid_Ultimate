@@ -1,0 +1,20 @@
+[
+{"Devices":"Infinix Hot 9 Play","Models":"X680C","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Hot 9","Models":"X655C","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Hot 9","Models":"X680","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Hot 10 Play","Models":"X688C","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Hot 10","Models":"X682C","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Note 7 Lite","Models":"X656","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Note 7","Models":"X690B","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Note 8","Models":"X692","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix S4","Models":"X626","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix S5 Lite","Models":"X652B","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix S5","Models":"X652","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Smart 3 Plus","Models":"X627","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Smart 4","Models":"X653","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Smart 5","Models":"X657C","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Zero 5 Pro","Models":"X603B","Platform":"MT6757","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Zero 5","Models":"X603","Platform":"MT6757","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Zero 8","Models":"X687","Platform":"MT6785","Conn":"auth","Broom":"brom"},
+{"Devices":"Infinix Zero 8i","Models":"X687B","Platform":"MT6785","Conn":"auth","Broom":"brom"}
+]

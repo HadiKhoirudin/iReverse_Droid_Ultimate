@@ -1,0 +1,22 @@
+[
+{"Devices":"Meizu M1E","Models":"MZ-m1e","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M2","Models":"MZ-m2","Platform":"MT6735","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M2 Note","Models":"MZ-m2 note","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M2 Note II","Models":"MZ-m2 note","Platform":"M6753","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M3e","Models":"MZ-m3e","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M3 Max","Models":"MZ-m3 max","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M3 Note","Models":"MZ-m3 note","Platform":"","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M5c","Models":"MZ-M5c","Platform":"MT6737M","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M5 Note","Models":"MZ-M5 Note","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M5 Note","Models":"M-1621","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M5s","Models":"MZ-M5s","Platform":"MT6753","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M8 Lite","Models":"MZ-M8 lite","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu M8-V8","Models":"M-1813","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu MX5","Models":"MZ-MX5","Platform":"MT6795","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu MX6","Models":"MZ-MX6","Platform":"MT6797","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu Pro 6","Models":"MZ-pro6","Platform":"MT6797","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu Pro 7 Plus","Models":"M-1793","Platform":"MT6799","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu Pro 7s","Models":"M-1792L","Platform":"MT6757D","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu U20","Models":"MZ-U20","Platform":"MT6755","Conn":"auth","Broom":"brom"},
+{"Devices":"Meizu V8","Models":"M-1816","Platform":"MT6739","Conn":"auth","Broom":"brom"}
+]

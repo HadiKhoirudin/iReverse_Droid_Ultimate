@@ -1,0 +1,23 @@
+[
+{"Devices":"Honor 8A","Models":"JAT AL00","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Honor 8A","Models":"JAT L41","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Honor 8A","Models":"JAT LGRP2","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Honor 8A","Models":"JAT LX1","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Honor 8S","Models":"KSA LX9","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y5 2019","Models":"AMN LX2","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y5 2019","Models":"AMN LX9","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y5P","Models":"DRA LXX","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y5Prime","Models":"DRA-L22","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD L01","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD L11","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD L21","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD L41","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD L41A","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD LGRP2","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD LX1F","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD LX1N","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD LX2","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6 2019","Models":"MRD LX3","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6P","Models":"MED L2X","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Huawei Y6S","Models":"JAT L29","Platform":"MT6765","Conn":"auth","Broom":"brom"}
+]

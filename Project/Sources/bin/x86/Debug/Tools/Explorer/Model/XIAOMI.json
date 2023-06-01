@@ -1,0 +1,26 @@
+[
+{"Devices":"Xiaomi Mi Play","Models":"lotus","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Poco C3","Models":"angelica","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Poco M2","Models":"shiva","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 6","Models":"ceretus","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 6A","Models":"cactus","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9","Models":"lancelot","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9A","Models":"dandelion","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9C NFC","Models":"M2006C3MNG","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9C POCO Phone3","Models":"pcm","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9C","Models":"angelica","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 9T","Models":"M2010J19SG","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 10X 4G","Models":"M2003J15SC","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 10X 5G","Models":"atom","Platform":"MT6873","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi 10X Pro 5G","Models":"bamb","Platform":"MT6873","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi K30 Ultra","Models":"cezanne","Platform":"MT6885","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi Note 4 (MediaTek)","Models":"Nikel","Platform":"MT6797","Conn":"","Broom":"brom"},
+{"Devices":"Xiaomi Redmi Note 8 2021","Models":"biloba","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi Note 8 Pro","Models":"begonia","Platform":"MT6785","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi Note 9","Models":"merlin","Platform":"MT6768","Conn":"auth","Broom":"brom"},
+{"Devices":"Xiaomi Redmi Note 10S","Models":"rosemary","Platform":"MT6785","Conn":"auth","Broom":"brom"}
+]
+
+
+
+

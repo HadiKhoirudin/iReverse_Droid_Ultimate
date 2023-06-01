@@ -1,0 +1,37 @@
+﻿General settings creat command
+General Command exec
+General Command ::LoadDA
+General Command ::LoadScatterFile
+General Command ::LoadRoms
+load roms in rom list
+General Command ::LoadAuthFile
+General Command ::LoadCertFile
+General command exec done!
+Connection create done!
+Command (0)::Execute
+Connecting to BROM...
+Scanning USB port...
+Search usb, timeout set as 120000 ms
+USB port detected
+BROM connected
+Downloading & Connecting to DA...
+connect DA end stage: 2, enable DRAM in 1st DA: 0
+COM port is open. Trying to sync with the target...
+Download DA now...
+20% of DA has been sent.
+40% of DA has been sent.
+60% of DA has been sent.
+80% of DA has been sent.
+100% of DA has been sent.
+Switching to USB high speed...
+Scaning DA high speed USB port...
+DA Connected
+executing
+cb_da_report():
+Downloading bootloader...
+100% of bootloader has been sent
+Write Memory Initial...
+100% of flash has been formatted.
+Format Succeeded.
+All command exec done!
+Formatting

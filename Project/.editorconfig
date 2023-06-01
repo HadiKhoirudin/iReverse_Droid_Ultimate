@@ -1,0 +1,7 @@
+﻿[*.vb]
+
+# BC42025: Access of shared member, constant member, enum member or nested type through an instance
+dotnet_diagnostic.BC42025.severity = none
+
+# BC42030: Variable is passed by reference before it has been assigned a value
+dotnet_diagnostic.BC42030.severity = none

@@ -1,0 +1,8 @@
+[Connection]
+;PlatformType: "Smart Phone", "Modem Only", "Dummy AP", "DUT in META Mode", "XL1 Simulator", "Thin Modem"
+PlatformType=Smart Phone
+;ComPortType: "USB", "UART"
+ComPortType = USB
+ComPort=USB COM
+EnableADBService=1
+EnableSwitchModemMode=0

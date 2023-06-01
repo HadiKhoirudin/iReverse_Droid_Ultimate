@@ -1,0 +1,4 @@
+process.exe
+python3.dll
+python38.dll
+vcruntime140.dll

@@ -1,0 +1,460 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3A2DEE85-43EC-4C8E-8378-F1C834B6248F}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Reverse_Tool</RootNamespace>
+    <AssemblyName>iREVERSE DROID ULTIMATE</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>iconireverse.ico</ApplicationIcon>
+    <StartupObject>Reverse_Tool.MyApplication</StartupObject>
+    <TargetFrameworkProfile />
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314,42324</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignManifests>false</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ManifestCertificateThumbprint>FD52424AF50FF4B0143911E1395619BFA7FB7BAB</ManifestCertificateThumbprint>
+  </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>false</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>iReverse_Droid_Ultimate_keys.pfx</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG</DefineConstants>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314,42324</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>41999,42016,42017,42018,42019,42020,42021,42022,42032,42036,42314</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup>
+    <MyType>WindowsFormsWithCustomSubMain</MyType>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Bunifu_UI_v1.5.3, Version=1.5.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\Data Pengguna\Hadi\Documents\Visual Studio 2019\UI\Bunifu_UI_v1.5.3.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+    </Reference>
+    <Reference Include="DevExpress.BonusSkins.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.Desktop.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Data.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Images.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Office.v21.1.Core, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Pdf.v21.1.Core, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Printing.v21.1.Core, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.RichEdit.v21.1.Core, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.Sparkline.v21.1.Core, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.Utils.v21.1.UI, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraBars.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraEditors.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="DevExpress.XtraGrid.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraLayout.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraPrinting.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" />
+    <Reference Include="DevExpress.XtraRichEdit.v21.1, Version=21.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a, processorArchitecture=MSIL" />
+    <Reference Include="emmclibs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\emmclibs.dll</HintPath>
+    </Reference>
+    <Reference Include="LibUsbDotNet.LibUsbDotNet, Version=2.2.0.0, Culture=neutral, PublicKeyToken=c677239abe1e02a9, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\LibUsbDotNet.LibUsbDotNet.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\Microsoft.WindowsAPICodePack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.WindowsAPICodePack.Shell, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\Microsoft.WindowsAPICodePack.Shell.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Newtonsoft.Json.dll</HintPath>
+      <Private>True</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="QC.QMSLPhone, Version=6.1.405.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>bin\x86\Debug\QC.QMSLPhone.dll</HintPath>
+    </Reference>
+    <Reference Include="SevenZipSharp, Version=1.0.19.0, Culture=neutral, PublicKeyToken=c8ff6ba0184838bb, processorArchitecture=MSIL">
+      <HintPath>..\packages\SevenZipSharp.Net45.1.0.19\lib\net45\SevenZipSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.Linq" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Xml.Linq" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="My Project\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="My Project\Application.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Application.myapp</DependentUpon>
+    </Compile>
+    <Compile Include="Resources.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\AdbDotNet\AdbTool.vb" />
+    <Compile Include="Utility\CryptoOperation\CryptoOperation.vb" />
+    <Compile Include="Utility\Direct ISP\DirectISP.Designer.vb">
+      <DependentUpon>DirectISP.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\Direct ISP\DirectISP.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utility\DownloadOperation\DownloadOperation.vb" />
+    <Compile Include="Utility\HackShield\HackShield.vb" />
+    <Compile Include="Utility\HexOperation\HexOperation.vb" />
+    <Compile Include="Utility\My\CacheBox.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utility\AdbDotNet\AdbAppInfo.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbAppLocation.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbAppType.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbClient.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbDevice.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbException.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbFileInfo.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbHelpers.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbInvalidResponseException.vb" />
+    <Compile Include="Utility\AdbDotNet\AdbSocket.vb" />
+    <Compile Include="Utility\AdbDotNet\Tracer.vb" />
+    <Compile Include="Utility\My\Progress.vb" />
+    <Compile Include="Utility\My\Radiobuttons.vb">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Utility\My\ClearDirectory.vb" />
+    <Compile Include="Utility\My\KillCommand.vb" />
+    <Compile Include="Qualcomm\loadxml.Designer.vb">
+      <DependentUpon>loadxml.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Qualcomm\loadxml.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Login.Designer.vb">
+      <DependentUpon>Login.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Login.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mediatek\Authentication\Spdlpath.vb" />
+    <Compile Include="Mediatek\Authentication\Pythonfile.vb" />
+    <Compile Include="Mediatek\Authentication\Python.vb" />
+    <Compile Include="Mediatek\Disksize\SizeSize.vb" />
+    <Compile Include="Mediatek\Mediatek_list\Addresformat.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\Ext4.vb" />
+    <Compile Include="Mediatek\Mediatek_list\ListPath.vb" />
+    <Compile Include="Mediatek\Mediatek_list\ListDevice.vb" />
+    <Compile Include="Mediatek\Mediatek_list\Datarows.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\Android.vb" />
+    <Compile Include="Mediatek\Metamode\Meta.vb" />
+    <Compile Include="Qualcomm\Qualcomm_list\Datarows.vb" />
+    <Compile Include="Qualcomm\Qualcomm_list\ListDevice.vb" />
+    <Compile Include="Qualcomm\Qualcomm_list\Modellist.vb" />
+    <Compile Include="Qualcomm\Qualcomm_tool\FIREHOSE.vb" />
+    <Compile Include="Qualcomm\Qualcomm_tool\FIREHOSE_MANAGER.vb" />
+    <Compile Include="Qualcomm\Qualcomm_tool\SAHARA.vb" />
+    <Compile Include="Qualcomm\Qualcomm_tool\SAHARA_MANAGER.vb" />
+    <Compile Include="Utility\My\RichLog.vb" />
+    <Compile Include="Utility\My\clsComputerInfo.vb" />
+    <Compile Include="Qualcomm\Qualcomm_tool\DiskWriter.vb" />
+    <Compile Include="Mediatek\Mediatek_list\Listport.vb" />
+    <Compile Include="Mediatek\Mediatek_list\Modellist.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\Flash_Tool.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\Mtkxml.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\MediatekInt.vb" />
+    <Compile Include="Mediatek\Mediatek_tool\Flashpath.vb" />
+    <Compile Include="Mediatek\MtkFlash.Designer.vb">
+      <DependentUpon>MtkFlash.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Mediatek\MtkFlash.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Mediatek\MtkUnlock.Designer.vb">
+      <DependentUpon>MtkUnlock.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Mediatek\MtkUnlock.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="My Project\AssemblyInfo.vb" />
+    <Compile Include="Utility\My\MyApplication.vb" />
+    <Compile Include="Utility\My\MyComputer.vb" />
+    <Compile Include="Utility\My\MyProject.vb" />
+    <Compile Include="Utility\My\MySettings.Designer.vb">
+      <DependentUpon>MySettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Compile Include="Utility\My\MySettingsProperty.vb" />
+    <Compile Include="Utility\My\Resources\Resources.vb" />
+    <Compile Include="Qualcomm\QcFlash.Designer.vb">
+      <DependentUpon>QcFlash.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Qualcomm\QcFlash.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Qualcomm\QcUnlock.Designer.vb">
+      <DependentUpon>QcUnlock.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Qualcomm\QcUnlock.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Qualcomm\Qualcomm_list\QcListport.vb" />
+    <Compile Include="Main.Designer.vb">
+      <DependentUpon>Main.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Main.vb">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Utility\My\Settings\Settings.Designer.vb">
+      <DependentUpon>Settings.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\My\Settings\Settings.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Utility\OFPExtractor\OFPExtractor.vb" />
+    <Compile Include="Utility\PortIO\PortIO.vb" />
+    <Compile Include="Utility\PotatoFastboot\Fastboot.vb" />
+    <Compile Include="Utility\PotatoFastboot\FastbootUI.Designer.vb">
+      <DependentUpon>FastbootUI.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Utility\PotatoFastboot\FastbootUI.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Qualcomm\loadxml.resx">
+      <DependentUpon>loadxml.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Login.resx">
+      <DependentUpon>Login.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mediatek\MtkFlash.resx">
+      <DependentUpon>MtkFlash.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mediatek\MtkUnlock.resx">
+      <DependentUpon>MtkUnlock.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="My Project\licenses.licx" />
+    <EmbeddedResource Include="Qualcomm\QcFlash.resx">
+      <DependentUpon>QcFlash.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Qualcomm\QcUnlock.resx">
+      <DependentUpon>QcUnlock.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources.resx">
+      <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
+      <CustomToolNamespace>My.Resources</CustomToolNamespace>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.vb</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Main.resx">
+      <DependentUpon>Main.vb</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utility\Direct ISP\DirectISP.resx">
+      <DependentUpon>DirectISP.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utility\My\Settings\Settings.resx">
+      <DependentUpon>Settings.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Utility\PotatoFastboot\FastbootUI.resx">
+      <DependentUpon>FastbootUI.vb</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.editorconfig">
+      <Link>.editorconfig</Link>
+    </None>
+    <None Include="App.config" />
+    <None Include="app.manifest" />
+    <None Include="iReverse_Droid_Ultimate_keys.pfx" />
+    <None Include="Utility\My\MySettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>MySettings.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="packages.config" />
+    <None Include="Utility\My\Resources\safeformat_ufs" />
+    <None Include="Utility\My\Resources\safeformat_emmc" />
+    <None Include="Utility\My\Resources\skip" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Utility\My\Resources\Android-icon.png" />
+    <None Include="Utility\My\Resources\logoireverse.png" />
+    <None Include="Utility\My\Resources\logochipqualcomm.png" />
+    <None Include="Utility\My\Resources\logochipmediatek.png" />
+    <None Include="Utility\My\Resources\logohuawei.png" />
+    <None Include="Utility\My\Resources\logoinfinix.png" />
+    <None Include="Utility\My\Resources\logomediatek.png" />
+    <None Include="Utility\My\Resources\logomeizu.png" />
+    <None Include="Utility\My\Resources\logomi.png" />
+    <None Include="Utility\My\Resources\logonokia.png" />
+    <None Include="Utility\My\Resources\logooppo.png" />
+    <None Include="Utility\My\Resources\logoqualcomm.png" />
+    <None Include="Utility\My\Resources\logosamsung.png" />
+    <None Include="Utility\My\Resources\logovivo.png" />
+    <None Include="Utility\My\Resources\logorealme.png" />
+    <None Include="Utility\My\Resources\logoasus.png" />
+    <None Include="Utility\My\Resources\logoasus1.jpg" />
+    <None Include="Utility\My\Resources\logorealme.jpg" />
+    <None Include="Utility\My\Resources\logoinfinix.jpg" />
+    <None Include="Utility\My\Resources\logohuawei.jpg" />
+    <None Include="Utility\My\Resources\logosamsung.jpg" />
+    <None Include="Utility\My\Resources\logonokia.jpg" />
+    <None Include="Utility\My\Resources\logoasus.jpg" />
+    <None Include="Utility\My\Resources\logomeizu.jpg" />
+    <None Include="Utility\My\Resources\logooppo.jpg" />
+    <None Include="Utility\My\Resources\logovivo.jpg" />
+    <None Include="Utility\My\Resources\logomi.jpg" />
+    <None Include="Utility\My\Resources\logomediatek.jpg" />
+    <None Include="Utility\My\Resources\logoqualcomm.jpg" />
+    <None Include="Utility\My\Resources\logoLG.jpg" />
+    <None Include="Utility\My\Resources\logo_fix2.png" />
+    <None Include="Utility\My\Resources\Stop30.png" />
+    <None Include="Utility\My\Resources\Stop_30.png" />
+    <None Include="Utility\My\Resources\Save22px.png" />
+    <None Include="Utility\My\Resources\Save22.png" />
+    <None Include="Utility\My\Resources\Safe22px.png" />
+    <None Include="Utility\My\Resources\Safe22.png" />
+    <None Include="Utility\My\Resources\Readinfo22.png" />
+    <None Include="Utility\My\Resources\OpenLock.png" />
+    <None Include="Utility\My\Resources\miremof.png" />
+    <None Include="Utility\My\Resources\MiCloud22.png" />
+    <None Include="Utility\My\Resources\Format22.png" />
+    <None Include="Utility\My\Resources\Factory.png" />
+    <None Include="Utility\My\Resources\Erasefrp.png" />
+    <None Include="Utility\My\Resources\Erase22.png" />
+    <None Include="Utility\My\Resources\cyber.png" />
+    <None Include="Utility\My\Resources\Spdata.txt" />
+    <None Include="Utility\My\Resources\process.txt" />
+    <None Include="Utility\My\Resources\logs1.txt" />
+    <None Include="Utility\My\Resources\logs.txt" />
+    <None Include="Utility\My\Resources\C4.exe" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="iconireverse.ico" />
+    <None Include="Resources\dd.exe" />
+    <None Include="Utility\My\Resources\logospreadtrum.png" />
+    <None Include="Utility\My\Resources\logochipspreadtrum.png" />
+    <None Include="Utility\My\Resources\logoapple.png" />
+    <None Include="My Project\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="Utility\My\Resources\labelControl1.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\labelControlRefresh.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\SimpleButtonReboot.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonWrNvram.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonUniNvBackup.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonUBL.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonRPMBwrite.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonRpmbErase.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonRelockUBL.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonRebbot.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonReadInfo.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonReadGPT.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonRDrpmb.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonQc_ReadP.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonQc_Idnt.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonQc_eP.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonNvErase.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonMiReset.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonMiDisable.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonLoader.Image.png" />
+    <None Include="Utility\My\Resources\ButtonGptWrite.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonFRP_SAM.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonFormatUser.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonFlashQc.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonEraseGPT.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonEMI.Image.png" />
+    <None Include="Utility\My\Resources\ButtonAuth.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\ButtonAllFRP.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\BtnSAM_FRP_Oem.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\BtnGPTread.ImageOptions.Image.png" />
+    <None Include="Utility\My\Resources\Btn_RawXML.Image.png" />
+    <None Include="Utility\My\Resources\Btn_PatchXML.Image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.7.2 %28x86 and x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Spreadtrum\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
+</Project>

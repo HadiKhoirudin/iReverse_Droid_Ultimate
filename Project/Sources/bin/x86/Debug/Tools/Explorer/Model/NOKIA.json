@@ -1,0 +1,11 @@
+[
+{"Devices":"Nokia 1","Models":"TA-1047","Platform":"MT6737","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 1 Plus","Models":"TA-1111","Platform":"MT6739","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 2.3","Models":"TA-1211","Platform":"MT6761","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 2.4","Models":"TA-1277","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 3","Models":"TA-1032","Platform":"MT6737","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 3.1","Models":"TA-1049","Platform":"MT6750","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 3.1 Plus","Models":"TA-1118","Platform":"MT6765","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 5.1","Models":"TA-1075","Platform":"MT6750","Conn":"auth","Broom":"brom"},
+{"Devices":"Nokia 5.1 Plus","Models":"TA-1120","Platform":"MT6771","Conn":"auth","Broom":"brom"}
+]

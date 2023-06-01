@@ -1,0 +1,54 @@
+<Project ProjectFileVersion="4" UseRelativePaths="True" CheckVersionsWhileResolvingAssemblies="True" DisabledFromMSBuild="False" ID="{b0ebb379-ac07-4d91-a98e-dde3920818e7}">
+  <SearchDirectories />
+  <OutputSettings OutputPath=".\CryptoObfuscator_Output" MainAssemblyPath="iREVERSE DROID ULTIMATE" RunAssemblyPath="iREVERSE DROID ULTIMATE" SNPath="sn.exe" SignToolPath="signtool.exe" LicensingDLLPath="" OverwriteInputFiles="False" BuildID="" MapFilesLocation="" FullParamNamesInMappingFile="False">
+    <AdditionalAssemblies>
+      <AdditionalAssembly Path=".\SevenZipSharp.dll" Encrypt="True" Compress="True" />
+      <AdditionalAssembly Path=".\QC.QMSLPhone.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Newtonsoft.Json.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Microsoft.WindowsAPICodePack.Shell.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Microsoft.WindowsAPICodePack.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\LibUsbDotNet.LibUsbDotNet.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Guna.UI2.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\emmclibs.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraVerticalGrid.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraTreeList.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraRichEdit.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraPrinting.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraLayout.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraGrid.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraEditors.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.XtraBars.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Xpo.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Utils.v21.1.UI.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Utils.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Sparkline.v21.1.Core.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.RichEdit.v21.1.Core.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Printing.v21.1.Core.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Pdf.v21.1.Drawing.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Pdf.v21.1.Core.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Office.v21.1.Core.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Images.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.DataAccess.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Data.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.Data.Desktop.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.CodeParser.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\DevExpress.BonusSkins.v21.1.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Bunifu_UI_v1.5.3.dll" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\iREVERSE DROID ULTIMATE.exe" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\adb.exe" Encrypt="False" Compress="True" />
+      <AdditionalAssembly Path=".\Newtonsoft.Json.xml" Encrypt="False" Compress="True" />
+    </AdditionalAssemblies>
+  </OutputSettings>
+  <ExceptionReporting ExceptionReportingServiceURL="" TryToContinueOnException="True" LocalReportPath=".\Crypto_iReverse_ExceptionReports" ApplicationName="" CompanyName="" ShowUI="True" EnableSaveToFileButton="True" EnableSendReportButton="True" DeleteDownloadedReportsFromServer="True" />
+  <ObfuscationSettings RenamingScheme="0" UseOverloadedFieldNames="False" UseOverloadedMethodNames="False" HonorObfuscationAttributes="True" ExcludeSerializedTypes="True" ProcessInlineStrings="True" ForceXAMLProcessingModeExclude="False" ForceRenameParams="False" SymbolPrefix="" SymbolSuffix="" FakeFields="" FakeTypes="" FakeMethods="" EncryptionActive="True" CompressionActive="True" RemoveAccessedThroughPropertyAttribute="False" UseSaltForCryptographicRenaming="False" />
+  <ObfuscationRules />
+  <InclusionExclusionRules />
+  <Assembly Load="true" Path=".\iREVERSE DROID ULTIMATE.exe" XapEntryName="" KeyFilePath="" KeyFileContainsPublicKeyOnly="False" CertFilePath="" TimeStampURL="" Rfc3161TimestampURL="False" SHA256SigningAlgorithm="False" Embed="True" AddExceptionReporting="False" PfxPassword="" PfxPasswordCert="" IsWinRTAssembly="False">
+    <ObfuscationSettings EncryptStrings="True" EncryptMethods="True" EncryptConstants="True" SuppressReflector="False" ReduceMetaData="False" ObfuscationDisposition="1" FlowObfuscation="3" CodeMasking="0" SuppressILDASM="True" SuppressReflection="False" CombineResources="True" EncryptResources="True" CompressResources="True" MarkAsSealed="True" EnableTamperDetection="False" EnableAntiDebugging="True" SymbolRenaming="True" HideExternalCalls="False" HideInternalCalls="False" GeneratePdbFile="True" ObfuscatePdbFileNames="True" IncludeLocalVariablesInPdbFile="False" Encrypt="True" Compress="True" MSBuild="False" ObfuscatedNamespace="A" RetainNamespace="False" ModuleInitializationMethod="" LicensingMerge="False" RemoveConstants="False" ProcessSatelliteAssemblies="True">
+      <Watermarks Watermark0="" Watermark1="" Watermark2="" Watermark3="" Watermark4="" Watermark5="" Watermark6="" Watermark7="" Watermark8="" Watermark9="" />
+    </ObfuscationSettings>
+  </Assembly>
+  <WarningSuppressions />
+  <Warnings SaveWarningsToFile="" FailOnUnsuppressedWarning="False" SaveSuppressedWarnings="True" SaveUnsuppressedWarnings="True" />
+  <Filters />
+</Project>
