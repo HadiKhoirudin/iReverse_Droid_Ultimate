@@ -409,6 +409,16 @@ Namespace Bismillah.SAHARA
                         IsLoaderExist = True
                     End If
 
+                Else
+                    If Not QcFlash.SharedUI.TxtFlashLoader.Text = "" Then
+                        loader = File.ReadAllBytes(QcFlash.SharedUI.TxtFlashLoader.Text)
+                        If Not Encoding.UTF8.GetString(loader).Take(20).Contains("ELF") Then
+                            RichLogs("Harap pilih file loader yang benar!", Color.Red, True, False)
+                            IsLoaderExist = False
+                        Else
+                            IsLoaderExist = True
+                        End If
+                    End If
                 End If
             End If
             If cmd = SAHARA_EXEC_CMD.SAHARA_EXEC_CMD_SERIAL_NUM_READ Then

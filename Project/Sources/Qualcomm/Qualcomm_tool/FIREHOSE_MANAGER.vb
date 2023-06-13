@@ -595,7 +595,7 @@ Namespace Bismillah.FIREHOSE
                 If k.ToLower.Contains("ack") Then
                     RichLogs("Configured", Color.Yellow, True, True)
                     If MerkTerpilih.ToLower().Contains("vivo") Then
-                        If TypeTerpilih.ToUpper().Contains("[PD1818EF]") Or TypeTerpilih.ToUpper().Contains("[PD1818EF]") Or TypeTerpilih.ToUpper().Contains("[PD1818EF]") Then
+                        If TypeTerpilih.ToUpper().Contains("[PD1818F]") Or TypeTerpilih.ToUpper().Contains("[PD1818CF]") Or TypeTerpilih.ToUpper().Contains("[PD1818EF]") Then
                             RichLogs("Need Patching", Color.Blue, True, True)
                             Dim xmldata = "<?xml version=""1.0"" ?><data><poke SizeInBytes=""4"" address64=""0x08062F04"" value=""1""/></data>"
                             SendXml(xmldata)

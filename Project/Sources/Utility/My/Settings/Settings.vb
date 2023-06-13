@@ -170,7 +170,6 @@ Public Class Settings
                 AddHandler BgWorker.DoWork, AddressOf WorkerRun
                 AddHandler BgWorker.RunWorkerCompleted, AddressOf AllDone
                 BgWorker.RunWorkerAsync()
-                BgWorker.Dispose()
 
                 RichLogs("", Color.White, True, True)
             End If
@@ -180,68 +179,69 @@ Public Class Settings
         Dim str1 As String = FilesCollection
         Dim strArrays As String() = str1.Split(New Char() {","c})
         Dim length As Integer = strArrays.Length - 1
-        Dim num As Integer
-        For num = 0 To length
-            Console.WriteLine(strArrays(num))
-            ProcessBar2(doprosess, totaldo)
-            RichLogs(" Processing " & strArrays(num), Color.White, True, False)
+        For num As Integer = 0 To length
+            If Not num > length Then
 
-            doprosess += 1
-            NamaFilenya = strArrays(num)
+                Console.WriteLine(strArrays(num) & " Current : " & num & " Total length : " & length)
+                ProcessBar2(doprosess, totaldo)
+                RichLogs(" Process " & num & ">" & length & " " & strArrays(num), Color.White, True, False)
+                NamaFilenya = strArrays(num)
 
-            If NamaFilenya.Contains("bin") OrElse NamaFilenya.Contains("elf") OrElse NamaFilenya.Contains("mbn") Then
-                Filenya = "loader"
-            ElseIf NamaFilenya.Contains("xml") Then
-                Filenya = "xml"
-            ElseIf NamaFilenya.Contains("img") Then
-                Filenya = "raw"
-            End If
+                doprosess += 1
 
-            Dim str As String = SavedFolder & "\" & NamaFilenya
-            Dim keyEncrypt As String = TxtPassword.Text
-
-            Dim EncyLoader As Byte() = File.ReadAllBytes(LoadFolder & "\" & NamaFilenya)
-            OutDecripted = EncyLoader
-
-            lenFile = 0L
-            If EncryptDecrypt Then
-                File.Copy(LoadFolder & "\" & NamaFilenya, LoadFolder & "\tmp.process")
-
-                File.AppendAllText(LoadFolder & "\tmp.process", "EndCF")
-
-                Thread.Sleep(200)
-                EncryptFile(keyEncrypt, LoadFolder & "\tmp.process", str)
-
-                Thread.Sleep(500)
-                If File.Exists(LoadFolder & "\tmp.process") Then
-                    File.Delete(LoadFolder & "\tmp.process")
+                If NamaFilenya.Contains("bin") OrElse NamaFilenya.Contains("elf") OrElse NamaFilenya.Contains("mbn") Then
+                    Filenya = "loader"
+                ElseIf NamaFilenya.Contains("xml") Then
+                    Filenya = "xml"
+                ElseIf NamaFilenya.Contains("img") Then
+                    Filenya = "raw"
                 End If
 
-                RichLogs(" encrypt Done!", Color.Lime, True, True)
+                Dim str As String = SavedFolder & "\" & NamaFilenya
+                Dim keyEncrypt As String = TxtPassword.Text
 
-            Else
-                DecryptFile(keyEncrypt, LoadFolder & "\" & NamaFilenya, str)
-                Thread.Sleep(200)
-                If NamaFilenya.Contains(".xml") Then
-                    Dim ss As Integer = FilterData(File.ReadAllBytes(str))
-                    Dim sk As String = Encoding.UTF8.GetString(File.ReadAllBytes(str))
-                    StringXml = sk.Skip(ss - 1).ToArray
-                    If StringXml.Contains("EndCF") Then
-                        File.WriteAllText(str, StringXml.Replace("EndCF", ""))
+                Dim EncyLoader As Byte() = File.ReadAllBytes(LoadFolder & "\" & NamaFilenya)
+                OutDecripted = EncyLoader
+
+                lenFile = 0L
+                If EncryptDecrypt Then
+                    File.Copy(LoadFolder & "\" & NamaFilenya, LoadFolder & "\tmp.process")
+
+                    File.AppendAllText(LoadFolder & "\tmp.process", "EndCF")
+                    Delay(0.1)
+                    EncryptFile(keyEncrypt, LoadFolder & "\tmp.process", str)
+
+                    Delay(0.1)
+                    If File.Exists(LoadFolder & "\tmp.process") Then
+                        File.Delete(LoadFolder & "\tmp.process")
                     End If
+
+                    RichLogs(" encrypt Done!", Color.Lime, True, True)
+
                 Else
-                    OutDecripted = File.ReadAllBytes(str)
-                    If Encoding.UTF8.GetString(OutDecripted).Contains("EndCF") Then
-                        File.WriteAllBytes(str, GetRawData(OutDecripted.Take(lenFile).ToArray))
+                    DecryptFile(keyEncrypt, LoadFolder & "\" & NamaFilenya, str)
+                    Delay(0.1)
+                    If NamaFilenya.Contains(".xml") Then
+                        Dim ss As Integer = FilterData(File.ReadAllBytes(str))
+                        Dim sk As String = Encoding.UTF8.GetString(File.ReadAllBytes(str))
+                        StringXml = sk.Skip(ss - 1).ToArray
+                        If StringXml.Contains("EndCF") Then
+                            File.WriteAllText(str, StringXml.Replace("EndCF", ""))
+                        End If
+                    Else
+                        OutDecripted = File.ReadAllBytes(str)
+                        If Encoding.UTF8.GetString(OutDecripted).Contains("EndCF") Then
+                            File.WriteAllBytes(str, GetRawData(OutDecripted.Take(lenFile).ToArray))
+                        End If
                     End If
+
+                    RichLogs(" decrypt Done!", Color.Lime, True, True)
                 End If
 
-                RichLogs(" decrypt Done!", Color.Lime, True, True)
+                ProcessBar2(doprosess, totaldo)
+            Else
+                Exit For
             End If
-
-            ProcessBar2(doprosess, totaldo)
-
-            num += 1
         Next
     End Sub
 
