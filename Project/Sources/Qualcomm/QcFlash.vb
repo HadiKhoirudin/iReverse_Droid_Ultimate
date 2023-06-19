@@ -19,229 +19,229 @@ Imports Reverse_Tool.Bismillah.FIREHOSE.FIREHOSE_MANAGER
 
 Public Class QcFlash
 
-        Friend Shared SharedUI As QcFlash
+    Friend Shared SharedUI As QcFlash
 
-        Public Sub New()
-            server = "http://localhost/iReverseWebsite/datatool/"
-            InitializeComponent()
-            SharedUI = Me
-            Watch = New Stopwatch()
-            AddHandler Load, AddressOf LoadMenu
-            AddHandler DataView.MouseWheel, AddressOf DataView_Mousewheel
-            AddHandler DataView.RowPrePaint, AddressOf DataView_RowPrePaint
-        End Sub
+    Public Sub New()
+        server = "http://localhost/iReverseWebsite/datatool/"
+        InitializeComponent()
+        SharedUI = Me
+        Watch = New Stopwatch()
+        AddHandler Load, AddressOf LoadMenu
+        AddHandler DataView.MouseWheel, AddressOf DataView_Mousewheel
+        AddHandler DataView.RowPrePaint, AddressOf DataView_RowPrePaint
+    End Sub
 
-        Shared Sub New()
-            ReDim loader(-1)
-            ReDim OutDecripted(-1)
-            PortQcom = 0
-            sendingloaderStatus = False
-            TypeMemory = "emmc"
-            SectorSize = "512"
-            MenuEx = New MenuEksekusi()
-            PatchString = ""
-            LoadFolderXml = ""
-        End Sub
+    Shared Sub New()
+        ReDim loader(-1)
+        ReDim OutDecripted(-1)
+        PortQcom = 0
+        sendingloaderStatus = False
+        TypeMemory = "emmc"
+        SectorSize = "512"
+        MenuEx = New MenuEksekusi()
+        PatchString = ""
+        LoadFolderXml = ""
+    End Sub
 
-        Public Sub LoadMenu(sender As Object, e As EventArgs)
-            MenuEx = MenuEksekusi.manual
-        End Sub
+    Public Sub LoadMenu(sender As Object, e As EventArgs)
+        MenuEx = MenuEksekusi.manual
+    End Sub
 
-        Private Sub DataView_Mousewheel(sender As Object, e As MouseEventArgs)
-            If DataView.Rows.Count > 0 Then
+    Private Sub DataView_Mousewheel(sender As Object, e As MouseEventArgs)
+        If DataView.Rows.Count > 0 Then
 
-                If e.Delta > 0 AndAlso DataView.FirstDisplayedScrollingRowIndex > 0 Then
-                    DataView.FirstDisplayedScrollingRowIndex -= 1
-                ElseIf e.Delta < 0 Then
-                    DataView.FirstDisplayedScrollingRowIndex += 1
-                End If
-
-            End If
-        End Sub
-
-        Private Sub DataView_RowPrePaint(sender As Object, e As DataGridViewRowPrePaintEventArgs)
-            If e.RowIndex Mod 2 = 0 Then
-                DataView.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.Gray
-            Else
-                DataView.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.FromArgb(96, 94, 92)
-            End If
-        End Sub
-
-        Private Sub MainTab_MouseClick(sender As Object, e As MouseEventArgs) Handles MainTab.MouseClick
-            Dim WorkerMethod As String
-            If MainTab.SelectedTabPage.Name = MainTab.TabPages(0).Name Then
-                WorkerMethod = "FLASH"
+            If e.Delta > 0 AndAlso DataView.FirstDisplayedScrollingRowIndex > 0 Then
+                DataView.FirstDisplayedScrollingRowIndex -= 1
+            ElseIf e.Delta < 0 Then
+                DataView.FirstDisplayedScrollingRowIndex += 1
             End If
 
-            If MainTab.SelectedTabPage.Name = MainTab.TabPages(1).Name Then
-                WorkerMethod = "UNIFERSAL"
+        End If
+    End Sub
+
+    Private Sub DataView_RowPrePaint(sender As Object, e As DataGridViewRowPrePaintEventArgs)
+        If e.RowIndex Mod 2 = 0 Then
+            DataView.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.Gray
+        Else
+            DataView.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.FromArgb(96, 94, 92)
+        End If
+    End Sub
+
+    Private Sub MainTab_MouseClick(sender As Object, e As MouseEventArgs) Handles MainTab.MouseClick
+        Dim WorkerMethod As String
+        If MainTab.SelectedTabPage.Name = MainTab.TabPages(0).Name Then
+            WorkerMethod = "FLASH"
+        End If
+
+        If MainTab.SelectedTabPage.Name = MainTab.TabPages(1).Name Then
+            WorkerMethod = "UNIFERSAL"
+        End If
+    End Sub
+    Private Sub VScrollBarQcFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles VScrollBarQcFlashDataView.Scroll
+        If DataView.Rows.Count > 0 Then
+            VScrollBarQcFlashDataView.LargeChange = DataView.Rows.Count
+            VScrollBarQcFlashDataView.Maximum = DataView.Rows.Count - 1 + VScrollBarQcFlashDataView.LargeChange - 1
+            DataView.FirstDisplayedScrollingRowIndex = e.NewValue
+        End If
+    End Sub
+
+    Private Sub HScrollBarQcFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles HScrollBarQcFlashDataView.Scroll
+        DataView.FirstDisplayedScrollingColumnIndex = e.NewValue
+    End Sub
+    Private Sub DataView_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataView.CellDoubleClick
+        If e.ColumnIndex = 3 Then
+            Dim openFileDialog As OpenFileDialog = New OpenFileDialog With {
+                            .Title = String.Format("Choice {0}  file !", DataView.CurrentRow.Cells(4).Value),
+                            .Filter = String.Format("{0}  |*.*|Other|*.*", DataView.CurrentRow.Cells(4).Value)
+                            }
+
+            If openFileDialog.ShowDialog() = DialogResult.OK Then
+                DataView.CurrentRow.Cells(7).Value = openFileDialog.FileName
+                DataView.CurrentRow.Cells(0).Value = True
             End If
-        End Sub
-        Private Sub VScrollBarQcFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles VScrollBarQcFlashDataView.Scroll
-            If DataView.Rows.Count > 0 Then
-                VScrollBarQcFlashDataView.LargeChange = DataView.Rows.Count
-                VScrollBarQcFlashDataView.Maximum = DataView.Rows.Count - 1 + VScrollBarQcFlashDataView.LargeChange - 1
-                DataView.FirstDisplayedScrollingRowIndex = e.NewValue
+
+        End If
+    End Sub
+
+    Public Sub Loadsss(xml As String)
+        LoadXmlFolder(xml)
+    End Sub
+    Private Sub LoadXmlFolder(xml As String)
+        Dim enumerator As IEnumerator = Nothing
+        DataView.Rows.Clear()
+        Dim strArrays As String() = xml.Split(New Char() {","c})
+        Dim str As String = ""
+        Dim length As Integer = strArrays.Length - 1
+        For i As Integer = 0 To length Step 1
+            str = strArrays(i)
+            If Operators.CompareString(str, "", False) = 0 Then
+                Exit For
             End If
-        End Sub
-
-        Private Sub HScrollBarQcFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles HScrollBarQcFlashDataView.Scroll
-            DataView.FirstDisplayedScrollingColumnIndex = e.NewValue
-        End Sub
-        Private Sub DataView_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataView.CellDoubleClick
-            If e.ColumnIndex = 3 Then
-                Dim openFileDialog As OpenFileDialog = New OpenFileDialog With {
-                        .Title = String.Format("Choice {0}  file !", DataView.CurrentRow.Cells(4).Value),
-                        .Filter = String.Format("{0}  |*.*|Other|*.*", DataView.CurrentRow.Cells(4).Value)
-                        }
-
-                If openFileDialog.ShowDialog() = DialogResult.OK Then
-                    DataView.CurrentRow.Cells(7).Value = openFileDialog.FileName
-                    DataView.CurrentRow.Cells(0).Value = True
-                End If
-
-            End If
-        End Sub
-
-        Public Sub Loadsss(xml As String)
-            LoadXmlFolder(xml)
-        End Sub
-        Private Sub LoadXmlFolder(xml As String)
-            Dim enumerator As IEnumerator = Nothing
-            DataView.Rows.Clear()
-            Dim strArrays As String() = xml.Split(New Char() {","c})
-            Dim str As String = ""
-            Dim length As Integer = strArrays.Length - 1
-            For i As Integer = 0 To length Step 1
-                str = strArrays(i)
-                If Operators.CompareString(str, "", False) = 0 Then
-                    Exit For
-                End If
-                Dim attribute As String = ""
-                Dim text As String = ""
-                Dim xmlReader As XmlReader = XmlReader.Create(String.Concat(LoadFolderXml, "\", str))
-                While True
-                    If xmlReader.Read() Then
-                        If If(xmlReader.NodeType <> XmlNodeType.Element, False, Operators.CompareString(xmlReader.Name, "program", False) = 0) Then
-                            If Operators.CompareString(xmlReader.GetAttribute("filename"), "", False) <> 0 Then
-                                text = String.Concat(LoadFolderXml, "\", xmlReader.GetAttribute("filename"))
-                            Else
-                                text = "none"
-                            End If
-                            attribute = xmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES")
-
-                            DataView.Rows.Add(False,
-                        xmlReader.GetAttribute("physical_partition_number"), 'LUNs
-                        xmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES"), 'Blocks
-                        "double click ...", ' Browse Files
-                        xmlReader.GetAttribute("label"), 'Partitions
-                        xmlReader.GetAttribute("start_sector"), 'Start Sectors
-                        xmlReader.GetAttribute("num_partition_sectors"), 'End Sectors
-                        text) 'Locations
-
+            Dim attribute As String = ""
+            Dim text As String = ""
+            Dim xmlReader As XmlReader = XmlReader.Create(String.Concat(LoadFolderXml, "\", str))
+            While True
+                If xmlReader.Read() Then
+                    If If(xmlReader.NodeType <> XmlNodeType.Element, False, Operators.CompareString(xmlReader.Name, "program", False) = 0) Then
+                        If Operators.CompareString(xmlReader.GetAttribute("filename"), "", False) <> 0 Then
+                            text = String.Concat(LoadFolderXml, "\", xmlReader.GetAttribute("filename"))
+                        Else
+                            text = "none"
                         End If
-                        If If(xmlReader.NodeType <> XmlNodeType.Element, False, Operators.CompareString(xmlReader.Name.ToLower(), "patch", False) = 0) Then
-                            PatchString = String.Concat(PatchString, str, ",")
-                            Console.WriteLine(PatchString)
-                            Exit While
-                        End If
-                    Else
+                        attribute = xmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES")
+
+                        DataView.Rows.Add(False,
+                            xmlReader.GetAttribute("physical_partition_number"), 'LUNs
+                            xmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES"), 'Blocks
+                            "double click ...", ' Browse Files
+                            xmlReader.GetAttribute("label"), 'Partitions
+                            xmlReader.GetAttribute("start_sector"), 'Start Sectors
+                            xmlReader.GetAttribute("num_partition_sectors"), 'End Sectors
+                            text) 'Locations
+
+                    End If
+                    If If(xmlReader.NodeType <> XmlNodeType.Element, False, Operators.CompareString(xmlReader.Name.ToLower(), "patch", False) = 0) Then
+                        PatchString = String.Concat(PatchString, str, ",")
+                        Console.WriteLine(PatchString)
                         Exit While
                     End If
-                End While
+                Else
+                    Exit While
+                End If
+            End While
 
-                For Each itm As DataGridViewRow In DataView.Rows
-                    If itm.Cells(7).Value = "none" Then
-                        itm.Cells(0).Value = False
-                    Else
-                        itm.Cells(0).Value = True
-                    End If
-                Next
-                If attribute.Contains("512") Then
-                    ComboChipQc.SelectedIndex = 0
-                    TypeMemory = "emmc"
-                    SectorSize = "512"
-                ElseIf attribute.Contains("4096") Then
-                    ComboChipQc.SelectedIndex = 1
-                    TypeMemory = "ufs"
-                    SectorSize = "4096"
+            For Each itm As DataGridViewRow In DataView.Rows
+                If itm.Cells(7).Value = "none" Then
+                    itm.Cells(0).Value = False
+                Else
+                    itm.Cells(0).Value = True
                 End If
             Next
-        End Sub
-
-        Private Sub ButtonLoader_Click(sender As Object, e As EventArgs) Handles ButtonLoader.Click
-            TxtFlashLoader.Text = ""
-            ReDim loader(-1)
-            ReDim OutDecripted(-1)
-            datafile = ""
-            Dim openFileDialog As New OpenFileDialog() With
-                        {
-                        .Title = "loader",
-                        .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-                        .FileName = "*.*",
-                        .Filter = "all file |*.*;*.* ",
-                        .FilterIndex = 2,
-                        .RestoreDirectory = True
-                        }
-            If openFileDialog.ShowDialog() = DialogResult.OK Then
-                TxtFlashLoader.Text = openFileDialog.FileName
-                Dim fileInfo As New FileInfo(openFileDialog.FileName)
-            End If
-        End Sub
-
-        Public Sub Btn_RawXML_Click(sender As Object, e As EventArgs) Handles Btn_BrowseXML.Click
-            TxtFlashRawXML.Text = ""
-            TxtFlashRawXML.Enabled = False
-
-            Dim folderDlg As New FolderBrowserDialog
-            folderDlg.ShowNewFolderButton = True
-            If folderDlg.ShowDialog() = DialogResult.OK Then
-                LoadFolderXml = folderDlg.SelectedPath
-                My.Forms.loadxml.Show()
-                TxtFlashRawXML.Text = LoadFolderXml
-
-            End If
-
-        End Sub
-
-        Private Sub ComboChipQc_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboChipQc.SelectedIndexChanged
-            If ComboChipQc.SelectedIndex = 0 Then
+            If attribute.Contains("512") Then
+                ComboChipQc.SelectedIndex = 0
                 TypeMemory = "emmc"
                 SectorSize = "512"
-            ElseIf ComboChipQc.SelectedIndex = 1 Then
+            ElseIf attribute.Contains("4096") Then
+                ComboChipQc.SelectedIndex = 1
                 TypeMemory = "ufs"
                 SectorSize = "4096"
             End If
-            Console.WriteLine("Selected : " & TypeMemory & " " & SectorSize)
-        End Sub
-        Private Sub CkboxSelectpartitionDataView_CheckedChanged(sender As Object, e As EventArgs) Handles CkboxSelectpartitionDataView.CheckedChanged
-            If CkboxSelectpartitionDataView.CheckState = CheckState.Checked Then
+        Next
+    End Sub
 
-                For Each item As DataGridViewRow In DataView.Rows
-                    For i As Integer = 0 To item.Cells.Count - 1
-                        item.Cells(0).Value = True
-                    Next
-                Next
-                Return
+    Private Sub ButtonLoader_Click(sender As Object, e As EventArgs) Handles ButtonLoader.Click
+        TxtFlashLoader.Text = ""
+        ReDim loader(-1)
+        ReDim OutDecripted(-1)
+        datafile = ""
+        Dim openFileDialog As New OpenFileDialog() With
+                            {
+                            .Title = "loader",
+                            .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                            .FileName = "*.*",
+                            .Filter = "all file |*.*;*.* ",
+                            .FilterIndex = 2,
+                            .RestoreDirectory = True
+                            }
+        If openFileDialog.ShowDialog() = DialogResult.OK Then
+            TxtFlashLoader.Text = openFileDialog.FileName
+            Dim fileInfo As New FileInfo(openFileDialog.FileName)
+        End If
+    End Sub
 
-            Else
+    Public Sub Btn_RawXML_Click(sender As Object, e As EventArgs) Handles Btn_BrowseXML.Click
+        TxtFlashRawXML.Text = ""
+        TxtFlashRawXML.Enabled = False
 
-                For Each item As DataGridViewRow In DataView.Rows
-                    For i As Integer = 0 To item.Cells.Count - 1
-                        item.Cells(0).Value = False
-                    Next
-                Next
-                Return
-            End If
-        End Sub
+        Dim folderDlg As New FolderBrowserDialog
+        folderDlg.ShowNewFolderButton = True
+        If folderDlg.ShowDialog() = DialogResult.OK Then
+            LoadFolderXml = folderDlg.SelectedPath
+            My.Forms.loadxml.Show()
+            TxtFlashRawXML.Text = LoadFolderXml
 
-        Public Sub ButtonFlashQc_Click(sender As Object, e As EventArgs) Handles ButtonFlashQc.Click
-            Dim flag As Boolean
+        End If
+
+    End Sub
+
+    Private Sub ComboChipQc_SelectedIndexChanged(sender As Object, e As EventArgs) Handles ComboChipQc.SelectedIndexChanged
+        If ComboChipQc.SelectedIndex = 0 Then
+            TypeMemory = "emmc"
+            SectorSize = "512"
+        ElseIf ComboChipQc.SelectedIndex = 1 Then
+            TypeMemory = "ufs"
+            SectorSize = "4096"
+        End If
+        Console.WriteLine("Selected : " & TypeMemory & " " & SectorSize)
+    End Sub
+    Private Sub CkboxSelectpartitionDataView_CheckedChanged(sender As Object, e As EventArgs) Handles CkboxSelectpartitionDataView.CheckedChanged
+        If CkboxSelectpartitionDataView.CheckState = CheckState.Checked Then
 
             For Each item As DataGridViewRow In DataView.Rows
-                If CacheBoxAutoFormatData.Checked Then
-                    If item.Cells(DataView.Columns(4).Index).Value = "misc" Then
-                        If SectorSize = "512" Then
+                For i As Integer = 0 To item.Cells.Count - 1
+                    item.Cells(0).Value = True
+                Next
+            Next
+            Return
+
+        Else
+
+            For Each item As DataGridViewRow In DataView.Rows
+                For i As Integer = 0 To item.Cells.Count - 1
+                    item.Cells(0).Value = False
+                Next
+            Next
+            Return
+        End If
+    End Sub
+
+    Public Sub ButtonFlashQc_Click(sender As Object, e As EventArgs) Handles ButtonFlashQc.Click
+        Dim flag As Boolean
+
+        For Each item As DataGridViewRow In DataView.Rows
+            If CacheBoxAutoFormatData.Checked Then
+                If item.Cells(DataView.Columns(4).Index).Value = "misc" Then
+                    If SectorSize = "512" Then
                         item.Cells(DataView.Columns(7).Index).Value = Windows.Forms.Application.StartupPath & "\Tools\Reset\misc_emmc.img"
                     Else
                         item.Cells(DataView.Columns(7).Index).Value = Windows.Forms.Application.StartupPath & "\Tools\Reset\misc_ufs.img"
@@ -262,27 +262,26 @@ Public Class QcFlash
         Next
 
         If flag Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "Flashing"
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -298,14 +297,14 @@ Public Class QcFlash
                     totalchecked += 1
 
                     StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
 
                 End If
             Next
@@ -319,29 +318,27 @@ Public Class QcFlash
 
 
     Private Sub SimpleButtonReboot_Click(sender As Object, e As EventArgs) Handles SimpleButtonReboot.Click
-
+        MenuEx = MenuEksekusi.manual
         MenuManual = "Reboot"
 
         Thread.Sleep(500)
         If Not CheckBoxServer.Checked Then
             If TxtFlashLoader.Text = "" Then
                 Main.IsAutoLoader = True
+            Else
+                Main.IsAutoLoader = False
             End If
         End If
 
-        If Not QcomWorker.IsBusy Then
+        If Not CariportQC.IsBusy Then
             Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
             Watch.Restart()
             RtbClear()
             Setwaktu()
             Watch.Start()
             StringXml = ""
-            QcomWorker = New BackgroundWorker()
-            QcomWorker.WorkerSupportsCancellation = True
-            AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-            AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-            QcomWorker.RunWorkerAsync()
-            QcomWorker.Dispose()
+            CariportQC.RunWorkerAsync()
+            CariportQC.Dispose()
         Else
             RichLogs("", Color.Yellow, True, True)
             RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -361,34 +358,33 @@ Public Class QcFlash
 
         If flag Then
             Dim folderBrowserDialog As New FolderBrowserDialog() With
-                        {
-                        .ShowNewFolderButton = True
-                        }
+                            {
+                            .ShowNewFolderButton = True
+                            }
 
             If folderBrowserDialog.ShowDialog() = DialogResult.OK Then
                 foldersave = folderBrowserDialog.SelectedPath
+                MenuEx = MenuEksekusi.manual
                 MenuManual = "Read"
 
                 Thread.Sleep(500)
                 If Not CheckBoxServer.Checked Then
                     If TxtFlashLoader.Text = "" Then
                         Main.IsAutoLoader = True
+                    Else
+                        Main.IsAutoLoader = False
                     End If
                 End If
 
-                If Not QcomWorker.IsBusy Then
+                If Not CariportQC.IsBusy Then
                     Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                     Watch.Restart()
                     RtbClear()
                     Setwaktu()
                     Watch.Start()
                     StringXml = ""
-                    QcomWorker = New BackgroundWorker()
-                    QcomWorker.WorkerSupportsCancellation = True
-                    AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                    AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                    QcomWorker.RunWorkerAsync()
-                    QcomWorker.Dispose()
+                    CariportQC.RunWorkerAsync()
+                    CariportQC.Dispose()
                 Else
                     RichLogs("", Color.Yellow, True, True)
                     RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -404,14 +400,14 @@ Public Class QcFlash
                         totalchecked += 1
 
                         StringXml = String.Concat(StringXml, String.Format("<read SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
 
                     End If
                 Next
@@ -434,29 +430,27 @@ Public Class QcFlash
         Next
 
         If flag Then
-
+            MenuEx = MenuEksekusi.manual
             MenuManual = "Erase"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -472,14 +466,14 @@ Public Class QcFlash
                     totalchecked += 1
 
                     StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
 
                 End If
             Next
@@ -492,15 +486,18 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonQc_Idnt_Click(sender As Object, e As EventArgs) Handles ButtonQc_Idnt.Click
+        MenuEx = MenuEksekusi.manual
         MenuManual = "Read GPT"
         Thread.Sleep(500)
         If Not CheckBoxServer.Checked Then
             If TxtFlashLoader.Text = "" Then
                 Main.IsAutoLoader = True
+            Else
+                Main.IsAutoLoader = False
             End If
         End If
 
-        If Not QcomWorker.IsBusy Then
+        If Not CariportQC.IsBusy Then
             Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
             DataView.Rows.Clear()
             Watch.Restart()
@@ -508,12 +505,8 @@ Public Class QcFlash
             Setwaktu()
             Watch.Start()
             StringXml = ""
-            QcomWorker = New BackgroundWorker()
-            QcomWorker.WorkerSupportsCancellation = True
-            AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-            AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-            QcomWorker.RunWorkerAsync()
-            QcomWorker.Dispose()
+            CariportQC.RunWorkerAsync()
+            CariportQC.Dispose()
         Else
             RichLogs("", Color.Yellow, True, True)
             RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -583,6 +576,7 @@ Public Class QcFlash
         Dim Flag As Boolean = True
         ComboBoxEditModels.Properties.Items.Clear()
         ComboBoxEditModels.Text = ""
+
         If ComboBoxEditBrand.Text = "HUAWEI" Then
             XtraMessageBox.Show("Saat Ini Untuk HUAWEI Qualcomm Belum Tersedia!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
             Flag = False
@@ -700,28 +694,36 @@ Public Class QcFlash
 
     Private Sub ButtonReadInfo_Click(sender As Object, e As EventArgs) Handles ButtonReadInfo.Click
         If DataView.Rows.Count > 0 Then
-            MenuManual = "Read"
+            MenuEx = MenuEksekusi.manual
+            MenuManual = "Read Info"
+
+            If Not File.Exists(Mediatek.Mediatek_tool.Sourcefile.Andoidpath) Then
+                Directory.CreateDirectory(Path.GetDirectoryName(Mediatek.Mediatek_tool.Sourcefile.Andoidpath))
+                File.WriteAllBytes(Mediatek.Mediatek_tool.Sourcefile.Andoidpath, My.Resources.C4)
+            End If
+
+            If File.Exists(Mediatek.Mediatek_tool.Sourcefile.Dumped) Then
+                File.Delete(Mediatek.Mediatek_tool.Sourcefile.Dumped)
+            End If
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -735,17 +737,18 @@ Public Class QcFlash
             For Each item As DataGridViewRow In DataView.Rows
                 If item.Cells(DataView.Columns(4).Index).Value = "recovery" Then
                     totalchecked += 1
-                    foldersave = Windows.Forms.Application.StartupPath & "\Tools\process"
+
+                    foldersave = Mediatek.Mediatek_tool.Sourcefile.Directorypath
 
                     StringXml = String.Concat(StringXml, String.Format("<read SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
                 End If
             Next
 
@@ -758,28 +761,27 @@ Public Class QcFlash
 
     Private Sub ButtonMiReset_Click(sender As Object, e As EventArgs) Handles ButtonMiReset.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "HexOperation"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -796,14 +798,14 @@ Public Class QcFlash
                     foldersave = Windows.Forms.Application.StartupPath & "\Tools\process"
 
                     StringXml = String.Concat(StringXml, String.Format("<read SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
                 End If
             Next
 
@@ -816,28 +818,27 @@ Public Class QcFlash
     End Sub
     Private Sub ButtonMiDisable_Click(sender As Object, e As EventArgs) Handles ButtonMiDisable.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "HexOperation"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -854,14 +855,14 @@ Public Class QcFlash
                     foldersave = Windows.Forms.Application.StartupPath & "\Tools\process"
 
                     StringXml = String.Concat(StringXml, String.Format("<read SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(), 'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(), 'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()  'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
                 End If
             Next
 
@@ -876,28 +877,27 @@ Public Class QcFlash
 
     Private Sub ButtonFormatUser_Click(sender As Object, e As EventArgs) Handles ButtonFormatUser.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "Format Data"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -913,14 +913,14 @@ Public Class QcFlash
                     totalchecked += 1
 
                     StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
 
                 End If
             Next
@@ -936,22 +936,20 @@ Public Class QcFlash
         If Not CheckBoxServer.Checked Then
             If TxtFlashLoader.Text = "" Then
                 Main.IsAutoLoader = True
+            Else
+                Main.IsAutoLoader = False
             End If
         End If
 
-        If Not QcomWorker.IsBusy Then
+        If Not CariportQC.IsBusy Then
             Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
             Watch.Restart()
             RtbClear()
             Setwaktu()
             Watch.Start()
             StringXml = ""
-            QcomWorker = New BackgroundWorker()
-            QcomWorker.WorkerSupportsCancellation = True
-            AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-            AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-            QcomWorker.RunWorkerAsync()
-            QcomWorker.Dispose()
+            CariportQC.RunWorkerAsync()
+            CariportQC.Dispose()
         Else
             RichLogs("", Color.Yellow, True, True)
             RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -961,28 +959,27 @@ Public Class QcFlash
 
     Private Sub ButtonUBL_Click(sender As Object, e As EventArgs) Handles ButtonUBL.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "UnRelock Bootloader"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -1011,28 +1008,27 @@ Public Class QcFlash
 
     Private Sub ButtonRelockUBL_Click(sender As Object, e As EventArgs) Handles ButtonRelockUBL.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "UnRelock Bootloader"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -1064,28 +1060,27 @@ Public Class QcFlash
 
     Private Sub ButtonAllFRP_Click(sender As Object, e As EventArgs) Handles ButtonAllFRP.Click
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "Erase"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
                 Setwaktu()
                 Watch.Start()
                 StringXml = ""
-                QcomWorker = New BackgroundWorker()
-                QcomWorker.WorkerSupportsCancellation = True
-                AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                QcomWorker.RunWorkerAsync()
-                QcomWorker.Dispose()
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
                 RichLogs("", Color.Yellow, True, True)
                 RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
@@ -1101,14 +1096,14 @@ Public Class QcFlash
                     totalchecked += 1
 
                     StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
                 Else
                     XtraMessageBox.Show("Tidak ada data FRP!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
                     Return
@@ -1125,72 +1120,89 @@ Public Class QcFlash
     Private Sub ButtonFRP_SAM_Click(sender As Object, e As EventArgs) Handles ButtonFRP_SAM.Click
 
         If DataView.Rows.Count > 0 Then
+            MenuEx = MenuEksekusi.manual
             MenuManual = "Erase"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
                 If TxtFlashLoader.Text = "" Then
                     Main.IsAutoLoader = True
+                Else
+                    Main.IsAutoLoader = False
                 End If
             End If
 
-            If Not QcomWorker.IsBusy Then
+            If Not CariportQC.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
-                    RtbClear()
-                    Setwaktu()
-                    Watch.Start()
-                    StringXml = ""
-                    QcomWorker = New BackgroundWorker()
-                    QcomWorker.WorkerSupportsCancellation = True
-                    AddHandler QcomWorker.DoWork, AddressOf WorkerFlashRun
-                    AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                    QcomWorker.RunWorkerAsync()
-                    QcomWorker.Dispose()
-                Else
-                    RichLogs("", Color.Yellow, True, True)
-                    RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
-                End If
-
-                StringXml = String.Concat(StringXml, "<?xml version=""1.0"" ?>" & vbCrLf & "")
-                StringXml = String.Concat(StringXml, "<data>" & vbCrLf & "")
-
-
-                totalchecked = 0
-                For Each item As DataGridViewRow In DataView.Rows
-                    If item.Cells(DataView.Columns(4).Index).Value = "persistent" Then
-                        totalchecked += 1
-
-                        StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
-                        SectorSize, '512, 4096
-                        item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
-                        item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
-                        item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
-                        item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
-                        item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
-                        }),
-                        "" & vbCrLf & "")
-                    Else
-                        XtraMessageBox.Show("Tidak ada data FRP Samsung!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-                        Return
-                    End If
-                Next
-
-                StringXml = String.Concat(StringXml, "</data>")
-
+                RtbClear()
+                Setwaktu()
+                Watch.Start()
+                StringXml = ""
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
             Else
-                XtraMessageBox.Show("Tidak ada data!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                RichLogs("", Color.Yellow, True, True)
+                RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
             End If
 
-        End Sub
+            StringXml = String.Concat(StringXml, "<?xml version=""1.0"" ?>" & vbCrLf & "")
+            StringXml = String.Concat(StringXml, "<data>" & vbCrLf & "")
 
 
-        Private Sub TxtOFPQC_OnValueChanged(sender As Object, e As EventArgs) Handles TxtOFPQC.OnValueChanged
+            totalchecked = 0
+            For Each item As DataGridViewRow In DataView.Rows
+                If item.Cells(DataView.Columns(4).Index).Value = "persistent" Then
+                    totalchecked += 1
 
-        End Sub
+                    StringXml = String.Concat(StringXml, String.Format("<program SECTOR_SIZE_IN_BYTES=""{0}"" file_sector_offset=""0"" filename=""{1}"" label=""{2}"" num_partition_sectors=""{3}"" physical_partition_number=""{4}"" start_sector=""{5}""/>", New Object() {
+                            SectorSize, '512, 4096
+                            item.Cells(DataView.Columns(7).Index).Value.ToString(), 'filenames = Locations
+                            item.Cells(DataView.Columns(4).Index).Value.ToString(), 'label = Partitions
+                            item.Cells(DataView.Columns(6).Index).Value.ToString(),  'num_partition_sectors = End Sectors
+                            item.Cells(DataView.Columns(1).Index).Value.ToString(),   'physical_partition_number = Luns
+                            item.Cells(DataView.Columns(5).Index).Value.ToString()    'start_sector = Start Sector
+                            }),
+                            "" & vbCrLf & "")
+                Else
+                    XtraMessageBox.Show("Tidak ada data FRP Samsung!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                    Return
+                End If
+            Next
+
+            StringXml = String.Concat(StringXml, "</data>")
+
+        Else
+            XtraMessageBox.Show("Tidak ada data!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+        End If
+
+    End Sub
 
 
-        Private Sub Btn_OFPQc_Click(sender As Object, e As EventArgs) Handles Btn_OFPQc.Click
+    Private Sub Btn_OFPQc_Click(sender As Object, e As EventArgs) Handles Btn_OFPQc.Click
+        Dim openFileDialog As New OpenFileDialog() With
+                            {
+                            .Title = "Select Qualcomm OFP",
+                            .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                            .FileName = "*.*",
+                            .Filter = "all file |*.*;*.* ",
+                            .FilterIndex = 2,
+                            .RestoreDirectory = True
+                            }
+        If openFileDialog.ShowDialog() = DialogResult.OK Then
+            TxtOFPQC.Text = openFileDialog.FileName
+            OFPExtractor.fname = openFileDialog.FileName
+            Dim folderBrowserDialog As New FolderBrowserDialog() With
+                            {
+                            .ShowNewFolderButton = True
+                            }
 
-        End Sub
-    End Class
+            If folderBrowserDialog.ShowDialog() = DialogResult.OK Then
+                foldersave = folderBrowserDialog.SelectedPath
+                OFPExtractor.LoadTabelKeyOFP()
+                OFPExtractor.OPFWorkerQC.RunWorkerAsync()
+                OFPExtractor.OPFWorkerQC.Dispose()
+            End If
+        End If
+    End Sub
+End Class

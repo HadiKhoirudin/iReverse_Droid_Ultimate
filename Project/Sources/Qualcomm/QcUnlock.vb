@@ -238,50 +238,49 @@ Public Class QcUnlock
         End Try
     End Sub
     Public Sub DoExecOneClick(sender As Object, e As EventArgs)
-        Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
-        Watch.Restart()
-        Watch.Start()
-        Dim str As String = Conversions.ToString(NewLateBinding.LateGet(sender, Nothing, "text", New Object(-1) {}, Nothing, Nothing, Nothing))
-        RtbClear()
-        RichLogs("Operation  : ", Color.White, True, False)
-        RichLogs(str, Color.Orange, True, True)
-        RichLogs(" Brand     : ", Color.White, True, False)
-        RichLogs(MerkTerpilih, Color.DeepSkyBlue, True, True)
-        RichLogs(" Devices   :", Color.White, True, False)
-        RichLogs(DevicesTerpilih.Replace(MerkTerpilih, ""), Color.DeepSkyBlue, True, True)
-        RichLogs(" Model     : ", Color.White, True, False)
-        RichLogs(TypeTerpilih, Color.DeepSkyBlue, True, True)
-        RichLogs(" Platform  : ", Color.White, True, False)
-        RichLogs("Qualcomm", Color.DeepSkyBlue, True, True)
-        RichLogs(" Connect   : ", Color.White, True, False)
-        RichLogs("Auth", Color.DeepSkyBlue, True, True)
-        RichLogs("Dowloading Loader Data" & vbTab & ":  ", Color.White, True, False)
-        Dim array As Byte() = getfile("loader.bin", False)
-        OutDecripted = array
-        Thread.Sleep(500)
-        If Not CryptStream(keyEncrypt, array, False, "loader", 0L) Then
-            RichLogs("Failed ", Color.Red, True, True)
-        Else
-            Dim [string] As String = Encoding.UTF8.GetString(loader.Take(20).ToArray())
-            If Not [string].ToUpper().Contains("ELF") Then
-                RichLogs(" Invalid Loader Data", Color.Red, True, True)
+        If Not CariportQC.IsBusy Then
+            MenuEx = MenuEksekusi.oneclick
+            Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+            Watch.Restart()
+            Watch.Start()
+            Dim str As String = Conversions.ToString(NewLateBinding.LateGet(sender, Nothing, "text", New Object(-1) {}, Nothing, Nothing, Nothing))
+            RtbClear()
+            RichLogs("Operation  : ", Color.White, True, False)
+            RichLogs(str, Color.Orange, True, True)
+            RichLogs(" Brand     : ", Color.White, True, False)
+            RichLogs(MerkTerpilih, Color.DeepSkyBlue, True, True)
+            RichLogs(" Devices   :", Color.White, True, False)
+            RichLogs(DevicesTerpilih.Replace(MerkTerpilih, ""), Color.DeepSkyBlue, True, True)
+            RichLogs(" Model     : ", Color.White, True, False)
+            RichLogs(TypeTerpilih, Color.DeepSkyBlue, True, True)
+            RichLogs(" Platform  : ", Color.White, True, False)
+            RichLogs("Qualcomm", Color.DeepSkyBlue, True, True)
+            RichLogs(" Connect   : ", Color.White, True, False)
+            RichLogs("Auth", Color.DeepSkyBlue, True, True)
+            RichLogs("Dowloading Loader Data" & vbTab & ":  ", Color.White, True, False)
+            Dim array As Byte() = getfile("loader.bin", False)
+            OutDecripted = array
+            Thread.Sleep(500)
+            If Not CryptStream(keyEncrypt, array, False, "loader", 0L) Then
+                RichLogs("Failed ", Color.Red, True, True)
             Else
-                RichLogs("Done  ✓ ", Color.Yellow, True, True)
-                RichLogs("Dowloading Support Data" & vbTab & ":  ", Color.White, True, False)
-                Dim array2 As Byte() = getfile((str + ".xml").Replace(" ", "%20").Replace("+", "%2b"), False)
-                OutDecripted = array2
-                Thread.Sleep(500)
-                If CryptStream(keyEncrypt, array2, False, "xml", 0L) Then
-                    If Not StringXml.ToLower().Contains("xml") Then
-                        RichLogs("Invalid xml Data", Color.Red, True, True)
-                    Else
-                        RichLogs("Done  ✓ ", Color.Yellow, True, True)
-                        QcomWorker = New BackgroundWorker()
-                        QcomWorker.WorkerSupportsCancellation = True
-                        AddHandler QcomWorker.DoWork, AddressOf WorkerOneclickhRun
-                        AddHandler QcomWorker.RunWorkerCompleted, AddressOf CariPortsDone
-                        QcomWorker.RunWorkerAsync()
-                        QcomWorker.Dispose()
+                Dim [string] As String = Encoding.UTF8.GetString(loader.Take(20).ToArray())
+                If Not [string].ToUpper().Contains("ELF") Then
+                    RichLogs(" Invalid Loader Data", Color.Red, True, True)
+                Else
+                    RichLogs("Done  ✓ ", Color.Yellow, True, True)
+                    RichLogs("Dowloading Support Data" & vbTab & ":  ", Color.White, True, False)
+                    Dim array2 As Byte() = getfile((str + ".xml").Replace(" ", "%20").Replace("+", "%2b"), False)
+                    OutDecripted = array2
+                    Thread.Sleep(500)
+                    If CryptStream(keyEncrypt, array2, False, "xml", 0L) Then
+                        If Not StringXml.ToLower().Contains("xml") Then
+                            RichLogs("Invalid xml Data", Color.Red, True, True)
+                        Else
+                            RichLogs("Done  ✓ ", Color.Yellow, True, True)
+                            CariportQC.RunWorkerAsync()
+                            CariportQC.Dispose()
+                        End If
                     End If
                 End If
             End If

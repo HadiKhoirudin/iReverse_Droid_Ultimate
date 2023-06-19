@@ -20,15 +20,18 @@ Imports Microsoft.VisualBasic.CompilerServices
 Imports Reverse_Tool.Bismillah.DISK.DiskWriter
 Imports Reverse_Tool.Bismillah.FIREHOSE.PACKET
 Imports Reverse_Tool.Bismillah.SAHARA
+Imports Reverse_Tool.Mediatek
 Imports Reverse_Tool.HexOperation
 Imports Reverse_Tool.CryptoOperation
 
 Namespace Bismillah.FIREHOSE
     Public Class FIREHOSE_MANAGER
         Public Shared Booln As Boolean
-        Friend Shared WithEvents CariPortQcom As New Windows.Forms.Timer()
         Public Shared saharaManager As SAHARA_MANAGER
-        Public Shared QcomWorker As New BackgroundWorker()
+
+        Public Shared CariportQC As New BackgroundWorker()
+        Public Shared SaharaWorker As New BackgroundWorker()
+        Public Shared FirehoseWorker As New BackgroundWorker()
 
         Public Shared keyEncrypt As String = "BabiBangsad"
         Public Shared MenuEx As MenuEksekusi = MenuEksekusi.manual
@@ -86,7 +89,7 @@ Namespace Bismillah.FIREHOSE
         Public Shared lb As New ListBox()
         Public Shared PatchString As String
         Public Shared LoadFolderXml As String
-        
+
         Public Shared StringXml As String
         Public Shared FilesOneClick As Byte()
         Public Shared portsfound As Boolean
@@ -400,11 +403,6 @@ Namespace Bismillah.FIREHOSE
             Return str
         End Function
 
-        Public Shared Sub CariPortQcom_Tick(sender As Object, e As EventArgs) Handles CariPortQcom.Tick
-            If Not QcomWorker.IsBusy Then
-                QcomWorker.RunWorkerAsync()
-            End If
-        End Sub
         Public Shared Function CariPorts() As Boolean
             Dim enumerator As ManagementObjectCollection.ManagementObjectEnumerator = Nothing
             Try
@@ -412,7 +410,6 @@ Namespace Bismillah.FIREHOSE
                     enumerator = managementObjectSearcher.[Get]().GetEnumerator()
                     While enumerator.MoveNext()
                         Dim current As ManagementObject = DirectCast(enumerator.Current, ManagementObject)
-                        CariPortQcom.[Stop]()
                         Dim str As String = current("Name").ToString()
                         Dim str1 As String = current("Name").ToString().Substring(current("Name").ToString().IndexOf("(COM") + 4)
                         PortQcom = Conversions.ToInteger(str1.TrimEnd(New Char() {")"c}))
@@ -435,14 +432,9 @@ Namespace Bismillah.FIREHOSE
         End Function
         Public Shared Sub CariPortsDone(sender As Object, e As RunWorkerCompletedEventArgs)
             If portsfound Then
-                If Not QcomWorker.IsBusy Then
-                    QcomWorker = New BackgroundWorker()
-                    QcomWorker.WorkerSupportsCancellation = True
-                    AddHandler QcomWorker.DoWork, AddressOf sendingLoader
-                    AddHandler QcomWorker.RunWorkerCompleted, AddressOf sendingloaderDone
-                    AddHandler QcomWorker.ProgressChanged, AddressOf ProcessSendingLoader
-                    QcomWorker.RunWorkerAsync()
-                    QcomWorker.Dispose()
+                If Not SaharaWorker.IsBusy Then
+                    SaharaWorker.RunWorkerAsync()
+                    SaharaWorker.Dispose()
                     GetInfDrive()
                 Else
                     RichLogs("Worker Flash is Busy", Color.Yellow, True, True)
@@ -461,16 +453,11 @@ Namespace Bismillah.FIREHOSE
                 TimeSpanElapsed.ElapsedTime(Watch)
                 Watch.Stop()
             Else
-                If QcomWorker.IsBusy Then
+                If FirehoseWorker.IsBusy Then
                     RichLogs("Worker Flash Is Busy", Color.Red, True, True)
                 Else
-                    QcomWorker = New BackgroundWorker()
-                    QcomWorker.WorkerSupportsCancellation = True
-                    AddHandler QcomWorker.DoWork, AddressOf ConnectToFlshLoader
-                    AddHandler QcomWorker.RunWorkerCompleted, AddressOf AllDone
-                    AddHandler QcomWorker.ProgressChanged, AddressOf ProcessSendingLoader
-                    QcomWorker.RunWorkerAsync()
-                    QcomWorker.Dispose()
+                    FirehoseWorker.RunWorkerAsync()
+                    FirehoseWorker.Dispose()
                 End If
             End If
         End Sub
@@ -562,6 +549,10 @@ Namespace Bismillah.FIREHOSE
 
         Public Shared Sub ConnectToFlshLoader(sender As Object, e As DoWorkEventArgs)
             Try
+                If FirehoseWorker.CancellationPending Then
+                    e.Cancel = True
+                    Return
+                End If
                 If Not OpenDisk("\\.\COM" & PortQcom) Then
                     Console.WriteLine("Failed to configuring safehandler...")
                     Return
@@ -571,6 +562,10 @@ Namespace Bismillah.FIREHOSE
                 If MenuEx = MenuEksekusi.oneclick Then
                     xr1 = New XmlTextReader(New StringReader(StringXml))
                     Do While xr1.Read()
+                        If FirehoseWorker.CancellationPending Then
+                            e.Cancel = True
+                            Return
+                        End If
                         If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name.ToLower = "program" Or xr1.Name.ToLower = "erase" Or xr1.Name.ToLower = "patch" Then
                             SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                             Exit Do
@@ -607,7 +602,7 @@ Namespace Bismillah.FIREHOSE
                         End If
                     End If
                 Else
-                        If Not k.Contains("xml") Then
+                    If Not k.Contains("xml") Then
                         Return
                     Else
                         If k.Contains("Only nop and sig tag") Then
@@ -707,6 +702,10 @@ Namespace Bismillah.FIREHOSE
                         xr1 = New XmlTextReader(New StringReader(StringXml))
 
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "patch" Then
                                 Dim SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim BytesOffset = xr1.GetAttribute("byte_offset")
@@ -743,6 +742,10 @@ Namespace Bismillah.FIREHOSE
 
                         xr1 = New XmlTextReader(New StringReader(StringXml))
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso Operators.CompareString(xr1.Name, "program", False) = 0 Then
                                 SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim numPartSect = xr1.GetAttribute("num_partition_sectors")
@@ -773,6 +776,10 @@ Namespace Bismillah.FIREHOSE
                         Dim doprosess As Integer = 0
                         xr1 = New XmlTextReader(New StringReader(StringXml))
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso Operators.CompareString(xr1.Name, "program", False) = 0 Then
                                 SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim numPartSect = xr1.GetAttribute("num_partition_sectors")
@@ -796,6 +803,10 @@ Namespace Bismillah.FIREHOSE
                         Dim doprosess As Integer = 0
                         xr1 = New XmlTextReader(New StringReader(StringXml))
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "read" Then
                                 Dim SectSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim SectorSizeStorage = SectSize
@@ -811,7 +822,7 @@ Namespace Bismillah.FIREHOSE
 
                                 Dim result As Boolean
                                 Dim patch_result As Boolean
-                                Dim Status = ReadPart(StartSector, numPartSect, SectSize, PhysicalPartition, label)
+                                Dim Status = ReadPart(StartSector, numPartSect, SectSize, PhysicalPartition, label, e)
                                 If Status Then
                                     RichLogs("Done  ✓", Color.Yellow, True, True)
                                     RichLogs("Patching " & label & " partition...", Color.White, True, False)
@@ -871,6 +882,10 @@ Namespace Bismillah.FIREHOSE
                         Dim doprosess = 0
                         xr1 = New XmlTextReader(New StringReader(StringXml))
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "program" Then
                                 SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim numPartSect = xr1.GetAttribute("num_partition_sectors")
@@ -918,6 +933,10 @@ Namespace Bismillah.FIREHOSE
                             RichLogs("Apply Patch       : ", Color.White, True, False)
                             xr1 = New XmlTextReader(New StringReader(File.ReadAllText(LoadFolderXml & "\" & filenamePatch)))
                             Do While xr1.Read()
+                                If FirehoseWorker.CancellationPending Then
+                                    e.Cancel = True
+                                    Return
+                                End If
                                 If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "patch" Then
                                     Dim SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                     Dim BytesOffset = xr1.GetAttribute("byte_offset")
@@ -982,6 +1001,10 @@ Namespace Bismillah.FIREHOSE
                         Dim doprosess = 0
                         xr1 = New XmlTextReader(New StringReader(StringXml))
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "program" Then
                                 SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
 
@@ -1009,6 +1032,69 @@ Namespace Bismillah.FIREHOSE
 
                             End If
                         Loop
+                    ElseIf MenuManual = "Read Info" Then
+
+                        RichLogs(" " & vbCrLf, Color.White, True, False)
+                        Dim totaldo = totalchecked
+                        Dim doprosess = 0
+
+                        Try
+
+                            xr1 = New XmlTextReader(New StringReader(StringXml))
+                            Do While xr1.Read()
+                                If FirehoseWorker.CancellationPending Then
+                                    e.Cancel = True
+                                    Return
+                                End If
+                                If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "read" Then
+                                    Dim SectSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
+                                    Dim SectorSizeStorage = SectSize
+                                    Dim numPartSect = xr1.GetAttribute("num_partition_sectors")
+                                    Dim label = xr1.GetAttribute("label")
+                                    Dim PhysicalPartition = xr1.GetAttribute("physical_partition_number")
+                                    Dim StartSector = xr1.GetAttribute("start_sector")
+
+                                    RichLogs("Get ", Color.White, True, False)
+                                    RichLogs("Information : ", Color.Orange, True, False)
+
+                                    Dim Status = ReadPart(StartSector, numPartSect, SectSize, PhysicalPartition, label, e)
+                                    If Status Then
+                                        RichLogs("Done  ✓", Color.Yellow, True, True)
+                                        If File.Exists(Mediatek_tool.Sourcefile.Directorypath & "/recovery.img") Then
+                                            File.Move(Mediatek_tool.Sourcefile.Directorypath & "/recovery.img", Mediatek_tool.Sourcefile.Directorypath & "/boot.img")
+                                        End If
+                                        If File.Exists(Mediatek_tool.Sourcefile.Directorypath & "/boot.img") Then
+                                            Mediatek_tool.Android.AndroidUnpact(Path.GetFileName(Mediatek_tool.Sourcefile.Dumped), Path.GetDirectoryName(Mediatek_tool.Sourcefile.Andoidpath) & "\initrd\", FirehoseWorker, e)
+
+                                            Dim directory As DirectoryInfo = New DirectoryInfo(Path.GetDirectoryName(Mediatek.Mediatek_tool.Sourcefile.Andoidpath))
+
+                                            For Each file As FileInfo In directory.EnumerateFiles()
+                                                file.Delete()
+                                            Next
+
+                                            For Each subDirectory As DirectoryInfo In directory.EnumerateDirectories()
+                                                subDirectory.Delete(True)
+                                            Next
+
+                                            directory.Delete(True)
+
+                                        End If
+                                        doprosess += 1
+
+                                        Else
+                                            RichLogs("Failed", Color.Red, True, True)
+                                        doprosess += 1
+
+                                    End If
+                                    ProcessBar2(doprosess, totaldo)
+                                End If
+                            Loop
+
+                            Return
+                        Catch ex As Exception
+                            MsgBox(ex.ToString)
+                        End Try
+
                     ElseIf MenuManual = "Read" Then
 
                         RichLogs(" " & vbCrLf, Color.White, True, False)
@@ -1026,6 +1112,10 @@ Namespace Bismillah.FIREHOSE
 
                             xr1 = New XmlTextReader(New StringReader(StringXml))
                             Do While xr1.Read()
+                                If FirehoseWorker.CancellationPending Then
+                                    e.Cancel = True
+                                    Return
+                                End If
                                 If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "read" Then
                                     Dim SectSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                     Dim SectorSizeStorage = SectSize
@@ -1040,7 +1130,7 @@ Namespace Bismillah.FIREHOSE
                                     RichLogs(StartSector & " : ", Color.Aqua, True, False)
 
 
-                                    Dim Status = ReadPart(StartSector, numPartSect, SectSize, PhysicalPartition, label)
+                                    Dim Status = ReadPart(StartSector, numPartSect, SectSize, PhysicalPartition, label, e)
                                     If Status Then
                                         RichLogs("Done  ✓", Color.Yellow, True, True)
                                         files.WriteLine("<program SECTOR_SIZE_IN_BYTES=""" & SectorSize & """ file_sector_offset=""0"" filename=""" & getfilenames(label) & """ label=""" & label & """ num_partition_sectors=""" & numPartSect & """ physical_partition_number=""" & PhysicalPartition & """ start_sector=""" & StartSector & """/>")
@@ -1079,6 +1169,10 @@ Namespace Bismillah.FIREHOSE
                         xr1 = New XmlTextReader(New StringReader(StringXml))
 
                         Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "patch" Then
                                 Dim SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                                 Dim BytesOffset = xr1.GetAttribute("byte_offset")
@@ -1102,6 +1196,10 @@ Namespace Bismillah.FIREHOSE
                     xr1 = New XmlTextReader(New StringReader(StringXml))
 
                     Do While xr1.Read()
+                        If FirehoseWorker.CancellationPending Then
+                            e.Cancel = True
+                            Return
+                        End If
                         If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "patch" Then
                             Dim SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
                             Dim BytesOffset = xr1.GetAttribute("byte_offset")
@@ -1815,7 +1913,7 @@ Namespace Bismillah.FIREHOSE
         Public Shared Function ReadPartWarning(NumPartition As String, pname As String) As String
             Return "Read " & pname & " skipped!"
         End Function
-        Public Shared Function ReadPart(Startsector As String, NumPartition As String, ByRef SectSize As String, physical As String, pname As String) As Boolean
+        Public Shared Function ReadPart(Startsector As String, NumPartition As String, ByRef SectSize As String, physical As String, pname As String, ee As DoWorkEventArgs) As Boolean
             If NumPartition < 1 Then
                 RichLogs(ReadPartWarning(NumPartition, pname), Color.Yellow, True, True)
                 RichLogs("Please Try Read " & pname & " From GPT... ", Color.Yellow, True, False)
@@ -1824,16 +1922,22 @@ Namespace Bismillah.FIREHOSE
                 'If CacheBoxConsole.Checked Then
                 'Return ReadpartNonConsoleMode(Startsector, NumPartition, SectSize, physical, pname)
                 'Else
-                Return ReadpartNonConsoleMode(Startsector, NumPartition, SectSize, physical, pname)
+                Return ReadpartNonConsoleMode(Startsector, NumPartition, SectSize, physical, pname, ee)
                 'End If
             End If
         End Function
-        Public Shared Function ReadpartNonConsoleMode(Startsector As String, NumPartition As String, ByRef SectSize As String, physical As String, pname As String) As Boolean
+        Public Shared Function ReadpartNonConsoleMode(Startsector As String, NumPartition As String, ByRef SectSize As String, physical As String, pname As String, e As DoWorkEventArgs) As Boolean
             If NumPartition < 1 Then
                 RichLogs(ReadPartWarning(NumPartition, pname), Color.Yellow, True, True)
                 Return True
             End If
             Try
+
+                If FirehoseWorker.CancellationPending Then
+                    e.Cancel = True
+                    Return False
+                End If
+
                 Dim i As Integer = 0
                 Dim BYTES_TO_READ As Long = NumPartition * SectSize
                 Dim totalLen = NumPartition * SectSize
@@ -1846,7 +1950,6 @@ Namespace Bismillah.FIREHOSE
 
                 Dim stream As New FileStream(foldersave & "\" & getfilenames(pname), FileMode.Append, FileAccess.Write)
                 Using stream
-
                     Dim buffer As Byte() = New Byte() {}
                     SendXml(pkt)
                     Dim s As Byte() = readByte()
@@ -1863,6 +1966,16 @@ Namespace Bismillah.FIREHOSE
                         ProcessBar1(fileOffset, BYTES_TO_READ)
                     End If
                     Do
+
+                        If FirehoseWorker.CancellationPending Then
+                            If File.Exists(foldersave & "\" & getfilenames(pname)) Then
+                                stream.Close()
+                                File.Delete(foldersave & "\" & getfilenames(pname))
+                            End If
+                            e.Cancel = True
+                            Return False
+                        End If
+
                         buffer = DiskRead()
                         fileOffset += buffer.Length
                         If fileOffset > BYTES_TO_READ Then
@@ -2009,8 +2122,37 @@ Namespace Bismillah.FIREHOSE
         End Function
 
         Public Shared Sub WorkerFlashRun(sender As Object, e As DoWorkEventArgs)
-            MenuEx = MenuEksekusi.manual
-            If QcFlash.SharedUI.CheckBoxServer.Checked Then
+            If MenuEx = MenuEksekusi.oneclick Then
+
+                Setwaktu()
+                RichLogs("Searching Qualcomm Usb Devices" & vbTab & ":  ", Color.Yellow, True, False)
+                While Not CariportQC.CancellationPending
+                    If WaktuCari = 0 Then
+                        RichLogs("Not Founds", Color.Red, True, True)
+                        TimeSpanElapsed.ElapsedTime(Watch)
+                        Watch.Stop()
+                        portsfound = False
+                        Return
+                    End If
+                    If CariPorts() Then
+                        portsfound = True
+                        Return
+                    End If
+                    Thread.Sleep(1000)
+                    Main.SharedUI.LabelTimer.Invoke(Sub()
+                                                        Main.SharedUI.LabelTimer.Visible = True
+                                                        Main.SharedUI.LabelTimer.Text = Conversions.ToString(WaktuCari)
+                                                    End Sub)
+                    Dim ptr As Integer = WaktuCari
+                    WaktuCari = ptr - 1
+                End While
+                e.Cancel = True
+                Return
+
+
+            ElseIf MenuEx = MenuEksekusi.manual Then
+
+                If QcFlash.SharedUI.CheckBoxServer.Checked Then
                 RichLogs("Operation  : ", Color.White, True, False)
                 RichLogs(MenuManual, Color.Orange, True, True)
                 RichLogs(" Brand     : ", Color.White, True, False)
@@ -2064,8 +2206,8 @@ Namespace Bismillah.FIREHOSE
 
             End If
             RichLogs("Searching Qualcomm Usb Devices : ", Color.White, True, False)
-            While Not QcomWorker.CancellationPending
-                If WaktuCari = 0 Then
+                While Not CariportQC.CancellationPending
+                    If WaktuCari = 0 Then
                     RichLogs("Not Founds", Color.Red, True, True)
                     TimeSpanElapsed.ElapsedTime(Watch)
                     Watch.Stop()
@@ -2083,43 +2225,11 @@ Namespace Bismillah.FIREHOSE
                                                 End Sub)
                 Dim ptr As Integer = WaktuCari
                 WaktuCari = ptr - 1
-            End While
-            e.Cancel = True
-            RichLogs("Process stoped", Color.Red, True, True)
-            TimeSpanElapsed.ElapsedTime(Watch)
-            Watch.Stop()
-            Return
+                End While
+                e.Cancel = True
+                Return
+            End If
         End Sub
 
-        Public Shared Sub WorkerOneclickhRun(sender As Object, e As DoWorkEventArgs)
-            MenuEx = MenuEksekusi.oneclick
-            Setwaktu()
-            RichLogs("Searching Qualcomm Usb Devices" & vbTab & ":  ", Color.Yellow, True, False)
-            While Not QcomWorker.CancellationPending
-                If WaktuCari = 0 Then
-                    RichLogs("Not Founds", Color.Red, True, True)
-                    TimeSpanElapsed.ElapsedTime(Watch)
-                    Watch.Stop()
-                    portsfound = False
-                    Return
-                End If
-                If CariPorts() Then
-                    portsfound = True
-                    Return
-                End If
-                Thread.Sleep(1000)
-                Main.SharedUI.LabelTimer.Invoke(Sub()
-                                                    Main.SharedUI.LabelTimer.Visible = True
-                                                    Main.SharedUI.LabelTimer.Text = Conversions.ToString(WaktuCari)
-                                                End Sub)
-                Dim ptr As Integer = WaktuCari
-                WaktuCari = ptr - 1
-            End While
-            e.Cancel = True
-            RichLogs("Process stoped", Color.Red, True, True)
-            TimeSpanElapsed.ElapsedTime(Watch)
-            Watch.Stop()
-            Return
-        End Sub
     End Class
 End Namespace

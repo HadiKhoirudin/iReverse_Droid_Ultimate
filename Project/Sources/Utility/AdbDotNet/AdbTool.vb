@@ -276,8 +276,8 @@ Public Class AdbTool
                 Dim MyProcess As New Process
 
                 With MyProcess.StartInfo
-                    .FileName = "adb.exe"
-                    .Arguments = "start-server"
+                .FileName = Windows.Forms.Application.StartupPath & "/Tools/process/adb.exe"
+                .Arguments = "start-server"
                     .UseShellExecute = False
                     .CreateNoWindow = True
                     .RedirectStandardInput = True

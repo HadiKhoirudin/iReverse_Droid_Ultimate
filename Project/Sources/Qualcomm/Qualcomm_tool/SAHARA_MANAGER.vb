@@ -413,7 +413,7 @@ Namespace Bismillah.SAHARA
                     If Not QcFlash.SharedUI.TxtFlashLoader.Text = "" Then
                         loader = File.ReadAllBytes(QcFlash.SharedUI.TxtFlashLoader.Text)
                         If Not Encoding.UTF8.GetString(loader).Take(20).Contains("ELF") Then
-                            RichLogs("Harap pilih file loader yang benar!", Color.Red, True, False)
+                            RichLogs("Loader is Invalid Or Encrypted  ", Color.Red, True, False)
                             IsLoaderExist = False
                         Else
                             IsLoaderExist = True

@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.Drawing
 Imports System.IO
 Imports System.Linq
 Imports System.Security.Cryptography
@@ -9,13 +10,13 @@ Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Xml.Linq
 Imports Microsoft.VisualBasic
+Imports Reverse_Tool.Bismillah.FIREHOSE.FIREHOSE_MANAGER
 Public Class OFPExtractor
     Public Shared startoffsetofp As Double = 0
     Public Shared cekvalidmd5 As String
     Public Shared cekvalidsha256 As String
     Public Shared totalchecked As Integer
     Public Shared fname As String = ""
-    Public Shared foldersave As String = ""
     Public Shared pagesize As String = ""
     Public Shared namafileofp As String = ""
     Public Shared rlen As String = ""
@@ -25,19 +26,20 @@ Public Class OFPExtractor
     Public Shared lb As New ListBox()
     Public Shared lbofpMtk As New ListBox()
     Public Shared lbofpQcom As New ListBox()
-    Public Shared BgEDL As New BackgroundWorker
+    Public Shared OPFWorkerMTK As New BackgroundWorker()
+    Public Shared OPFWorkerQC As New BackgroundWorker()
     Public Shared Function rol(ByVal he As String, ByVal n As String, Optional ByVal bits As String = "32") As String
         n = bits - n
-        Dim a = (2 ^ n) - 1
-        Dim b = DecToBinary(he)
-        Dim c = DecToBinary(a)
-        Dim d = ApplyAnd(b, c)
-        Dim e = DecToBinary(n)
-        Dim s = Bin2Dec(ApplyShiftDoblekanan(b, n))
-        Dim x = bits - n
-        Dim y = ApplyShiftDoblekiri(d, x)
-        Dim h = Bin2Dec(y)
-        Dim z = h + s
+        Dim a As Double = (2 ^ n) - 1
+        Dim b As String = DecToBinary(he)
+        Dim c As String = DecToBinary(a)
+        Dim d As String = ApplyAnd(b, c)
+        Dim e As String = DecToBinary(n)
+        Dim s As Double = Bin2Dec(ApplyShiftDoblekanan(b, n))
+        Dim x As Double = bits - n
+        Dim y As String = ApplyShiftDoblekiri(d, x)
+        Dim h As Double = Bin2Dec(y)
+        Dim z As Double = h + s
         '   Dim tt = ToBinary(z)
         Return z
     End Function
@@ -100,17 +102,17 @@ Public Class OFPExtractor
         Dim p = 0
         For i As Integer = 0 To (input1.Length / 2) - 1
             p += 1
-            Dim a = input1.Substring(s, 2)
-            Dim b = input2.Substring(s, 2)
-            Dim x = (DecToBinary(HexToDec(a)))
-            Dim y = (DecToBinary(HexToDec(b)))
-            Dim c = ApplyXor(x, y)
-            Dim e = Bin2Dec(c)
+            Dim a As String = input1.Substring(s, 2)
+            Dim b As String = input2.Substring(s, 2)
+            Dim x As String = (DecToBinary(HexToDec(a)))
+            Dim y As String = (DecToBinary(HexToDec(b)))
+            Dim c As String = ApplyXor(x, y)
+            Dim e As Double = Bin2Dec(c)
             '    MsgBox(e)
             '  MsgBox(input2.Substring(s, 2))
             Dim ikeh As UInt64 = rol(e, 4, 8)
             Dim by() As Byte = BitConverter.GetBytes(ikeh)
-            Dim sk = BytesToHextring(by).Substring(0, 2)
+            Dim sk As String = BytesToHextring(by).Substring(0, 2)
             outpit += sk
             s += 2
         Next
@@ -129,16 +131,13 @@ Public Class OFPExtractor
     End Function
     Public Shared Sub BruteKeyQcom(sender As Object, e As DoWorkEventArgs)
         logs("Search Key : ", False, Biru)
-        If loadofp = True Then
-            foldersave = CurDir() & "\temp"
-        End If
         Dim superdone0 As Boolean = False
         Dim superdone1 As Boolean = False
         Dim superdone2 As Boolean = False
         Dim ada As Boolean = False
         Dim xmlstring As String = ""
         Dim keystring As String = ""
-        Dim ivstring = ""
+        Dim ivstring As String = ""
         Dim kuy() As Byte = New Byte() {}
         For i As Integer = 0 To lbofpQcom.Items.Count - 1
             Dim key() As Byte = New Byte() {}
@@ -149,11 +148,11 @@ Public Class OFPExtractor
                 ivstring = liskey(1)
                 kuy = GetXml(keystring, ivstring)
             Else
-                Dim stringMc = (liskey(1))
-                Dim stringUserkey = (liskey(2))
-                Dim Stringivec = (liskey(3))
-                Dim DeciKey = DeObsucaate(stringUserkey, stringMc)
-                Dim decivi = DeObsucaate(Stringivec, stringMc)
+                Dim stringMc As String = (liskey(1))
+                Dim stringUserkey As String = (liskey(2))
+                Dim Stringivec As String = (liskey(3))
+                Dim DeciKey As String = DeObsucaate(stringUserkey, stringMc)
+                Dim decivi As String = DeObsucaate(Stringivec, stringMc)
                 keystring = md5Hash(HexStringToBytes(DeciKey)).ToLower.Substring(0, 16)
                 ivstring = md5Hash(HexStringToBytes(decivi)).ToLower.Substring(0, 16)
                 kuy = GetXml(keystring, ivstring)
@@ -206,8 +205,8 @@ Public Class OFPExtractor
         Dim FilePartition As String = ""
         Dim decryptsize As String = ""
         Dim ceksums() As String = {}
-        Dim sumsha256 = ""
-        Dim summd5 = ""
+        Dim sumsha256 As String = ""
+        Dim summd5 As String = ""
         logs("Start Extracting : ", True, Kuning)
         Try
             Dim doc As XDocument = XDocument.Parse(File.ReadAllText(foldersave & "\profile.xml"))
@@ -215,7 +214,7 @@ Public Class OFPExtractor
             Dim u As Integer = 0
             Dim totalbaris As Integer = 0
             For Each child As XElement In root.Elements
-                If BgEDL.CancellationPending Then
+                If OPFWorkerQC.CancellationPending Then
                     e.Cancel = True
                     logs("", True, Merah)
                     logs("Process Aborted", True, Merah)
@@ -223,18 +222,18 @@ Public Class OFPExtractor
                 End If
                 totalbaris += 1
             Next
-            Dim yukyuk = 0
+            Dim yukyuk As Integer = 0
             For Each child As XElement In root.Elements
                 yukyuk += 1
                 ProcessBar1(yukyuk, totalbaris)
-                If BgEDL.CancellationPending Then
+                If OPFWorkerQC.CancellationPending Then
                     e.Cancel = True
                     logs("", True, Merah)
                     logs("Process Aborted", True, Merah)
                     Exit Sub
                 End If
                 For Each itm As XElement In child.Elements
-                    If BgEDL.CancellationPending Then
+                    If OPFWorkerQC.CancellationPending Then
                         e.Cancel = True
                         logs("", True, Merah)
                         logs("Process Aborted", True, Merah)
@@ -244,7 +243,7 @@ Public Class OFPExtractor
                         For Each att As XAttribute In itm.Attributes
                             Dim skuy() As String = decrypitem(itm, pagesize)
                             wfilename = foldersave & "\" & skuy(0)
-                            Dim tempFiles = foldersave & "\" & skuy(0)
+                            Dim tempFiles As String = foldersave & "\" & skuy(0)
                             startoffsetofp = skuy(1)
                             len = skuy(2)
                             rlen = skuy(3)
@@ -252,7 +251,7 @@ Public Class OFPExtractor
                             summd5 = skuy(5)
                             decryptsize = skuy(6)
                             ceksums = {sumsha256, summd5}
-                            Dim cekFiles = tempFiles.Replace(foldersave & "\", "")
+                            Dim cekFiles As String = tempFiles.Replace(foldersave & "\", "")
                             If cekFiles = "" Or startoffsetofp = -1 Then
                                 Continue For
                             End If
@@ -263,7 +262,7 @@ Public Class OFPExtractor
                     Dim ku() As String = decrypitem(itm, pagesize)
                     wfilename = foldersave & "\" & ku(0)
                     FilePartition = ku(0)
-                    Dim tempFile = foldersave & "\" & ku(0)
+                    Dim tempFile As String = foldersave & "\" & ku(0)
                     startoffsetofp = ku(1)
                     len = ku(2)
                     rlen = ku(3)
@@ -271,7 +270,7 @@ Public Class OFPExtractor
                     summd5 = ku(5)
                     decryptsize = ku(6)
                     ceksums = {sumsha256, summd5}
-                    Dim cekFile = tempFile.Replace(foldersave & "\", "")
+                    Dim cekFile As String = tempFile.Replace(foldersave & "\", "")
                     If cekFile = "" Or startoffsetofp = -1 Then
                         Continue For
                     End If
@@ -284,22 +283,22 @@ Public Class OFPExtractor
                     If flashofp = True Then
                         Dim totaldo As Integer = 0
                         totaldo = totalchecked
-                        Dim doprosess = 0
-                        Dim XmlReader = New XmlTextReader(New StringReader(StringXML))
+                        Dim doprosess As Integer = 0
+                        Dim XmlReader As XmlTextReader = New XmlTextReader(New StringReader(StringXML))
                         Do While XmlReader.Read()
-                            If BgEDL.CancellationPending = True Then
+                            If OPFWorkerQC.CancellationPending = True Then
                                 'bg worker flash cancel
                                 e.Cancel = True
                                 logs("Process Stopped By User", True, Merah)
                                 Return
                             Else
                                 If XmlReader.NodeType = XmlNodeType.Element AndAlso XmlReader.Name = "program" Then
-                                    Dim SectorSize = XmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES")
-                                    Dim numPartSect = XmlReader.GetAttribute("num_partition_sectors")
-                                    Dim filename = XmlReader.GetAttribute("filename")
-                                    Dim PhysicalPartition = XmlReader.GetAttribute("physical_partition_number")
-                                    Dim label = XmlReader.GetAttribute("label")
-                                    Dim StartSector = XmlReader.GetAttribute("start_sector")
+                                    Dim SectorSize As String = XmlReader.GetAttribute("SECTOR_SIZE_IN_BYTES")
+                                    Dim numPartSect As String = XmlReader.GetAttribute("num_partition_sectors")
+                                    Dim filename As String = XmlReader.GetAttribute("filename")
+                                    Dim PhysicalPartition As String = XmlReader.GetAttribute("physical_partition_number")
+                                    Dim label As String = XmlReader.GetAttribute("label")
+                                    Dim StartSector As String = XmlReader.GetAttribute("start_sector")
                                     If (FilePartition).ToLower.Contains("super.0") Then
                                         If superdone0 Then
                                             Continue For
@@ -342,13 +341,13 @@ Public Class OFPExtractor
                             If child.Name.ToString = "DigestsToSign" Or child.Name = "ChainedTableOfDigests" Or child.Name = "Firmware" Then
                                 logs("copy " & wfilename, True, Kuning)
                                 CopyOfp(wfilename, startoffsetofp, len, ceksums)
-                                Dim cek = CheckSumsFile(wfilename, ceksums)
+                                Dim cek As String() = CheckSumsFile(wfilename, ceksums)
                                 logs("[SHA256 : " & cek(0) & " | md5 : " & cek(1) & "]", True, putih)
                                 logs("", True, putih)
                             Else
                                 logs("decrypt " & wfilename & " " & startoffsetofp & " " & len & " " & rlen & " " & decryptsize, True, Kuning)
                                 decryptFile(sender, e, keystring, ivstring, wfilename, startoffsetofp, len, rlen, ceksums, decryptsize)
-                                Dim cek = CheckSumsFile(wfilename, ceksums)
+                                Dim cek As String() = CheckSumsFile(wfilename, ceksums)
                                 logs("[SHA256 : " & cek(0) & " | md5 : " & cek(1) & "]", True, putih)
                                 logs("", True, putih)
                                 '   Exit Function
@@ -368,8 +367,8 @@ Public Class OFPExtractor
         End Try
     End Sub
     Public Shared Function CheckSumsFile(filename As String, HashListCek() As String) As String()
-        Dim retSha256 = ""
-        Dim retMd5 = ""
+        Dim retSha256 As String = ""
+        Dim retMd5 As String = ""
         If Not HashListCek(0) = "" Then
             retSha256 = sha256cek(filename, HashListCek(0))
         Else
@@ -382,13 +381,13 @@ Public Class OFPExtractor
         End If
         Return {retSha256, retMd5}
     End Function
-    Public Shared Function sha256cek(wfilename As String, hascek As String)
+    Public Shared Function sha256cek(wfilename As String, hascek As String) As String
         Dim lencek As Long = New FileInfo(wfilename).Length
         If Not lencek < &H40000 Then
             lencek = &H40000
         End If
-        Dim s = File.OpenRead(wfilename)
-        Dim buf = New Byte(lencek - 1) {}
+        Dim s As FileStream = File.OpenRead(wfilename)
+        Dim buf As Byte() = New Byte(lencek - 1) {}
         s.Read(buf, 0, buf.Length)
         Dim SHA256Obj As New SHA256Managed
         Dim hash = SHA256Obj.ComputeHash(buf)
@@ -425,10 +424,10 @@ Public Class OFPExtractor
         If Not lencek < &H40000 Then
             lencek = &H40000
         End If
-        Dim s = File.OpenRead(wfilename)
-        Dim buf = New Byte(lencek - 1) {}
+        Dim s As FileStream = File.OpenRead(wfilename)
+        Dim buf As Byte() = New Byte(lencek - 1) {}
         s.Read(buf, 0, buf.Length)
-        Dim k = md5Hash(buf).ToLower
+        Dim k As String = md5Hash(buf).ToLower
         s.Close()
         If SourceCek = k Then
             Return "verified"
@@ -453,9 +452,9 @@ Public Class OFPExtractor
                         fsin.Read(buffer, 0, buffer.Length)
                         bytesread += buffer.Length
                         If bytesread > size Then
-                            Dim num2 = bytesread - size
-                            Dim zz = buffer.Length - num2
-                            Dim data2 = buffer.Take(zz).ToArray
+                            Dim num2 As Integer = bytesread - size
+                            Dim zz As Integer = buffer.Length - num2
+                            Dim data2 As Byte() = buffer.Take(zz).ToArray
                             fsout.Write(data2, 0, data2.Length)
                             Exit Do
                         End If
@@ -472,9 +471,9 @@ Public Class OFPExtractor
         End Try
     End Sub
     Public Shared Function decrypitem(item As XElement, pagesize As String) As String()
-        Dim sha256sum = ""
-        Dim md5sum = ""
-        Dim wfilename = ""
+        Dim sha256sum As String = ""
+        Dim md5sum As String = ""
+        Dim wfilename As String = ""
         Dim start As Long = -1
         Dim rlength As Long = 0
         Dim decryptsize = &H40000
@@ -514,7 +513,7 @@ Public Class OFPExtractor
     End Function
     Public Shared Sub decryptFile(sender As Object, e As DoWorkEventArgs, ByVal key As String, ByVal iv As String, ByVal wfilename As String, ByVal start As String, ByVal lengthSource As String, ByVal lengthFile As String, ByVal Checksum() As String, Optional ByVal decryptedsize As Double = &H40000)
         Dim LenFileOut As Long = lengthFile
-        Dim blocksize = decryptedsize
+        Dim blocksize As Double = decryptedsize
         If lengthSource < decryptedsize Then
             blocksize = lengthSource
         End If
@@ -522,12 +521,12 @@ Public Class OFPExtractor
             blocksize = lengthSource
         End If
         If Not blocksize Mod 16 = 0 Then
-            Dim jkl = (blocksize Mod 16)
-            Dim kurangnya = 16 - jkl
+            Dim jkl As Double = (blocksize Mod 16)
+            Dim kurangnya As Double = 16 - jkl
             blocksize = blocksize + kurangnya
         End If
-        Dim byt = Encoding.UTF8.GetBytes(key) '   
-        Dim byts = Encoding.UTF8.GetBytes(iv)
+        Dim byt As Byte() = Encoding.UTF8.GetBytes(key) '   
+        Dim byts As Byte() = Encoding.UTF8.GetBytes(iv)
         Dim BytesRead As Long = 0
         Dim setseek As Long = 0
         Try
@@ -539,7 +538,7 @@ Public Class OFPExtractor
                     End If
                     Dim Rawbyte() As Byte = New Byte(blocksize - 1) {}
                     If Not blocksize Mod 16 = 0 Then
-                        Dim finlen = blocksize + (16 - (blocksize Mod 16))
+                        Dim finlen As Double = blocksize + (16 - (blocksize Mod 16))
                         Rawbyte = New Byte(finlen - 1) {}
                     End If
                     fsin.Read(Rawbyte, 0, Rawbyte.Length)
@@ -564,17 +563,17 @@ Public Class OFPExtractor
                     If LenFileOut > 0 Then
                         fsin.Seek(start + data.Length, SeekOrigin.Begin)
                         While LenFileOut > 0
-                            If BgEDL.CancellationPending Then
+                            If OPFWorkerQC.CancellationPending Then
                                 e.Cancel = True
                                 logs("", True, Merah)
                                 logs("Process Aborted", True, Merah)
                                 Exit Sub
                             End If
-                            Dim Sizebuf = &H200000
+                            Dim Sizebuf As Integer = &H200000
                             If LenFileOut < Sizebuf Then
                                 Sizebuf = LenFileOut
                             End If
-                            Dim buff = New Byte(Sizebuf - 1) {}
+                            Dim buff As Byte() = New Byte(Sizebuf - 1) {}
                             fsin.Read(buff, 0, buff.Length)
                             LenFileOut -= Sizebuf
                             fsout.Write(buff, 0, buff.Length)
@@ -596,7 +595,7 @@ Public Class OFPExtractor
     End Sub
     Public Shared Function GetXml(ByVal keystring As String, ByVal ivstring As String) As Byte()
         Try
-            Dim fi = New FileInfo(fname)
+            Dim fi As FileInfo = New FileInfo(fname)
             Dim LenFile As String = fi.Length
             pagesize = 0
             Using stream As New FileStream(fname, FileMode.Open, FileAccess.Read)
@@ -623,21 +622,21 @@ Public Class OFPExtractor
                 If pagesize = 0 Then
                     Return {}
                 End If
-                Dim xmloffset = LenFile - pagesize
+                Dim xmloffset As Long = LenFile - pagesize
                 stream.Seek(xmloffset + 20, SeekOrigin.Begin)
                 buff = New Byte(4 - 1) {}
                 stream.Read(buff, 0, buff.Length)
-                Dim offset = HexToDec((Unpack((BytesToHextring(buff))))) * pagesize
+                Dim offset As String = HexToDec((Unpack((BytesToHextring(buff))))) * pagesize
                 buff = New Byte(4 - 1) {}
                 stream.Read(buff, 0, buff.Length)
-                Dim lengthsize = HexToDec((Unpack((BytesToHextring(buff)))))
-                Dim sk = ((lengthsize / 16))
-                Dim l = bulat(sk) * 16
+                Dim lengthsize As String = HexToDec((Unpack((BytesToHextring(buff)))))
+                Dim sk As String = ((lengthsize / 16))
+                Dim l As Long = bulat(sk) * 16
                 buff = New Byte(l - 1) {}
                 stream.Seek(offset, SeekOrigin.Begin)
                 stream.Read(buff, 0, buff.Length)
                 stream.Close()
-                Dim ku = DecryptXml(buff, keystring, ivstring).Take(lengthsize).ToArray
+                Dim ku As Byte() = DecryptXml(buff, keystring, ivstring).Take(lengthsize).ToArray
                 Return ku
             End Using
         Catch ex As Exception
@@ -665,7 +664,7 @@ Public Class OFPExtractor
         End With
         Dim lenFile As Long = 0
         Dim buffout() As Byte = New Byte((cipherText.Length - 1)) {}
-        Dim s = New MemoryStream(buffout)
+        Dim s As MemoryStream = New MemoryStream(buffout)
         Using Decryptor As ICryptoTransform = Algo.CreateDecryptor()
             Using StreamInput As New MemoryStream(cipherText)
                 Using crypto_stream As New CryptoStream(s, Decryptor, CryptoStreamMode.Write)
@@ -694,17 +693,17 @@ Public Class OFPExtractor
         Return buffout
     End Function
     Public Shared Function Unpack(ByVal hexstring As String) As String
-        Dim s = 0
-        Dim lenbyte = hexstring.Length / 2
+        Dim s As Integer = 0
+        Dim lenbyte As Double = hexstring.Length / 2
         Dim lists As New List(Of String)()
         Dim ret As String = ""
         For i As Integer = 0 To lenbyte - 1
-            Dim kl = hexstring.Substring(s, 2)
+            Dim kl As String = hexstring.Substring(s, 2)
             lists.Add(kl)
             s += 2
         Next
         ' lists.Reverse()
-        Dim l = 0
+        Dim l As Integer = 0
         For Isd As Integer = 0 To lists.Count - 1
             ret += lists((lists.Count - 1) - l)
             l += 1
@@ -712,15 +711,15 @@ Public Class OFPExtractor
         Return ret
     End Function
     Public Shared Function DecryptXml(ByVal data() As Byte, key As String, iv As String) As Byte()
-        Dim byt = Encoding.UTF8.GetBytes(key) '   
-        Dim byts = Encoding.UTF8.GetBytes(iv)
+        Dim byt As Byte() = Encoding.UTF8.GetBytes(key) '   
+        Dim byts As Byte() = Encoding.UTF8.GetBytes(iv)
         Dim ctx = DecryptorAes(data, byt, byts)
         Return ctx
         '   MsgBox(Encoding.UTF8.GetString(ctx))
     End Function
     Public Shared Function HexStringToBytes(ByVal s As String) As Byte()
         s = s.Replace(" "c, "")
-        Dim nBytes = s.Length \ 2
+        Dim nBytes As Integer = s.Length \ 2
         Dim a(nBytes - 1) As Byte
         For i As Integer = 0 To nBytes - 1
             a(i) = Convert.ToByte(s.Substring(i * 2, 2), 16)
@@ -729,7 +728,7 @@ Public Class OFPExtractor
     End Function
     Public Shared Function ApplyShiftDoblekanan(ByVal input As String, ByVal num As Integer) As String
         Try
-            Dim panjang = input.Length - num
+            Dim panjang As Integer = input.Length - num
             Return input.Substring(0, panjang)
         Catch ex As Exception
             Return 0
@@ -818,23 +817,23 @@ Public Class OFPExtractor
     End Sub
     Public Shared Sub extractofpmtk(sender As Object, e As DoWorkEventArgs)
         Dim found As Boolean = False
-        Dim byt = New Byte() {}
-        Dim byts = New Byte() {}
+        Dim byt As Byte() = New Byte() {}
+        Dim byts As Byte() = New Byte() {}
         Dim aesiv As String
         Dim AesKey As String
         logs("Searching Key : ", False, Kuning)
         For i As Integer = 0 To lbofpMtk.Items.Count - 1
             Dim sk() As String = lbofpMtk.Items(i).ToString.Split(",")
             If sk.Length = 2 Then
-                Dim ku = GetKey(sk)
+                Dim ku As String() = GetKey(sk)
                 AesKey = ku(0)
                 aesiv = ku(1)
                 byt = HexStringToBytes(AesKey)
                 byts = HexStringToBytes(aesiv)
             Else
-                Dim ku = GetKey(sk)
-                Dim a = HexStringToBytes((ku(0)))
-                Dim b = HexStringToBytes((ku(1)))
+                Dim ku As String() = GetKey(sk)
+                Dim a As Byte() = HexStringToBytes((ku(0)))
+                Dim b As Byte() = HexStringToBytes((ku(1)))
                 AesKey = md5Hash(a).ToLower.Substring(0, 16)
                 aesiv = md5Hash(b).ToLower.Substring(0, 16)
                 byt = Encoding.UTF8.GetBytes(AesKey) '   
@@ -851,61 +850,61 @@ Public Class OFPExtractor
             Return
         End If
         Try
-            Dim fi = New FileInfo(fname)
+            Dim fi As FileInfo = New FileInfo(fname)
             Dim LenFile As String = fi.Length
-            Dim hdrLen = 108
-            Dim headerkey = Encoding.UTF8.GetBytes("geyixue")
+            Dim hdrLen As Integer = 108
+            Dim headerkey As Byte() = Encoding.UTF8.GetBytes("geyixue")
             Using stream As New FileStream(fname, FileMode.Open, FileAccess.Read)
                 stream.Seek(LenFile - hdrLen, SeekOrigin.Begin)
                 Dim InputBuff = New Byte(108 - 1) {}
                 stream.Read(InputBuff, 0, InputBuff.Length)
-                Dim HeaderKeyHexString = BytesToHextring(headerkey).Replace("-", "")
-                Dim inputHextring = BytesToHextring(InputBuff).Replace("-", "")
-                Dim s = Mtk_Shuffle(HeaderKeyHexString, inputHextring)
+                Dim HeaderKeyHexString As String = BytesToHextring(headerkey).Replace("-", "")
+                Dim inputHextring As String = BytesToHextring(InputBuff).Replace("-", "")
+                Dim s As String = Mtk_Shuffle(HeaderKeyHexString, inputHextring)
                 Dim ArrayData As Byte() = HexStringToBytes((s))
-                Dim prjname = Encoding.UTF8.GetString(ArrayData.Take(46).ToArray).Trim(ControlChars.NullChar)
-                Dim unknownval = BitConverter.ToUInt32(ArrayData.Skip(46).Take(8).ToArray, 0)
-                Dim reserved = Encoding.UTF8.GetString(ArrayData.Skip(54).Take(4).ToArray).Trim(ControlChars.NullChar)
-                Dim cputype = Encoding.UTF8.GetString(ArrayData.Skip(58).Take(8).ToArray).Trim(ControlChars.NullChar)
-                Dim Flashtype = Encoding.UTF8.GetString(ArrayData.Skip(66).Take(8).ToArray).Trim(ControlChars.NullChar)
-                Dim HeaderEntries = BitConverter.ToInt16(ArrayData.Skip(72).Take(2).ToArray, 0)
-                Dim pjrinfo = Encoding.UTF8.GetString(ArrayData.Skip(74).Take(32).ToArray).Trim(ControlChars.NullChar)
-                Dim crc = BitConverter.ToInt16(ArrayData.Skip(74 + 32).Take(2).ToArray, 0)
-                Dim hdr2length = HeaderEntries * &H60
+                Dim prjname As String = Encoding.UTF8.GetString(ArrayData.Take(46).ToArray).Trim(ControlChars.NullChar)
+                Dim unknownval As UInteger = BitConverter.ToUInt32(ArrayData.Skip(46).Take(8).ToArray, 0)
+                Dim reserved As String = Encoding.UTF8.GetString(ArrayData.Skip(54).Take(4).ToArray).Trim(ControlChars.NullChar)
+                Dim cputype As String = Encoding.UTF8.GetString(ArrayData.Skip(58).Take(8).ToArray).Trim(ControlChars.NullChar)
+                Dim Flashtype As String = Encoding.UTF8.GetString(ArrayData.Skip(66).Take(8).ToArray).Trim(ControlChars.NullChar)
+                Dim HeaderEntries As Short = BitConverter.ToInt16(ArrayData.Skip(72).Take(2).ToArray, 0)
+                Dim pjrinfo As String = Encoding.UTF8.GetString(ArrayData.Skip(74).Take(32).ToArray).Trim(ControlChars.NullChar)
+                Dim crc As Short = BitConverter.ToInt16(ArrayData.Skip(74 + 32).Take(2).ToArray, 0)
+                Dim hdr2length As Integer = HeaderEntries * &H60
                 stream.Seek((LenFile - hdr2length - hdrLen), SeekOrigin.Begin)
                 InputBuff = New Byte(hdr2length - 1) {}
                 stream.Read(InputBuff, 0, InputBuff.Length)
                 inputHextring = BytesToHextring(InputBuff).Replace("-", "")
-                Dim hdr2 = Mtk_Shuffle(HeaderKeyHexString, inputHextring)
+                Dim hdr2 As String = Mtk_Shuffle(HeaderKeyHexString, inputHextring)
                 ArrayData = HexStringToBytes((hdr2))
-                Dim addskip = 0
-                Dim totalfile = Int(ArrayData.Length) / &H60
+                Dim addskip As Integer = 0
+                Dim totalfile As Integer = Int(ArrayData.Length) / &H60
                 For i As Integer = 0 To (Int(ArrayData.Length) / &H60) - 1
-                    If BgEDL.CancellationPending Then
+                    If OPFWorkerMTK.CancellationPending Then
                         e.Cancel = True
                         logs("", True, Merah)
                         logs("Process Aborted", True, Merah)
                         Exit Sub
                     End If
                     ProcessBar1(i, totalfile)
-                    Dim pname = Encoding.UTF8.GetString(ArrayData.Skip(addskip).Take(32).ToArray).Trim(ControlChars.NullChar)
-                    Dim start = BitConverter.ToUInt32(ArrayData.Skip(32 + addskip).Take(8).ToArray, 0)
-                    Dim length = BitConverter.ToUInt32(ArrayData.Skip(40 + addskip).Take(8).ToArray, 0)
-                    Dim encylenk = BitConverter.ToUInt32(ArrayData.Skip(48 + addskip).Take(8).ToArray, 0)
-                    Dim filename = Encoding.UTF8.GetString(ArrayData.Skip(56 + addskip).Take(32).ToArray).Trim(ControlChars.NullChar)
-                    Dim crcf = BitConverter.ToUInt32(ArrayData.Skip(88 + addskip).Take(8).ToArray, 0)
+                    Dim pname As String = Encoding.UTF8.GetString(ArrayData.Skip(addskip).Take(32).ToArray).Trim(ControlChars.NullChar)
+                    Dim start As UInteger = BitConverter.ToUInt32(ArrayData.Skip(32 + addskip).Take(8).ToArray, 0)
+                    Dim length As UInteger = BitConverter.ToUInt32(ArrayData.Skip(40 + addskip).Take(8).ToArray, 0)
+                    Dim encylenk As UInteger = BitConverter.ToUInt32(ArrayData.Skip(48 + addskip).Take(8).ToArray, 0)
+                    Dim filename As String = Encoding.UTF8.GetString(ArrayData.Skip(56 + addskip).Take(32).ToArray).Trim(ControlChars.NullChar)
+                    Dim crcf As UInteger = BitConverter.ToUInt32(ArrayData.Skip(88 + addskip).Take(8).ToArray, 0)
                     Dim totallen As Long = length
                     Dim byteprocess As Long = 0
                     Using FsOut As New FileStream(foldersave & "\" & filename, FileMode.Create)
                         If encylenk > 0 Then
                             stream.Seek(start, SeekOrigin.Begin)
-                            Dim buff = New Byte(encylenk - 1) {}
+                            Dim buff As Byte() = New Byte(encylenk - 1) {}
                             If Not buff.Length Mod 16 = 0 Then
-                                Dim finlen = encylenk + (16 - (encylenk Mod 16))
+                                Dim finlen As Double = encylenk + (16 - (encylenk Mod 16))
                                 buff = New Byte(finlen - 1) {}
                             End If
                             stream.Read(buff, 0, buff.Length)
-                            Dim data = DecryptorAes(buff, byt, byts).Take(encylenk).ToArray
+                            Dim data As Byte() = DecryptorAes(buff, byt, byts).Take(encylenk).ToArray
                             FsOut.Write(data, 0, data.Length)
                             logs("Extracting " & filename & ": ", False, Biru)
                             '   Write(123, 567)
@@ -917,17 +916,17 @@ Public Class OFPExtractor
                         If length > 0 Then
                             stream.Seek(start + encylenk, SeekOrigin.Begin)
                             While length > 0
-                                If BgEDL.CancellationPending Then
+                                If OPFWorkerMTK.CancellationPending Then
                                     e.Cancel = True
                                     logs("", True, Merah)
                                     logs("Process Aborted", True, Merah)
                                     Exit Sub
                                 End If
-                                Dim Sizebuf = &H200000
+                                Dim Sizebuf As Integer = &H200000
                                 If length < Sizebuf Then
                                     Sizebuf = length
                                 End If
-                                Dim buff = New Byte(Sizebuf - 1) {}
+                                Dim buff As Byte() = New Byte(Sizebuf - 1) {}
                                 stream.Read(buff, 0, buff.Length)
                                 length -= Sizebuf
                                 FsOut.Write(buff, 0, buff.Length)
@@ -947,9 +946,9 @@ Public Class OFPExtractor
     Public Shared Function Mtk_Shuffle(ByVal key As String, ByVal input As String) As String
         Dim s As Integer = 0
         Dim mu As String = ""
-        Dim lenInput = input.Length / 2
-        Dim lenKey = key.Length / 2
-        Dim z = 0
+        Dim lenInput As Double = input.Length / 2
+        Dim lenKey As Double = key.Length / 2
+        Dim z As Integer = 0
         For i As Integer = 0 To lenInput - 1
             Dim a As String = i Mod lenKey
             If a = 0 Then
@@ -969,12 +968,12 @@ Public Class OFPExtractor
             End If
             Dim b As String = key.Substring(z, 2)
             Dim v As String = input.Substring(s, 2)
-            Dim l = (DecToBinary(HexToDec(v)))
-            Dim n = Bin2Dec(ApplyShiftDoblekanan(ApplyAnd(l, "11110000"), 4))
-            Dim m = Bin2Dec(ApplyAnd(l, "1111")) * 16
-            Dim k = ((HexToDec(b)))
-            Dim h = (m + n)
-            Dim tmp As String = Bin2Dec(ApplyXor(DecToBinary(k), DecToBinary(h)))
+            Dim l As String = (DecToBinary(HexToDec(v)))
+            Dim n As Double = Bin2Dec(ApplyShiftDoblekanan(ApplyAnd(l, "11110000"), 4))
+            Dim m As Double = Bin2Dec(ApplyAnd(l, "1111")) * 16
+            Dim k As String = ((HexToDec(b)))
+            Dim h As Double = (m + n)
+            Dim tmp As Double = Bin2Dec(ApplyXor(DecToBinary(k), DecToBinary(h)))
             Dim hh As UInt64 = tmp
             Dim by() As Byte = BitConverter.GetBytes(hh)
 
@@ -996,7 +995,7 @@ Public Class OFPExtractor
             '    Dim by() = BitConverter.GetBytes(f)
             '    Dim sk = BytesToHextring(by).Substring(0, 2)
 
-            Dim sk = BytesToHextring(by).Substring(0, 2)
+            Dim sk As String = BytesToHextring(by).Substring(0, 2)
             mu += sk
             s += 2
         Next
@@ -1008,17 +1007,17 @@ Public Class OFPExtractor
         For i As Integer = 0 To (input.Length / 2) - 1
             Dim h As String = key.Substring(s, 2)
             Dim j As String = input.Substring(s, 2)
-            Dim x = (DecToBinary(HexToDec(h)))
-            Dim y = (DecToBinary(HexToDec(j)))
-            Dim tmp = ApplyXor(x, y)
-            Dim a = ApplyAnd(tmp, "11110000")
-            Dim b = ApplyShiftDoblekanan(a, 4)
-            Dim c = Bin2Dec(b)
-            Dim d = ApplyAnd(tmp, "1111")
-            Dim e = Bin2Dec(d) * 16
+            Dim x As String = (DecToBinary(HexToDec(h)))
+            Dim y As String = (DecToBinary(HexToDec(j)))
+            Dim tmp As String = ApplyXor(x, y)
+            Dim a As String = ApplyAnd(tmp, "11110000")
+            Dim b As String = ApplyShiftDoblekanan(a, 4)
+            Dim c As Double = Bin2Dec(b)
+            Dim d As String = ApplyAnd(tmp, "1111")
+            Dim e As Double = Bin2Dec(d) * 16
             Dim f As UInt64 = c + e
             Dim by() As Byte = BitConverter.GetBytes(f)
-            Dim sk = BytesToHextring(by).Substring(0, 2)
+            Dim sk As String = BytesToHextring(by).Substring(0, 2)
             mu += sk
             s += 2
         Next
@@ -1026,12 +1025,12 @@ Public Class OFPExtractor
     End Function
     Public Shared Function GetKey(ByVal index() As String) As String()
         If index.Length = 3 Then
-            Dim h = Mtk_Shuffle2(index(0), index(1))
-            Dim j = Mtk_Shuffle2(index(0), index(2))
+            Dim h As String = Mtk_Shuffle2(index(0), index(1))
+            Dim j As String = Mtk_Shuffle2(index(0), index(2))
             Return {h, j}
         Else
-            Dim encaeskey = HexStringToBytes(index(0))
-            Dim encaesiv = HexStringToBytes(index(1))
+            Dim encaeskey As Byte() = HexStringToBytes(index(0))
+            Dim encaesiv As Byte() = HexStringToBytes(index(1))
             Return {index(0), index(1)}
         End If
     End Function
@@ -1044,7 +1043,7 @@ Public Class OFPExtractor
         End Using
         Dim bufout() As Byte = New Byte(16 - 1) {}
         Try
-            Dim k = Encoding.UTF8.GetString(DecryptorAes(buf, aeskey, aesiv))
+            Dim k As String = Encoding.UTF8.GetString(DecryptorAes(buf, aeskey, aesiv))
             If k.Contains("MMM") Then
                 Return True
             End If
@@ -1056,24 +1055,29 @@ Public Class OFPExtractor
     End Function
 
 
-    'BgEDL = New BackgroundWorker()
-    'BgEDL.WorkerSupportsCancellation = True
-    'AddHandler BgEDL.DoWork, AddressOf BruteKeyQcom
-    '   AddHandler BgEDL.RunWorkerCompleted, AddressOf CariDevicesEnableAdbSamsung
-    '   AddHandler BgEDL.ProgressChanged, AddressOf ProcessSendingLoader
-    'BgEDL.RunWorkerAsync()
-    'BgEDL.Dispose()
+    'OPFWorker = New BackgroundWorker()
+    'OPFWorker.WorkerSupportsCancellation = True
+    'AddHandler OPFWorker.DoWork, AddressOf BruteKeyQcom
+    '   AddHandler OPFWorker.RunWorkerCompleted, AddressOf CariDevicesEnableAdbSamsung
+    '   AddHandler OPFWorker.ProgressChanged, AddressOf ProcessSendingLoader
+    'OPFWorker.RunWorkerAsync()
+    'OPFWorker.Dispose()
 
 
-    'BgEDL = New BackgroundWorker()
-    'BgEDL.WorkerSupportsCancellation = True
-    'AddHandler() BgEDL.DoWork, AddressOf extractofpmtk
-    '   AddHandler BgEDL.RunWorkerCompleted, AddressOf CariDevicesEnableAdbSamsung
-    '   AddHandler BgEDL.ProgressChanged, AddressOf ProcessSendingLoader
-    'BgEDL.RunWorkerAsync()
-    'BgEDL.Dispose()
+    'OPFWorker = New BackgroundWorker()
+    'OPFWorker.WorkerSupportsCancellation = True
+    'AddHandler() OPFWorker.DoWork, AddressOf extractofpmtk
+    '   AddHandler OPFWorker.RunWorkerCompleted, AddressOf CariDevicesEnableAdbSamsung
+    '   AddHandler OPFWorker.ProgressChanged, AddressOf ProcessSendingLoader
+    'OPFWorker.RunWorkerAsync()
+    'OPFWorker.Dispose()
 
 
+    Public Shared Sub AllDone(sender As Object, e As RunWorkerCompletedEventArgs)
+        RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
+        TimeSpanElapsed.ElapsedTime(Watch)
+        Watch.Stop()
+    End Sub
 
 
 End Class

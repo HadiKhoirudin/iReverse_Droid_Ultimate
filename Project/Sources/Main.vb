@@ -56,6 +56,27 @@ Public Class Main
         Ports = New SerialPort()
         InitializeComponent()
         SharedUI = Me
+
+        CariportQC.WorkerSupportsCancellation = True
+        CariportQC.WorkerReportsProgress = True
+        AddHandler CariportQC.DoWork, AddressOf WorkerFlashRun
+        AddHandler CariportQC.RunWorkerCompleted, AddressOf CariPortsDone
+
+        SaharaWorker.WorkerSupportsCancellation = True
+        SaharaWorker.WorkerReportsProgress = True
+        AddHandler SaharaWorker.DoWork, AddressOf sendingLoader
+        AddHandler SaharaWorker.RunWorkerCompleted, AddressOf sendingloaderDone
+        AddHandler SaharaWorker.ProgressChanged, AddressOf ProcessSendingLoader
+
+        FirehoseWorker.WorkerSupportsCancellation = True
+        FirehoseWorker.WorkerReportsProgress = True
+        AddHandler FirehoseWorker.DoWork, AddressOf ConnectToFlshLoader
+        AddHandler FirehoseWorker.RunWorkerCompleted, AddressOf AllDone
+        AddHandler FirehoseWorker.ProgressChanged, AddressOf ProcessSendingLoader
+
+        OFPExtractor.OPFWorkerQC.WorkerSupportsCancellation = True
+        AddHandler OFPExtractor.OPFWorkerQC.DoWork, AddressOf OFPExtractor.BruteKeyQcom
+        AddHandler OFPExtractor.OPFWorkerQC.RunWorkerCompleted, AddressOf OFPExtractor.AllDone
     End Sub
 
 
@@ -413,18 +434,26 @@ Public Class Main
         Console.WriteLine("STOP")
         If MainSelectedChip = "Mediatek" Then
             If MtkFlash.SharedUI.SharedUI.BgwFlashfirmware.IsBusy OrElse MtkUnlock.SharedUI.SharedUI.BgwUnlocked.IsBusy Then
+                RichLogs(" ", Color.Red, True, True)
+                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
                 Mediatek.Mediatek_tool.MediatekInt.PathEditor = 0
                 MtkFlash.SharedUI.SharedUI.BgwFlashfirmware.CancelAsync()
                 MtkUnlock.SharedUI.SharedUI.BgwUnlocked.CancelAsync()
                 KillCommand.ProcessKill()
             End If
         Else
-            If QcomWorker.IsBusy Then
+            If FirehoseWorker.IsBusy Then
+                RichLogs(" ", Color.Red, True, True)
+                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
+                FirehoseWorker.CancelAsync()
+                FirehoseWorker.Dispose()
+            End If
+            If CariportQC.IsBusy Then
                 WaktuCari = 1
-                QcomWorker.CancelAsync()
-                QcomWorker.Dispose()
             End If
             If FastbootUI.SharedUI.FastbootWorker.IsBusy Then
+                RichLogs(" ", Color.Red, True, True)
+                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
                 Counter = 1
                 FastbootUI.SharedUI.FastbootWorker.CancelAsync()
                 FastbootUI.SharedUI.FastbootWorker.Dispose()
