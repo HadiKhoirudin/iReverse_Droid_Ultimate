@@ -1,6 +1,7 @@
 ﻿Imports System
 Imports System.Collections.Generic
 Imports System.ComponentModel
+Imports System.Diagnostics
 Imports System.Drawing
 Imports System.IO
 Imports System.Linq
@@ -217,7 +218,7 @@ Public Class OFPExtractor
                 If OPFWorkerQC.CancellationPending Then
                     e.Cancel = True
                     logs("", True, Merah)
-                    logs("Process Aborted", True, Merah)
+
                     Exit Sub
                 End If
                 totalbaris += 1
@@ -229,14 +230,14 @@ Public Class OFPExtractor
                 If OPFWorkerQC.CancellationPending Then
                     e.Cancel = True
                     logs("", True, Merah)
-                    logs("Process Aborted", True, Merah)
+
                     Exit Sub
                 End If
                 For Each itm As XElement In child.Elements
                     If OPFWorkerQC.CancellationPending Then
                         e.Cancel = True
                         logs("", True, Merah)
-                        logs("Process Aborted", True, Merah)
+
                         Exit Sub
                     End If
                     If Not itm.Attribute("Path") Is Nothing Or Not itm.Attribute("Filename") Is Nothing Then
@@ -444,13 +445,28 @@ Public Class OFPExtractor
             size = 1048576
         End If
         Try
+
+            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(size), Action))
+
             Using fsin As FileStream = New FileStream(fname, FileMode.Open)
                 Using fsout As FileStream = New FileStream(wfilename, FileMode.Create)
                     fsin.Seek(startoffsetofp, SeekOrigin.Begin)
+                    'Membuat objek Stopwatch untuk mengukur waktu
+                    Dim stopwatch As Stopwatch = New Stopwatch()
+                    stopwatch.Start()
+
                     Do
                         Dim buffer As Byte() = New Byte(size - 1) {}
                         fsin.Read(buffer, 0, buffer.Length)
                         bytesread += buffer.Length
+
+                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(bytesread), Action))
+
+                        ' Menghitung Waktu yang telah berlalu
+                        Dim elapsed As TimeSpan = stopwatch.Elapsed
+                        Dim speed As Double = bytesread / elapsed.TotalSeconds
+                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                         If bytesread > size Then
                             Dim num2 As Integer = bytesread - size
                             Dim zz As Integer = buffer.Length - num2
@@ -460,6 +476,11 @@ Public Class OFPExtractor
                         End If
                         fsout.Write(buffer, 0, buffer.Length)
                     Loop
+                    ' Berhenti menghitung
+                    stopwatch.Stop()
+                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+                    Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
                     fsin.Close()
                     fsout.Close()
                 End Using
@@ -530,6 +551,13 @@ Public Class OFPExtractor
         Dim BytesRead As Long = 0
         Dim setseek As Long = 0
         Try
+
+            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(lengthSource), Action))
+
+            'Membuat objek Stopwatch untuk mengukur waktu
+            Dim stopwatch As Stopwatch = New Stopwatch()
+            stopwatch.Start()
+
             Using fsin As FileStream = New FileStream(fname, FileMode.Open)
                 Using fsout As FileStream = New FileStream(wfilename, FileMode.Create)
                     fsin.Seek(start, SeekOrigin.Begin)
@@ -557,6 +585,14 @@ Public Class OFPExtractor
                     If data.Length > lengthSource Then
                         ProcessBar2(lengthSource, lengthSource)
                     Else
+
+                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(data.Length), Action))
+
+                        ' Menghitung Waktu yang telah berlalu
+                        Dim elapsed As TimeSpan = stopwatch.Elapsed
+                        Dim speed As Double = data.Length / elapsed.TotalSeconds
+                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                         ProcessBar2(data.Length, lengthSource)
                     End If
                     LenFileOut -= data.Length
@@ -566,7 +602,7 @@ Public Class OFPExtractor
                             If OPFWorkerQC.CancellationPending Then
                                 e.Cancel = True
                                 logs("", True, Merah)
-                                logs("Process Aborted", True, Merah)
+
                                 Exit Sub
                             End If
                             Dim Sizebuf As Integer = &H200000
@@ -578,7 +614,15 @@ Public Class OFPExtractor
                             LenFileOut -= Sizebuf
                             fsout.Write(buff, 0, buff.Length)
                             BytesRead += buff.Length
-                            If BytesRead > lengthSource Then
+
+                            Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(BytesRead), Action))
+
+                            ' Menghitung Waktu yang telah berlalu
+                            Dim elapsed As TimeSpan = stopwatch.Elapsed
+                            Dim speed As Double = BytesRead / elapsed.TotalSeconds
+                            Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
+                            If BytesRead < lengthSource Then
                                 ProcessBar2(BytesRead, lengthSource)
                             Else
                                 ProcessBar2(lengthSource, lengthSource)
@@ -588,6 +632,14 @@ Public Class OFPExtractor
                     fsin.Close()
                     fsout.Close()
                 End Using
+
+                ' Berhenti menghitung
+                stopwatch.Stop()
+                Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+
+                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+
             End Using
         Catch ex As Exception
             MsgBox(ex.ToString)
@@ -883,7 +935,7 @@ Public Class OFPExtractor
                     If OPFWorkerMTK.CancellationPending Then
                         e.Cancel = True
                         logs("", True, Merah)
-                        logs("Process Aborted", True, Merah)
+
                         Exit Sub
                     End If
                     ProcessBar1(i, totalfile)
@@ -919,7 +971,7 @@ Public Class OFPExtractor
                                 If OPFWorkerMTK.CancellationPending Then
                                     e.Cancel = True
                                     logs("", True, Merah)
-                                    logs("Process Aborted", True, Merah)
+
                                     Exit Sub
                                 End If
                                 Dim Sizebuf As Integer = &H200000

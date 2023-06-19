@@ -513,7 +513,7 @@ Namespace Bismillah.SAHARA
 
             RichLogs("Get Hand Shake    : ", Color.LimeGreen, True, False)
             If response.Length = 0 Then
-                RichLogs("Failed ", Color.Red, True, True)
+                RichLogs(" - ", Color.Yellow, True, True)
                 hangHack(SAHARA_MODE.SAHARA_MODE_COMMAND)
                 Return
             End If

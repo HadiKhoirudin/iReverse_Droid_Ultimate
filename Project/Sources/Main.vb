@@ -2,7 +2,6 @@
 Imports System.Collections
 Imports System.Collections.Generic
 Imports System.ComponentModel
-Imports System.Diagnostics
 Imports System.Drawing
 Imports System.IO
 Imports System.IO.Ports
@@ -57,6 +56,25 @@ Public Class Main
         InitializeComponent()
         SharedUI = Me
 
+        lblusername.Text = Login.username
+
+        Dim input As String = Login.hwidPC.Substring(0, 20)
+        Dim chunkSize As Integer = 4
+        Dim result As String = ""
+
+        For i As Integer = 0 To input.Length - 1 Step chunkSize
+            If i + chunkSize <= input.Length Then
+                result += input.Substring(i, chunkSize) + "-"
+            Else
+                result += input.Substring(i)
+            End If
+        Next
+
+        result = result.TrimEnd("-"c)
+
+        Console.WriteLine(result)
+        lblhwid.Text = result
+
         CariportQC.WorkerSupportsCancellation = True
         CariportQC.WorkerReportsProgress = True
         AddHandler CariportQC.DoWork, AddressOf WorkerFlashRun
@@ -75,6 +93,7 @@ Public Class Main
         AddHandler FirehoseWorker.ProgressChanged, AddressOf ProcessSendingLoader
 
         OFPExtractor.OPFWorkerQC.WorkerSupportsCancellation = True
+        OFPExtractor.OPFWorkerQC.WorkerReportsProgress = True
         AddHandler OFPExtractor.OPFWorkerQC.DoWork, AddressOf OFPExtractor.BruteKeyQcom
         AddHandler OFPExtractor.OPFWorkerQC.RunWorkerCompleted, AddressOf OFPExtractor.AllDone
     End Sub
@@ -94,13 +113,13 @@ Public Class Main
         RichLogs("► Software       : ", Color.White, True, False)
         RichLogs("Qualcomm & Mediatek Tool", Color.White, True, True)
         RichLogs("► Version Tool   : ", Color.White, True, False)
-        RichLogs("22-12-2022", Color.White, True, True)
+        RichLogs("20-06-2023", Color.White, True, True)
         RichLogs("► License        : ", Color.White, True, False)
-        RichLogs("Maintainer", Color.White, True, True)
+        RichLogs("Developer", Color.White, True, True)
         RichLogs("► Version Update : ", Color.White, True, False)
-        RichLogs("Alpha III based [ 22-12-2022 ] Version", Color.White, True, True)
+        RichLogs("Beta I based [ 22-12-2022 ] Version", Color.White, True, True)
         RichLogs("  ==================================================================", Color.White, True, True)
-        RichLogs("► Websites       : https://facebook.com/f.hadikhoir/", Color.White, True, True)
+        RichLogs("► Websites       : https://hadikhoirudin.github.io/ireverse", Color.White, True, True)
         RichLogs("  ==================================================================", Color.White, True, True)
         RichLogs("", Color.White, True, True)
     End Sub
@@ -447,6 +466,12 @@ Public Class Main
                 RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
                 FirehoseWorker.CancelAsync()
                 FirehoseWorker.Dispose()
+            End If
+            If OFPExtractor.OPFWorkerQC.IsBusy Then
+                RichLogs(" ", Color.Red, True, True)
+                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
+                OFPExtractor.OPFWorkerQC.CancelAsync()
+                OFPExtractor.OPFWorkerQC.Dispose()
             End If
             If CariportQC.IsBusy Then
                 WaktuCari = 1

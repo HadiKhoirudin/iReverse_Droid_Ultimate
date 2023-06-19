@@ -75,7 +75,7 @@ Namespace Bismillah.DISK
 
         Public Shared Function DiskRead(Optional delay As String = "0") As Byte()
             Try
-                Dim hu() As Byte = New Byte(524288 - 1) {}
+                Dim hu() As Byte = New Byte(1048576 - 1) {}
                 Dim z As Integer = New Integer
 
                 ReadFile(OpenWritePort, hu, hu.Length, z, IntPtr.Zero)
@@ -130,6 +130,10 @@ Namespace Bismillah.DISK
         End Function
         <DllImport("kernel32", CharSet:=CharSet.Auto, SetLastError:=True)>
         Friend Shared Function SetCommState(ByVal handle As SafeFileHandle, ByVal len As DCB) As Integer
+        End Function
+
+        <DllImport("Kernel32.dll", CharSet:=CharSet.Unicode, CallingConvention:=CallingConvention.StdCall)>
+        Public Shared Function FlushFileBuffers(hFile As SafeFileHandle) As Integer
         End Function
         Public Structure DCB
             Public DCBlength As UInt32 ' // sizeof(DCB)

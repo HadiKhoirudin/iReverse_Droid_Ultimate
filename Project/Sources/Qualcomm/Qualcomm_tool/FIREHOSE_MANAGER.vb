@@ -695,7 +695,47 @@ Namespace Bismillah.FIREHOSE
                         End If
 
 
-                    ElseIf MenuManual = "UnRelock Bootloader" Then
+                    ElseIf MenuManual = "Unlock Bootloader" Then
+                        Dim Totalpatch As Integer = 3
+                        Dim dopatch As Integer = 0
+
+                        xr1 = New XmlTextReader(New StringReader(StringXml))
+
+                        Do While xr1.Read()
+                            If FirehoseWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
+                            If xr1.NodeType = XmlNodeType.Element AndAlso xr1.Name = "patch" Then
+                                Dim SectorSize = xr1.GetAttribute("SECTOR_SIZE_IN_BYTES")
+                                Dim BytesOffset = xr1.GetAttribute("byte_offset")
+                                Dim FileName = xr1.GetAttribute("filename")
+                                Dim PhysicalPartition = xr1.GetAttribute("physical_partition_number")
+                                Dim SizesInBytes = xr1.GetAttribute("size_in_bytes")
+                                Dim StartSector = xr1.GetAttribute("start_sector")
+                                Dim Value = xr1.GetAttribute("value")
+                                Dim what = xr1.GetAttribute("what")
+                                If FileName.ToLower.Contains("disk") Then
+                                    Dim pkt = pkt_patch(SectorSize, BytesOffset, FileName, PhysicalPartition, SizesInBytes, StartSector, Value, what)
+
+                                    dopatch += 1
+                                    If dopatch = 1 Then
+                                        RichLogs("Patch Partition Data : ", Color.White, True, False)
+                                        SendXml(pkt)
+                                        ProcessBar1(dopatch, Totalpatch)
+                                    Else
+                                        SendXmlFast(pkt)
+
+                                    End If
+                                    If dopatch = Totalpatch Then
+                                        ProcessBar1(Totalpatch, Totalpatch)
+                                        RichLogs("Done  ✓", Color.Yellow, True, True)
+                                    End If
+                                End If
+                            End If
+                        Loop
+
+                    ElseIf MenuManual = "Relock Bootloader" Then
                         Dim Totalpatch As Integer = 3
                         Dim dopatch As Integer = 0
 
@@ -1259,7 +1299,7 @@ Namespace Bismillah.FIREHOSE
 
                             Else
                                 CheckKelar = 0
-                                RichLogs(" Downloading data : ", Color.White, True, False)
+                                RichLogs("Downloading data  : ", Color.White, True, False)
                                 EncryptedDownloadData = getfile(filename, True)
 
 
@@ -1332,8 +1372,9 @@ Namespace Bismillah.FIREHOSE
         End Function
 
         Public Shared Function WriteEmmc(SectSize As String, NumSect As String, Physical As String, StartSect As String, Filename As String) As Boolean
+            FlushFileBuffers(OpenWritePort)
+            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(NumSect * SectSize), Action))
             Dim imgfile As String = ""
-
             Dim dataBytes(16384) As Byte
             Dim stream As Stream = New MemoryStream(dataBytes)
             If MenuEx = MenuEksekusi.manual Then
@@ -1379,6 +1420,11 @@ Namespace Bismillah.FIREHOSE
                     Using reader As New BinaryReader(stream)
                         Dim buffer(1024) As Byte
                         chunkheader = New CHUNK_HEADER
+
+                        ' Membuat objek Stopwatch untuk mengukur waktu
+                        Dim Stopwatch = New Stopwatch()
+                        Stopwatch.Start()
+
                         Do
                             Try
                                 If i = 0 Then
@@ -1415,7 +1461,7 @@ Namespace Bismillah.FIREHOSE
                                     su += 1
                                     Dim PartitionName As String = Filename
                                     Dim completed As Boolean = False
-                                    Dim PacketSize As Integer = 524288
+                                    Dim PacketSize As Integer = 1048576
                                     Dim NumSec As Long = sectorsizeCunk / SectSize
                                     Dim bytesWritten As Long = 0
                                     Dim ii As Integer = 0
@@ -1455,8 +1501,18 @@ Namespace Bismillah.FIREHOSE
                                             bytesWritten += byt.Length
                                             OffsetStreams += byt.Length
 
+                                            Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(bytesWritten), Action))
+
+                                            ' Menghitung Waktu yang telah berlalu
+                                            Dim elapsed As TimeSpan = Stopwatch.Elapsed
+                                            Dim speed As Double = bytesWritten / elapsed.TotalSeconds
+                                            Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                                             ProcessBar1(bytesWritten, sectorsizeCunk)
                                         Loop
+                                        ' Berhenti menghitung
+                                        Stopwatch.Stop()
+                                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
                                     End If
                                 ElseIf hexchunk = SPARSE_FILL_CHUNK Then
                                     Dim NumSec As Long = sectorsizeCunk / SectSize
@@ -1470,8 +1526,12 @@ Namespace Bismillah.FIREHOSE
                                 i += 1
                                 If i = totalchunk Then
                                     ProcessBar2(i, totalchunk)
+                                    stream.Flush()
                                     stream.Close()
                                     reader.Close()
+                                    ' Berhenti menghitung
+                                    Stopwatch.Stop()
+                                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
                                     Return True
                                     Exit Do
                                 End If
@@ -1479,7 +1539,12 @@ Namespace Bismillah.FIREHOSE
                                 Continue Do
                             Catch e As Exception
                                 MsgBox(e.ToString)
+                                stream.Flush()
                                 stream.Close()
+                                reader.Close()
+                                ' Berhenti menghitung
+                                Stopwatch.Stop()
+                                Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
                                 Return False
                                 Exit Do
                             End Try
@@ -1487,6 +1552,11 @@ Namespace Bismillah.FIREHOSE
                         Loop
                     End Using
                 End If
+                Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+
+                stream.Flush()
                 stream.Close()
 
             Else
@@ -1507,22 +1577,7 @@ Namespace Bismillah.FIREHOSE
 
                 End If
 
-
-
-
-
-
-
-
-
-                Dim PacketSize As Integer = 8192
-
-
-
-
-                If besarFile >= 16777216 Then
-                    PacketSize = 524288 * 2
-                End If
+                Dim PacketSize As Integer = 1048576
 
                 Dim RealsectorSizeToBeWrite As Long = bulat(besarFile / SectorSize)
                 Dim RealBesarNyaFile = RealsectorSizeToBeWrite * SectorSize
@@ -1548,12 +1603,29 @@ Namespace Bismillah.FIREHOSE
 
                     Using reader As New BinaryReader(stream)
                         Try
+                            'Membuat objek Stopwatch untuk mengukur waktu
+                            Dim stopwatch As Stopwatch = New Stopwatch()
+                            stopwatch.Start()
                             Do
                                 If RealBesarNyaFile = TotalWriten Then
                                     If IsAck() Then ' got ACK, continue writing
+
+                                        Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+                                        ' Berhenti menghitung
+                                        stopwatch.Stop()
+                                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
                                         reader.Close()
+
                                         Return True
                                     Else
+
+                                        Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+                                        ' Berhenti menghitung
+                                        stopwatch.Stop()
+                                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+
                                         reader.Close()
                                         Return False
                                     End If
@@ -1565,18 +1637,36 @@ Namespace Bismillah.FIREHOSE
                                     reader.Read(Buffer, 0, PacketSize)
                                     DiskWrite(Buffer)
                                     TotalWriten += Buffer.Length
+                                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(TotalWriten), Action))
+
+                                    ' Menghitung Waktu yang telah berlalu
+                                    Dim elapsed As TimeSpan = stopwatch.Elapsed
+                                    Dim speed As Double = TotalWriten / elapsed.TotalSeconds
+                                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                                     ProcessBar1(TotalWriten, RealBesarNyaFile)
                                 Else
                                     Dim Buffer As Byte() = New Byte(PacketSize - 1) {}
                                     reader.Read(Buffer, 0, PacketSize)
                                     DiskWrite(Buffer)
                                     TotalWriten += Buffer.Length
+                                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(TotalWriten), Action))
+
+                                    ' Menghitung Waktu yang telah berlalu
+                                    Dim elapsed As TimeSpan = stopwatch.Elapsed
+                                    Dim speed As Double = TotalWriten / elapsed.TotalSeconds
+                                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                                     ProcessBar1(TotalWriten, RealBesarNyaFile)
                                 End If
 
 
 
                             Loop
+
+                            ' Berhenti menghitung
+                            stopwatch.Stop()
+                            Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
 
                         Catch ex As Exception
                             stream.Close()
@@ -1588,6 +1678,12 @@ Namespace Bismillah.FIREHOSE
                     End Using
 
 
+                    Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+
+                    stream.Flush()
+                    stream.Close()
+
                 Else
 
                     RichLogs("Failed ", Color.Red, True, False)
@@ -1595,10 +1691,6 @@ Namespace Bismillah.FIREHOSE
                 End If
 
             End If
-
-
-
-
             Return False
         End Function
 
@@ -1861,9 +1953,12 @@ Namespace Bismillah.FIREHOSE
         End Function
 
         Public Shared Function EraseParts(SectSize As String, numPartSect As String, PhysicalPartition As String, startSector As String) As Boolean
+            FlushFileBuffers(OpenWritePort)
+            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(numPartSect * SectSize), Action))
+
             Dim totalhapus As Integer = 1048576
             Dim bytesec As Long = 0
-            Dim PacketSize As Integer = 16384
+            Dim PacketSize As Integer = 1048576
             If numPartSect * SectSize >= totalhapus Then
                 bytesec = totalhapus / SectSize
             Else
@@ -1883,6 +1978,11 @@ Namespace Bismillah.FIREHOSE
                 Return False
             Else
                 Try
+
+                    'Membuat objek Stopwatch untuk mengukur waktu
+                    Dim stopwatch As Stopwatch = New Stopwatch()
+                    stopwatch.Start()
+
                     Do
                         If byteswritten = legthFile Then
                             If IsAck() Then
@@ -1900,8 +2000,22 @@ Namespace Bismillah.FIREHOSE
                         byteswritten += bytes.Length
                         offset += bytes.Length
 
+                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(byteswritten), Action))
+
+                        ' Menghitung Waktu yang telah berlalu
+                        Dim elapsed As TimeSpan = stopwatch.Elapsed
+                        Dim speed As Double = byteswritten / elapsed.TotalSeconds
+                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                         i += 1
                     Loop
+                    ' Berhenti menghitung
+                    Stopwatch.Stop()
+                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+
+                    Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+
                     Return True
                 Catch ex As Exception
                     MsgBox(ex.ToString)
@@ -1935,15 +2049,18 @@ Namespace Bismillah.FIREHOSE
 
                 If FirehoseWorker.CancellationPending Then
                     e.Cancel = True
-                    Return False
+                    Return True
                 End If
 
+
+                FlushFileBuffers(OpenWritePort)
                 Dim i As Integer = 0
                 Dim BYTES_TO_READ As Long = NumPartition * SectSize
                 Dim totalLen = NumPartition * SectSize
                 Dim fileOffset As Long = 0
                 Dim bytesRead As Long = 0
-                Dim SECTORS_TO_READ = NumPartition
+
+                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(BYTES_TO_READ), Action))
 
                 Dim pkt = pkt_read(SectSize, NumPartition, physical, Startsector)
 
@@ -1951,6 +2068,11 @@ Namespace Bismillah.FIREHOSE
                 Dim stream As New FileStream(foldersave & "\" & getfilenames(pname), FileMode.Append, FileAccess.Write)
                 Using stream
                     Dim buffer As Byte() = New Byte() {}
+
+                    'Membuat objek Stopwatch untuk mengukur waktu
+                    Dim stopwatch As Stopwatch = New Stopwatch()
+                    stopwatch.Start()
+
                     SendXml(pkt)
                     Dim s As Byte() = readByte()
                     If Not s.Length = 0 Then
@@ -1959,7 +2081,13 @@ Namespace Bismillah.FIREHOSE
                         If fileOffset >= BYTES_TO_READ Then
                             stream.Write(s, 0, BYTES_TO_READ)
                             ProcessBar1(BYTES_TO_READ, BYTES_TO_READ)
+                            stream.Flush()
                             stream.Close()
+                            ' Berhenti menghitung
+                            stopwatch.Stop()
+                            Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+                            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                            Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
                             Return True
                         End If
                         stream.Write(s, 0, s.Length)
@@ -1967,23 +2095,23 @@ Namespace Bismillah.FIREHOSE
                     End If
                     Do
 
-                        If FirehoseWorker.CancellationPending Then
-                            If File.Exists(foldersave & "\" & getfilenames(pname)) Then
-                                stream.Close()
-                                File.Delete(foldersave & "\" & getfilenames(pname))
-                            End If
-                            e.Cancel = True
-                            Return False
-                        End If
-
                         buffer = DiskRead()
                         fileOffset += buffer.Length
+
+                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(fileOffset), Action))
+
+                        ' Menghitung Waktu yang telah berlalu
+                        Dim elapsed As TimeSpan = stopwatch.Elapsed
+                        Dim speed As Double = fileOffset / elapsed.TotalSeconds
+                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+
                         If fileOffset > BYTES_TO_READ Then
                             Dim bytesLeft = fileOffset - BYTES_TO_READ
                             Dim zz = buffer.Length - bytesLeft
                             Dim buffer2 = buffer.Take(CInt(zz)).ToArray()
                             stream.Write(buffer2, 0, buffer2.Length)
                             ProcessBar1(fileOffset - bytesLeft, BYTES_TO_READ)
+                            stream.Flush()
                             stream.Close()
                             Exit Do
                         End If
@@ -1991,7 +2119,16 @@ Namespace Bismillah.FIREHOSE
                         ProcessBar1(fileOffset, BYTES_TO_READ)
                         i += 1
                     Loop
+
+                    ' Berhenti menghitung
+                    stopwatch.Stop()
+                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes / s", Action))
+
                 End Using
+
+                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+
                 Return True
             Catch ex As Exception
                 MsgBox(ex.ToString)

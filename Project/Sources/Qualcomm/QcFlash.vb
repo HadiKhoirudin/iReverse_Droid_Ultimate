@@ -273,7 +273,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -330,7 +330,7 @@ Public Class QcFlash
             End If
         End If
 
-        If Not CariportQC.IsBusy Then
+        If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
             Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
             Watch.Restart()
             RtbClear()
@@ -376,7 +376,7 @@ Public Class QcFlash
                     End If
                 End If
 
-                If Not CariportQC.IsBusy Then
+                If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                     Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                     Watch.Restart()
                     RtbClear()
@@ -442,7 +442,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -497,7 +497,7 @@ Public Class QcFlash
             End If
         End If
 
-        If Not CariportQC.IsBusy Then
+        If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
             Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
             DataView.Rows.Clear()
             Watch.Restart()
@@ -693,7 +693,29 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonReadInfo_Click(sender As Object, e As EventArgs) Handles ButtonReadInfo.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonReadInfo.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "Read Info"
 
@@ -715,7 +737,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -760,7 +782,29 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonMiReset_Click(sender As Object, e As EventArgs) Handles ButtonMiReset.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonMiReset.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "HexOperation"
 
@@ -773,7 +817,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -817,7 +861,29 @@ Public Class QcFlash
 
     End Sub
     Private Sub ButtonMiDisable_Click(sender As Object, e As EventArgs) Handles ButtonMiDisable.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonMiDisable.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "HexOperation"
 
@@ -830,7 +896,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -876,7 +942,29 @@ Public Class QcFlash
 
 
     Private Sub ButtonFormatUser_Click(sender As Object, e As EventArgs) Handles ButtonFormatUser.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonFormatUser.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "Format Data"
 
@@ -889,7 +977,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -933,34 +1021,74 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonAuth_Click(sender As Object, e As EventArgs) Handles ButtonAuth.Click
-        If Not CheckBoxServer.Checked Then
-            If TxtFlashLoader.Text = "" Then
-                Main.IsAutoLoader = True
-            Else
-                Main.IsAutoLoader = False
-            End If
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
+        If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonAuth.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
         End If
 
-        If Not CariportQC.IsBusy Then
-            Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
-            Watch.Restart()
-            RtbClear()
-            Setwaktu()
-            Watch.Start()
-            StringXml = ""
-            CariportQC.RunWorkerAsync()
-            CariportQC.Dispose()
-        Else
-            RichLogs("", Color.Yellow, True, True)
-            RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
+        If flag Then
+
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
+                Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                Watch.Restart()
+                RtbClear()
+                Setwaktu()
+                Watch.Start()
+                StringXml = ""
+                CariportQC.RunWorkerAsync()
+                CariportQC.Dispose()
+            Else
+                RichLogs("", Color.Yellow, True, True)
+                RichLogs("Worker Flash Is Running...", Color.Yellow, True, True)
+            End If
         End If
 
     End Sub
 
     Private Sub ButtonUBL_Click(sender As Object, e As EventArgs) Handles ButtonUBL.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonUBL.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
+
             MenuEx = MenuEksekusi.manual
-            MenuManual = "UnRelock Bootloader"
+            MenuManual = "Unlock Bootloader"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
@@ -971,7 +1099,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -1001,15 +1129,36 @@ Public Class QcFlash
             Next
 
             StringXml = String.Concat(StringXml, "</data>")
-        Else
-            XtraMessageBox.Show("Tidak ada data!", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
         End If
     End Sub
 
     Private Sub ButtonRelockUBL_Click(sender As Object, e As EventArgs) Handles ButtonRelockUBL.Click
+
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonRelockUBL.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
-            MenuManual = "UnRelock Bootloader"
+            MenuManual = "Relock Bootloader"
 
             Thread.Sleep(500)
             If Not CheckBoxServer.Checked Then
@@ -1020,7 +1169,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -1059,7 +1208,29 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonAllFRP_Click(sender As Object, e As EventArgs) Handles ButtonAllFRP.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
+
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonAllFRP.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "Erase"
 
@@ -1072,7 +1243,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -1088,7 +1259,6 @@ Public Class QcFlash
 
             StringXml = String.Concat(StringXml, "<?xml version=""1.0"" ?>" & vbCrLf & "")
             StringXml = String.Concat(StringXml, "<data>" & vbCrLf & "")
-
 
             totalchecked = 0
             For Each item As DataGridViewRow In DataView.Rows
@@ -1118,8 +1288,29 @@ Public Class QcFlash
     End Sub
 
     Private Sub ButtonFRP_SAM_Click(sender As Object, e As EventArgs) Handles ButtonFRP_SAM.Click
+        Dim flag As Boolean = False
+        Dim timeout As Integer = 30
 
         If DataView.Rows.Count > 0 Then
+            flag = True
+        Else
+            ButtonQc_Idnt_Click(sender, e)
+
+            Do Until (DataView.Rows.Count > 0 AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy)
+                Delay(5)
+                If timeout = 0 Then
+                    Exit Do
+                End If
+                If DataView.Rows.Count > 0 Then
+                    ButtonFRP_SAM.PerformClick()
+                    Exit Do
+                End If
+                timeout -= 1
+            Loop
+
+        End If
+
+        If flag Then
             MenuEx = MenuEksekusi.manual
             MenuManual = "Erase"
 
@@ -1132,7 +1323,7 @@ Public Class QcFlash
                 End If
             End If
 
-            If Not CariportQC.IsBusy Then
+            If Not CariportQC.IsBusy AndAlso Not SaharaWorker.IsBusy AndAlso Not FirehoseWorker.IsBusy Then
                 Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
                 Watch.Restart()
                 RtbClear()
@@ -1198,6 +1389,10 @@ Public Class QcFlash
                             }
 
             If folderBrowserDialog.ShowDialog() = DialogResult.OK Then
+                DataView.Rows.Clear()
+                Watch.Restart()
+                RtbClear()
+                Watch.Start()
                 foldersave = folderBrowserDialog.SelectedPath
                 OFPExtractor.LoadTabelKeyOFP()
                 OFPExtractor.OPFWorkerQC.RunWorkerAsync()

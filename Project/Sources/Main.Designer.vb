@@ -26,12 +26,14 @@ Partial Class Main
         Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(Main))
         Me.panelControl11 = New DevExpress.XtraEditors.PanelControl()
+        Me.ButtonFlashApple = New DevExpress.XtraEditors.SimpleButton()
         Me.TextBox7 = New System.Windows.Forms.TextBox()
         Me.PictureEditSelectedChip = New DevExpress.XtraEditors.PictureEdit()
         Me.ButtonVivoModel = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonFlashQc = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonSamsungModel = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonRealmeModel = New DevExpress.XtraEditors.SimpleButton()
+        Me.SimpleButton2 = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonFlashMtk = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonHuaweiModel = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonInfinixModel = New DevExpress.XtraEditors.SimpleButton()
@@ -73,15 +75,24 @@ Partial Class Main
         Me.labelControl3 = New DevExpress.XtraEditors.LabelControl()
         Me.ComboBroom = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.panelControl1 = New DevExpress.XtraEditors.PanelControl()
-        Me.LabelTime = New DevExpress.XtraEditors.LabelControl()
         Me.panelControl8 = New DevExpress.XtraEditors.PanelControl()
         Me.OpenFileDialog = New System.Windows.Forms.OpenFileDialog()
         Me.TimerTime = New System.Windows.Forms.Timer(Me.components)
         Me.Flashtool_Doworker = New System.ComponentModel.BackgroundWorker()
         Me.AdbPython = New System.ComponentModel.BackgroundWorker()
         Me.AdbDotNet = New System.ComponentModel.BackgroundWorker()
-        Me.SimpleButton2 = New DevExpress.XtraEditors.SimpleButton()
-        Me.ButtonFlashApple = New DevExpress.XtraEditors.SimpleButton()
+        Me.label_transferrate = New System.Windows.Forms.Label()
+        Me.Label4 = New System.Windows.Forms.Label()
+        Me.label_writensize = New System.Windows.Forms.Label()
+        Me.label_totalsize = New System.Windows.Forms.Label()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.label5 = New System.Windows.Forms.Label()
+        Me.Label17 = New System.Windows.Forms.Label()
+        Me.lblhwid = New System.Windows.Forms.Label()
+        Me.label7 = New System.Windows.Forms.Label()
+        Me.lblusername = New System.Windows.Forms.Label()
+        Me.LabelTime = New System.Windows.Forms.Label()
+        Me.Label1 = New System.Windows.Forms.Label()
         CType(Me.panelControl11, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.panelControl11.SuspendLayout()
         CType(Me.PictureEditSelectedChip.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -138,6 +149,24 @@ Partial Class Main
         Me.panelControl11.Name = "panelControl11"
         Me.panelControl11.Size = New System.Drawing.Size(1084, 65)
         Me.panelControl11.TabIndex = 1
+        '
+        'ButtonFlashApple
+        '
+        Me.ButtonFlashApple.Appearance.BackColor = System.Drawing.Color.Crimson
+        Me.ButtonFlashApple.Appearance.Font = New System.Drawing.Font("Comic Sans MS", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.ButtonFlashApple.Appearance.Options.UseBackColor = True
+        Me.ButtonFlashApple.Appearance.Options.UseFont = True
+        Me.ButtonFlashApple.AppearanceHovered.Font = New System.Drawing.Font("Comic Sans MS", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.ButtonFlashApple.AppearanceHovered.Options.UseFont = True
+        Me.ButtonFlashApple.BackgroundImage = Global.Reverse_Tool.My.Resources.Resources.logoapple
+        Me.ButtonFlashApple.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
+        Me.ButtonFlashApple.Location = New System.Drawing.Point(6, 4)
+        Me.ButtonFlashApple.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.ButtonFlashApple.Name = "ButtonFlashApple"
+        Me.ButtonFlashApple.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
+        Me.ButtonFlashApple.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
+        Me.ButtonFlashApple.Size = New System.Drawing.Size(105, 26)
+        Me.ButtonFlashApple.TabIndex = 32
         '
         'TextBox7
         '
@@ -227,6 +256,23 @@ Partial Class Main
         Me.ButtonRealmeModel.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
         Me.ButtonRealmeModel.Size = New System.Drawing.Size(105, 26)
         Me.ButtonRealmeModel.TabIndex = 33
+        '
+        'SimpleButton2
+        '
+        Me.SimpleButton2.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(0, Byte), Integer))
+        Me.SimpleButton2.Appearance.Font = New System.Drawing.Font("Comic Sans MS", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.SimpleButton2.Appearance.Options.UseBackColor = True
+        Me.SimpleButton2.Appearance.Options.UseFont = True
+        Me.SimpleButton2.AppearanceHovered.Font = New System.Drawing.Font("Comic Sans MS", 10.5!, System.Drawing.FontStyle.Bold)
+        Me.SimpleButton2.AppearanceHovered.Options.UseFont = True
+        Me.SimpleButton2.BackgroundImage = Global.Reverse_Tool.My.Resources.Resources.logospreadtrum
+        Me.SimpleButton2.Location = New System.Drawing.Point(115, 33)
+        Me.SimpleButton2.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.SimpleButton2.Name = "SimpleButton2"
+        Me.SimpleButton2.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
+        Me.SimpleButton2.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
+        Me.SimpleButton2.Size = New System.Drawing.Size(105, 26)
+        Me.SimpleButton2.TabIndex = 32
         '
         'ButtonFlashMtk
         '
@@ -887,25 +933,24 @@ Partial Class Main
         'panelControl1
         '
         Me.panelControl1.BorderStyle = DevExpress.XtraEditors.Controls.BorderStyles.NoBorder
+        Me.panelControl1.Controls.Add(Me.label_transferrate)
+        Me.panelControl1.Controls.Add(Me.Label4)
+        Me.panelControl1.Controls.Add(Me.label_writensize)
+        Me.panelControl1.Controls.Add(Me.lblhwid)
+        Me.panelControl1.Controls.Add(Me.label_totalsize)
+        Me.panelControl1.Controls.Add(Me.Label12)
+        Me.panelControl1.Controls.Add(Me.label5)
+        Me.panelControl1.Controls.Add(Me.Label17)
         Me.panelControl1.Controls.Add(Me.LabelTime)
+        Me.panelControl1.Controls.Add(Me.lblusername)
+        Me.panelControl1.Controls.Add(Me.Label1)
+        Me.panelControl1.Controls.Add(Me.label7)
         Me.panelControl1.Controls.Add(Me.panelControl8)
         Me.panelControl1.Dock = System.Windows.Forms.DockStyle.Bottom
         Me.panelControl1.Location = New System.Drawing.Point(0, 583)
         Me.panelControl1.Name = "panelControl1"
         Me.panelControl1.Size = New System.Drawing.Size(1084, 33)
         Me.panelControl1.TabIndex = 6
-        '
-        'LabelTime
-        '
-        Me.LabelTime.Appearance.Font = New System.Drawing.Font("Consolas", 10.0!)
-        Me.LabelTime.Appearance.ForeColor = System.Drawing.Color.Moccasin
-        Me.LabelTime.Appearance.Options.UseFont = True
-        Me.LabelTime.Appearance.Options.UseForeColor = True
-        Me.LabelTime.Location = New System.Drawing.Point(1011, 10)
-        Me.LabelTime.Name = "LabelTime"
-        Me.LabelTime.Size = New System.Drawing.Size(56, 15)
-        Me.LabelTime.TabIndex = 1
-        Me.LabelTime.Text = "00:00:00"
         '
         'panelControl8
         '
@@ -936,40 +981,171 @@ Partial Class Main
         Me.AdbDotNet.WorkerReportsProgress = True
         Me.AdbDotNet.WorkerSupportsCancellation = True
         '
-        'SimpleButton2
+        'label_transferrate
         '
-        Me.SimpleButton2.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(255, Byte), Integer), CType(CType(128, Byte), Integer), CType(CType(0, Byte), Integer))
-        Me.SimpleButton2.Appearance.Font = New System.Drawing.Font("Comic Sans MS", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.SimpleButton2.Appearance.Options.UseBackColor = True
-        Me.SimpleButton2.Appearance.Options.UseFont = True
-        Me.SimpleButton2.AppearanceHovered.Font = New System.Drawing.Font("Comic Sans MS", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.SimpleButton2.AppearanceHovered.Options.UseFont = True
-        Me.SimpleButton2.BackgroundImage = Global.Reverse_Tool.My.Resources.Resources.logospreadtrum
-        Me.SimpleButton2.Location = New System.Drawing.Point(115, 33)
-        Me.SimpleButton2.LookAndFeel.UseDefaultLookAndFeel = False
-        Me.SimpleButton2.Name = "SimpleButton2"
-        Me.SimpleButton2.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-        Me.SimpleButton2.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.SimpleButton2.Size = New System.Drawing.Size(105, 26)
-        Me.SimpleButton2.TabIndex = 32
+        Me.label_transferrate.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.label_transferrate.AutoSize = True
+        Me.label_transferrate.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.label_transferrate.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.label_transferrate.ForeColor = System.Drawing.Color.Moccasin
+        Me.label_transferrate.Location = New System.Drawing.Point(447, 11)
+        Me.label_transferrate.Name = "label_transferrate"
+        Me.label_transferrate.Size = New System.Drawing.Size(105, 13)
+        Me.label_transferrate.TabIndex = 43
+        Me.label_transferrate.Text = "0.00 Bytes /s           "
         '
-        'ButtonFlashApple
+        'Label4
         '
-        Me.ButtonFlashApple.Appearance.BackColor = System.Drawing.Color.Crimson
-        Me.ButtonFlashApple.Appearance.Font = New System.Drawing.Font("Comic Sans MS", 10.0!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
-        Me.ButtonFlashApple.Appearance.Options.UseBackColor = True
-        Me.ButtonFlashApple.Appearance.Options.UseFont = True
-        Me.ButtonFlashApple.AppearanceHovered.Font = New System.Drawing.Font("Comic Sans MS", 10.5!, System.Drawing.FontStyle.Bold)
-        Me.ButtonFlashApple.AppearanceHovered.Options.UseFont = True
-        Me.ButtonFlashApple.BackgroundImage = Global.Reverse_Tool.My.Resources.Resources.logoapple
-        Me.ButtonFlashApple.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch
-        Me.ButtonFlashApple.Location = New System.Drawing.Point(6, 4)
-        Me.ButtonFlashApple.LookAndFeel.UseDefaultLookAndFeel = False
-        Me.ButtonFlashApple.Name = "ButtonFlashApple"
-        Me.ButtonFlashApple.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-        Me.ButtonFlashApple.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonFlashApple.Size = New System.Drawing.Size(105, 26)
-        Me.ButtonFlashApple.TabIndex = 32
+        Me.Label4.Anchor = CType((((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label4.AutoSize = True
+        Me.Label4.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label4.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.Label4.Location = New System.Drawing.Point(358, 11)
+        Me.Label4.Name = "Label4"
+        Me.Label4.Size = New System.Drawing.Size(83, 13)
+        Me.Label4.TabIndex = 38
+        Me.Label4.Text = "Transfer Rate : "
+        '
+        'label_writensize
+        '
+        Me.label_writensize.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.label_writensize.AutoSize = True
+        Me.label_writensize.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.label_writensize.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.label_writensize.ForeColor = System.Drawing.Color.Moccasin
+        Me.label_writensize.Location = New System.Drawing.Point(260, 11)
+        Me.label_writensize.Name = "label_writensize"
+        Me.label_writensize.Size = New System.Drawing.Size(92, 13)
+        Me.label_writensize.TabIndex = 37
+        Me.label_writensize.Text = "0.00 Bytes           "
+        '
+        'label_totalsize
+        '
+        Me.label_totalsize.AutoSize = True
+        Me.label_totalsize.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.label_totalsize.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.label_totalsize.ForeColor = System.Drawing.Color.Moccasin
+        Me.label_totalsize.Location = New System.Drawing.Point(82, 11)
+        Me.label_totalsize.Name = "label_totalsize"
+        Me.label_totalsize.Size = New System.Drawing.Size(92, 13)
+        Me.label_totalsize.TabIndex = 35
+        Me.label_totalsize.Text = "0.00 Bytes           "
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label12.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.Label12.Location = New System.Drawing.Point(12, 11)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(64, 13)
+        Me.Label12.TabIndex = 34
+        Me.Label12.Text = "Total Size : "
+        '
+        'label5
+        '
+        Me.label5.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.label5.AutoSize = True
+        Me.label5.Font = New System.Drawing.Font("Segoe UI", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.label5.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.label5.Location = New System.Drawing.Point(180, 11)
+        Me.label5.Name = "label5"
+        Me.label5.Size = New System.Drawing.Size(74, 13)
+        Me.label5.TabIndex = 36
+        Me.label5.Text = "Writen Size : "
+        '
+        'Label17
+        '
+        Me.Label17.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.Label17.AutoSize = True
+        Me.Label17.BackColor = System.Drawing.Color.Transparent
+        Me.Label17.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label17.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.Label17.Location = New System.Drawing.Point(558, 11)
+        Me.Label17.Name = "Label17"
+        Me.Label17.Size = New System.Drawing.Size(34, 13)
+        Me.Label17.TabIndex = 41
+        Me.Label17.Text = "RID : "
+        '
+        'lblhwid
+        '
+        Me.lblhwid.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Left), System.Windows.Forms.AnchorStyles)
+        Me.lblhwid.AutoSize = True
+        Me.lblhwid.BackColor = System.Drawing.Color.Transparent
+        Me.lblhwid.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.lblhwid.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold)
+        Me.lblhwid.ForeColor = System.Drawing.Color.Moccasin
+        Me.lblhwid.Location = New System.Drawing.Point(598, 11)
+        Me.lblhwid.Name = "lblhwid"
+        Me.lblhwid.Size = New System.Drawing.Size(176, 13)
+        Me.lblhwid.TabIndex = 42
+        Me.lblhwid.Text = "0000-0000-0000-0000-0000           "
+        '
+        'label7
+        '
+        Me.label7.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.label7.AutoSize = True
+        Me.label7.BackColor = System.Drawing.Color.Transparent
+        Me.label7.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.label7.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.label7.Location = New System.Drawing.Point(785, 11)
+        Me.label7.Name = "label7"
+        Me.label7.Size = New System.Drawing.Size(67, 13)
+        Me.label7.TabIndex = 39
+        Me.label7.Text = "Username : "
+        '
+        'lblusername
+        '
+        Me.lblusername.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.lblusername.AutoSize = True
+        Me.lblusername.BackColor = System.Drawing.Color.Transparent
+        Me.lblusername.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.lblusername.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold)
+        Me.lblusername.ForeColor = System.Drawing.Color.Moccasin
+        Me.lblusername.Location = New System.Drawing.Point(858, 11)
+        Me.lblusername.Name = "lblusername"
+        Me.lblusername.Size = New System.Drawing.Size(17, 13)
+        Me.lblusername.TabIndex = 40
+        Me.lblusername.Text = " - "
+        '
+        'LabelTime
+        '
+        Me.LabelTime.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.LabelTime.AutoSize = True
+        Me.LabelTime.BackColor = System.Drawing.Color.Transparent
+        Me.LabelTime.FlatStyle = System.Windows.Forms.FlatStyle.Flat
+        Me.LabelTime.Font = New System.Drawing.Font("Segoe UI Semibold", 8.25!, System.Drawing.FontStyle.Bold)
+        Me.LabelTime.ForeColor = System.Drawing.Color.Moccasin
+        Me.LabelTime.Location = New System.Drawing.Point(1023, 11)
+        Me.LabelTime.Name = "LabelTime"
+        Me.LabelTime.Size = New System.Drawing.Size(49, 13)
+        Me.LabelTime.TabIndex = 40
+        Me.LabelTime.Text = "00:00:00"
+        '
+        'Label1
+        '
+        Me.Label1.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Bottom) _
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.Label1.AutoSize = True
+        Me.Label1.BackColor = System.Drawing.Color.Transparent
+        Me.Label1.Font = New System.Drawing.Font("Segoe UI", 8.25!)
+        Me.Label1.ForeColor = System.Drawing.Color.FromArgb(CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer), CType(CType(241, Byte), Integer))
+        Me.Label1.Location = New System.Drawing.Point(977, 11)
+        Me.Label1.Name = "Label1"
+        Me.Label1.Size = New System.Drawing.Size(40, 13)
+        Me.Label1.TabIndex = 39
+        Me.Label1.Text = "Time : "
         '
         'Main
         '
@@ -1062,7 +1238,6 @@ Partial Class Main
     Private WithEvents labelControl3 As LabelControl
     Private WithEvents ComboBroom As ComboBoxEdit
     Private WithEvents panelControl1 As PanelControl
-    Private WithEvents LabelTime As LabelControl
     Private WithEvents panelControl8 As PanelControl
 
     Public Shared RichTextBoxJSON As RichTextBox
@@ -1086,4 +1261,16 @@ Partial Class Main
     Friend WithEvents TimerTime As System.Windows.Forms.Timer
     Private WithEvents ButtonFlashApple As SimpleButton
     Private WithEvents SimpleButton2 As SimpleButton
+    Friend WithEvents label_transferrate As Label
+    Friend WithEvents Label4 As Label
+    Friend WithEvents label_writensize As Label
+    Friend WithEvents label_totalsize As Label
+    Friend WithEvents Label12 As Label
+    Friend WithEvents label5 As Label
+    Friend WithEvents Label17 As Label
+    Friend WithEvents lblhwid As Label
+    Friend WithEvents lblusername As Label
+    Friend WithEvents label7 As Label
+    Friend WithEvents LabelTime As Label
+    Friend WithEvents Label1 As Label
 End Class
