@@ -126,7 +126,7 @@ Public Class eMMCISP
 
     Public Delegate Sub txtbabbledelegate(ByVal text As String)
 
-    Public waitEvent As AutoResetEvent
+    Public Shared waitEvent As AutoResetEvent
 
 
     Public Shared prosesnya As Object
@@ -1053,8 +1053,8 @@ Public Class eMMCISP
     End Sub
 
     Public Shared Sub readfull()
+        RichLogs("Dumping " & Main.SharedUI.comboUSB.Text & " ", Color.WhiteSmoke, False, False)
         Dim enumerator As IEnumerator = Nothing
-        DirectISP.SharedUI.Logs1("Start Reading...")
         If Equals(Main.SharedUI.comboUSB.Text, "8mb") Then
             uks = 8388608
         ElseIf Equals(Main.SharedUI.comboUSB.Text, "16mb") Then
@@ -1102,12 +1102,12 @@ Public Class eMMCISP
             Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
             Try
                 Try
-                    If File.Exists(folderdersave & "\dump" & Main.SharedUI.comboUSB.Text & ".bin") Then
-                        File.Delete(folderdersave & "\dump" & Main.SharedUI.comboUSB.Text & ".bin")
+                    If File.Exists(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin") Then
+                        File.Delete(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin")
                     End If
-                    Dim [integer] As Integer = 1048576
+                    Dim [integer] As Integer = 1048576 * 8
                     Dim objectValue As Object = Operators.DivideObject(uks, [integer])
-                    Dim fileStream As System.IO.FileStream = New System.IO.FileStream(folderdersave & "\dump" & Main.SharedUI.comboUSB.Text & ".bin", FileMode.Append, FileAccess.Write)
+                    Dim fileStream As System.IO.FileStream = New System.IO.FileStream(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin", FileMode.Append, FileAccess.Write)
                     Try
                         Try
                             Dim num As Long = CLng(0)
@@ -1124,9 +1124,10 @@ Public Class eMMCISP
                                         fileStream.Write(numArray, 0, [integer])
                                         karung = num * CLng([integer])
                                         num8 = Conversions.ToDouble(Operators.DivideObject(num * CLng([integer]) * CLng(100), uks))
-                                        DirectISP.SharedUI.lb2(String.Concat("Reading sector 0x00", Conversion.Hex(num * CLng([integer]))))
-                                        DirectISP.SharedUI.lb1(String.Concat("process  ", Conversions.ToString(Conversion.Int(num8)), "%"))
-                                        DirectISP.SharedUI.PB1(CInt(Math.Round(num)))
+                                        Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = Bismillah.FIREHOSE.FIREHOSE_MANAGER.GetFileSize(Conversions.ToLong(uks)), Action))
+                                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = Bismillah.FIREHOSE.FIREHOSE_MANAGER.GetFileSize(CDbl(num * CLng([integer]))), Action))
+                                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = Bismillah.FIREHOSE.FIREHOSE_MANAGER.GetFileSize(CLng([integer])) & " /s", Action))
+                                        DirectISP.SharedUI.PB1(CInt(Math.Round(num8)))
                                         TaskbarManager.Instance().SetProgressValue(CInt(Math.Round(num8)), 100)
                                         TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
                                         num = num + CLng(1)
@@ -1142,7 +1143,11 @@ Public Class eMMCISP
                         End Try
                     Finally
                         fileStream.Close()
+                        RichLogs(" Done", Color.Lime, False, True)
                         DirectISP.SharedUI.PB1(100)
+                        Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
+                        Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
+                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes /s        ", Action))
                         TaskbarManager.Instance().SetProgressValue(0, 100)
                         TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
                     End Try
@@ -1396,7 +1401,7 @@ Public Class eMMCISP
                             DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
                             Application.DoEvents()
                         End If
-                        'waitEvent.WaitOne()
+                        waitEvent.WaitOne()
                         Thread.Sleep(300)
                         DirectISP.SharedUI.PB2(CInt(Math.Round(CDbl(num * 100) / CDbl(count))))
                         Dim richTextBox2 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
@@ -1485,7 +1490,7 @@ Public Class eMMCISP
                                 If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                     Application.DoEvents()
                                     DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
-                                    'waitEvent.WaitOne()
+                                    waitEvent.WaitOne()
                                     Thread.Sleep(300)
                                 End If
                                 RichLogs(" done", Color.LimeGreen, False, True)
@@ -1498,7 +1503,7 @@ Public Class eMMCISP
                                     If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                         Application.DoEvents()
                                         DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
-                                        'waitEvent.WaitOne()
+                                        waitEvent.WaitOne()
                                         Thread.Sleep(300)
                                     End If
                                 End If
@@ -1554,12 +1559,10 @@ Public Class eMMCISP
                             filesize = New System.IO.FileInfo(openfile).Length
                             Dim fileInfo2 As System.IO.FileInfo = New System.IO.FileInfo("unsparse.img")
                             If CDbl(fileInfo2.Length) <= Conversions.ToDouble(arg(2)) Then
-                                DirectISP.SharedUI.DirectISPWorker.WorkerReportsProgress = True
-                                DirectISP.SharedUI.DirectISPWorker.WorkerSupportsCancellation = True
                                 If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                     Application.DoEvents()
                                     DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
-                                    'waitEvent.WaitOne()
+                                    waitEvent.WaitOne()
                                     Thread.Sleep(300)
                                 End If
                                 RichLogs(" done", Color.LimeGreen, False, True)
@@ -1571,7 +1574,7 @@ Public Class eMMCISP
                                 If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                     Application.DoEvents()
                                     DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
-                                    'waitEvent.WaitOne()
+                                    waitEvent.WaitOne()
                                     Thread.Sleep(300)
                                 End If
                                 Dim richTextBox24 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
@@ -1612,47 +1615,43 @@ Public Class eMMCISP
     End Sub
 
     Public Shared Sub erases()
-        Dim enumerator As IEnumerator = Nothing
         Dim num As Integer = 0
-        If ListView1.CheckedItems.Count <> 0 Then
-            Try
-                enumerator = ListView1.CheckedItems.GetEnumerator()
-                While enumerator.MoveNext()
-                    Dim current As ListViewItem = DirectCast(enumerator.Current, ListViewItem)
-                    Dim count As Integer = ListView1.CheckedItems.Count
-                    poffsets = Conversions.ToLong(current.SubItems(3).Text)
-                    If Conversions.ToDouble(current.SubItems(2).Text) <> 0 Then
-                        psize = Conversions.ToLong(current.SubItems(2).Text)
+        DirectISP.SharedUI.PB2(0)
+        Using stringReader As StringReader = New StringReader(TodoCommand)
+            While stringReader.Peek() <> -1
+                Dim cmd As String = stringReader.ReadLine()
+
+                If cmd <> String.Empty Then
+
+                    Dim exec As String = Nothing
+                    Dim arg As String() = cmd.Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
+                    ' 0 bool
+                    ' 1 partition
+                    ' 2 size bytes
+                    ' 3 offset
+                    ' 4 location
+                    poffsets = Conversions.ToLong(arg(3))
+                    If Conversions.ToDouble(arg(2)) <> 0 Then
+                        psize = Conversions.ToLong(arg(2))
                     Else
-                        psize = Conversions.ToLong(Operators.SubtractObject(uks, current.SubItems(3).Text))
+                        psize = Conversions.ToLong(Operators.SubtractObject(uks, arg(3)))
                     End If
-                    pname = current.SubItems(1).Text
-                    Dim richTextBox2 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
-                    Dim richTextBox As System.Windows.Forms.RichTextBox = richTextBox2
-                    richTextBox2.Text = String.Concat(richTextBox.Text, "erasing ", pname, "...")
-                    DirectISP.SharedUI.DirectISPWorker.WorkerReportsProgress = True
-                    DirectISP.SharedUI.DirectISPWorker.WorkerSupportsCancellation = True
+                    pname = arg(1)
+                    RichLogs("erasing " & pname, Color.WhiteSmoke, False, False)
                     If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                         Application.DoEvents()
                         DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
-                        'waitEvent.WaitOne()
+                        waitEvent.WaitOne()
                         Thread.Sleep(300)
                     End If
-                    Dim richTextBox21 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
-                    richTextBox21.Text = String.Concat(richTextBox21.Text, "done" & vbCrLf & "")
+                    RichLogs(" Done ", Color.Lime, False, True)
                     num = num + 1
-                    Dim num1 As Double = CDbl(num * 100) / CDbl(count)
+                    Dim num1 As Double = CDbl(num * 100) / CDbl(Totaltodo)
                     DirectISP.SharedUI.PB2(CInt(Math.Round(num1)))
-                End While
-            Finally
-                If (TypeOf enumerator Is IDisposable) Then
-                    TryCast(enumerator, IDisposable).Dispose()
                 End If
-            End Try
-            Dim richTextBox1 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
-            richTextBox1.Text = String.Concat(richTextBox1.Text, "All done" & vbCrLf & "")
-            DirectISP.SharedUI.PB2(0)
-        End If
+            End While
+        End Using
+        DirectISP.SharedUI.PB2(100)
     End Sub
 
     Public Shared Sub DirectISPWorker_DoWork(ByVal sender As Object, ByVal e As DoWorkEventArgs)

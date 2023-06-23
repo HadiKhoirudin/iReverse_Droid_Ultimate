@@ -484,11 +484,15 @@ Public Class DirectISP
         If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
             XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
         Else
-            Logs1Clear()
-            RichTextBox2.Clear()
-            eMMCISP.m = "f"
-            Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.writedump)
-            thread.Start()
+            If (Equals(TxtRawDump.Text, "")) Then
+                XtraMessageBox.Show("Please select dump file", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+            Else
+                Logs1Clear()
+                RichTextBox2.Clear()
+                eMMCISP.m = "f"
+                Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.writedump)
+                thread.Start()
+            End If
         End If
     End Sub
 End Class
