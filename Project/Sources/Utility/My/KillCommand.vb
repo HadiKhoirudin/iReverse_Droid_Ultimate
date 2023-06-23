@@ -12,9 +12,9 @@ Public Class KillCommand
         End Sub
 
         Public Shared Sub ProcessKill()
-            Dim array As String() = New String() {"CmdDloader", "process", "process.exe", "Python", "Python.exe", "Python", "Python.exe", "QMSL_MSVC10R", "QMSL_MSVC10R.dll", "pythonw", "pythonw.exe", "adb", "adb.exe", "fh_loader", "fh_loader.exe"}
+        Dim array As String() = New String() {"CmdDloader", "process", "process.exe", "Python", "Python.exe", "Python", "Python.exe", "QMSL_MSVC10R", "QMSL_MSVC10R.dll", "pythonw", "pythonw.exe", "adb", "adb.exe", "fastboot", "fastboot.exe", "fh_loader", "fh_loader.exe"}
 
-            For Each text As String In array
+        For Each text As String In array
                 Dim processes As Process() = Process.GetProcesses()
 
                 For Each process As Process In processes

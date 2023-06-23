@@ -11,24 +11,26 @@ Imports Reverse_Tool.Potato.Fastboot
 
 Public Class FastbootUI
 
-    Public WithEvents Fastboot As Fastboot
-
     Public WorkerTodo As String
     Public IsConnected As Boolean
     Public TodoCommand As String
     Public totalchecked As String
     Public totaldo As String
     Public totallength As Long = 0
+    Public textbox As TextBox = New TextBox()
+    Public DevicesName As String = ""
+    Public serial As String = ""
     Friend Shared SharedUI As FastbootUI
 
     Public Sub New()
         InitializeComponent()
         SharedUI = Me
         Watch = New Stopwatch()
-        Fastboot = New Fastboot()
         AddHandler DataView.MouseWheel, AddressOf DataView_Mousewheel
         AddHandler DataView.RowPrePaint, AddressOf DataView_RowPrePaint
 
+        AddHandler FastbootWorker.DoWork, AddressOf Worker
+        AddHandler FastbootWorker.RunWorkerCompleted, AddressOf AllIsDone
     End Sub
 
     Private Sub DataView_Mousewheel(sender As Object, e As MouseEventArgs)
@@ -92,20 +94,24 @@ Public Class FastbootUI
     Private Sub HScrollBarFbFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles HScrollBarFbFlashDataView.Scroll
         DataView.FirstDisplayedScrollingColumnIndex = e.NewValue
     End Sub
-    Public Function FastbootConnect() As Boolean
+    Public Function FastbootConnect(worker As BackgroundWorker, ee As DoWorkEventArgs) As Boolean
         Watch.Restart()
         Watch.Start()
-        Counter = 30
+        IsConnected = False
         RichLogs("Waiting devices to connect... ", Color.White, False, False)
-        Main.SharedUI.LabelTimer.Invoke(CType(Sub() Main.SharedUI.LabelTimer.Visible = True, Action))
         Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Text = "", Action))
         LabelProductName.Invoke(CType(Sub() LabelProductName.Text = "-", Action))
-        Dim status As Boolean = Fastboot.Wait()
+        Dim status As Boolean = Consoles.Fastboot("getvar product", worker, ee).Contains("product")
         If status Then
-            Fastboot.Connect()
             IsConnected = True
-            Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Text = "Fastboot Device - " & Fastboot.GetSerialNumber(), Action))
-            LabelProductName.Invoke(CType(Sub() LabelProductName.Text = Fastboot.Command("getvar:product").Payload, Action))
+            textbox.Clear()
+            textbox.Text = Consoles.Fastboot("getvar product", worker, ee).Replace("product: ", "")
+            LabelProductName.Invoke(CType(Sub() LabelProductName.Text = textbox.Lines(0), Action))
+
+            textbox.Clear()
+            textbox.Text = Consoles.Fastboot("getvar serialno", worker, ee).Replace("serialno: ", "")
+            serial = textbox.Lines(0)
+            Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Text = "Fastboot Device - " & serial, Action))
             Return True
         Else
             Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Text = "", Action))
@@ -123,14 +129,14 @@ Public Class FastbootUI
     End Sub
     Private Sub ButtonBrowse_Click(sender As Object, e As EventArgs) Handles ButtonBrowse.Click
         Dim openFileDialog As New OpenFileDialog() With
-{
-.Title = "File",
-.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-.FileName = "*.bat*",
-.Filter = "bat file |*.bat* ",
-.FilterIndex = 2,
-.RestoreDirectory = True
-}
+        {
+        .Title = "File",
+        .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+        .FileName = "*.bat*",
+        .Filter = "bat file |*.bat* ",
+        .FilterIndex = 2,
+        .RestoreDirectory = True
+        }
         If openFileDialog.ShowDialog() = DialogResult.OK Then
             TextBoxLocation.Text = Path.Combine(New String() {Path.GetDirectoryName(openFileDialog.FileName)})
 
@@ -158,6 +164,7 @@ Public Class FastbootUI
             product = strs(0)
 
             LabelProductName.Text = product
+            DevicesName = product
             If str.Contains(")") Then
                 str = str.Substring(str.LastIndexOf(")") + 1)
             End If
@@ -168,41 +175,45 @@ Public Class FastbootUI
                     Dim command As String = ""
                     Dim partition As String = ""
                     Dim filename As String = ""
+                    Dim custom As String = ""
                     Dim path As String = TextBoxLocation.Text & "\images"
+
                     If str1.Contains("||") Then
                         Dim l As Integer
                         Dim p As Integer
                         l = str1.Length
                         p = str1.IndexOf("||") - 1
                         str1 = str1.Remove(p, l - p)
-                        str1 = str1.Replace("fastboot %* ", "").Replace("%~dp0images\", "").Replace("pause", "")
+                        str1 = str1.Replace("fastboot %* ", "").Replace("%~dp0images\", "").Replace("%~dp0\images\", "").Replace("pause", "").Replace("::", "").Replace("""", "")
                     Else
-                        str1 = str1.Replace("fastboot %* ", "").Replace("%~dp0images\", "").Replace("pause", "")
+                        str1 = str1.Replace("fastboot %* ", "").Replace("%~dp0images\", "").Replace("%~dp0\images\", "").Replace("pause", "").Replace("::", "").Replace("""", "")
                     End If
 
-                    If str1 <> String.Empty Then
-
-                        Console.WriteLine(str1)
-
+                    If Not String.IsNullOrEmpty(str1) Then
                         Dim strArrays As String() = str1.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-
                         command = strArrays(0)
 
-                        If command <> "getvar" Then
+                        If command <> "getvar" AndAlso command <> "echo" Then
+                            If strArrays.Length = 1 Then
+                                custom = ""
+                                path = ""
+                            End If
+
                             If strArrays.Length = 2 Then
                                 partition = strArrays(1)
+                                custom = ""
+                                path = ""
                             End If
 
                             If strArrays.Length = 3 Then
                                 partition = strArrays(1)
                                 filename = strArrays(2)
+                                custom = "double click..."
                             End If
 
-                            DataView.Invoke(New Action(Sub()
-                                                           DataView.Rows.Add(True, command, partition, "double click ...", filename, path)
-                                                       End Sub))
+                            DataView.Invoke(New Action(Sub() DataView.Rows.Add(True, command, partition, custom, filename, path)))
+                            Console.WriteLine("true " & command & " " & partition & " " & filename & " " & path)
                         End If
-
                     End If
                 End While
                 CkboxSelectpartitionDataView.Checked = True
@@ -210,19 +221,11 @@ Public Class FastbootUI
         End If
 
     End Sub
-    Public Sub ReadFastbootDeviceInfo()
 
-        RichLogs("Reading Device Info : ... ", Color.White, False, True)
-        RichLogs(Fastboot.Command("getvar:all").Payload, Color.White, False, True)
-
-    End Sub
     Public Sub AllIsDone(sender As Object, e As RunWorkerCompletedEventArgs)
         RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
         TimeSpanElapsed.ElapsedTime(Watch)
         Watch.Stop()
-        If IsConnected Then
-            Fastboot.Disconnect()
-        End If
     End Sub
 
     Private Sub ButtonFlash_Click(sender As Object, e As EventArgs) Handles ButtonFlash.Click
@@ -278,10 +281,6 @@ Public Class FastbootUI
                     End If
                 Next
 
-                FastbootWorker = New BackgroundWorker()
-                FastbootWorker.WorkerSupportsCancellation = True
-                AddHandler FastbootWorker.DoWork, AddressOf Worker
-                AddHandler FastbootWorker.RunWorkerCompleted, AddressOf AllIsDone
                 FastbootWorker.RunWorkerAsync()
                 FastbootWorker.Dispose()
             End If
@@ -294,10 +293,6 @@ Public Class FastbootUI
         If Not FastbootWorker.IsBusy Then
             Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
             WorkerTodo = "reboot"
-            FastbootWorker = New BackgroundWorker()
-            FastbootWorker.WorkerSupportsCancellation = True
-            AddHandler FastbootWorker.DoWork, AddressOf Worker
-            AddHandler FastbootWorker.RunWorkerCompleted, AddressOf AllIsDone
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
         Else
@@ -305,14 +300,21 @@ Public Class FastbootUI
             RichLogs("Fastboot Is Running", Color.WhiteSmoke, False, True)
         End If
     End Sub
-    Private Sub ButtonQc_eP_Click(sender As Object, e As EventArgs) Handles ButtonQc_eP.Click
+    Private Sub ButtonRebootEDLold_Click(sender As Object, e As EventArgs) Handles ButtonRebootEDLold.Click
         If Not FastbootWorker.IsBusy Then
             Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
-            WorkerTodo = "EDL"
-            FastbootWorker = New BackgroundWorker()
-            FastbootWorker.WorkerSupportsCancellation = True
-            AddHandler FastbootWorker.DoWork, AddressOf Worker
-            AddHandler FastbootWorker.RunWorkerCompleted, AddressOf AllIsDone
+            WorkerTodo = "EDLold"
+            FastbootWorker.RunWorkerAsync()
+            FastbootWorker.Dispose()
+        Else
+            RichLogs(" ", Color.White, True, True)
+            RichLogs("Fastboot Is Running", Color.WhiteSmoke, False, True)
+        End If
+    End Sub
+    Private Sub ButtonRebootEDLnew_Click(sender As Object, e As EventArgs) Handles ButtonRebootEDLnew.Click
+        If Not FastbootWorker.IsBusy Then
+            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+            WorkerTodo = "EDLold"
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
         Else
@@ -325,10 +327,6 @@ Public Class FastbootUI
         If Not FastbootWorker.IsBusy Then
             Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
             WorkerTodo = "info"
-            FastbootWorker = New BackgroundWorker()
-            FastbootWorker.WorkerSupportsCancellation = True
-            AddHandler FastbootWorker.DoWork, AddressOf Worker
-            AddHandler FastbootWorker.RunWorkerCompleted, AddressOf AllIsDone
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
         Else
@@ -336,112 +334,148 @@ Public Class FastbootUI
             RichLogs("Fastboot Is Running", Color.WhiteSmoke, False, True)
         End If
     End Sub
-    Private Sub Worker(sender As Object, e As DoWorkEventArgs)
-        Dim Connect = FastbootConnect()
+    Public Sub Worker(sender As Object, e As DoWorkEventArgs)
+        Dim Connect As Boolean = FastbootConnect(DirectCast(sender, BackgroundWorker), e)
         If Connect Then
             RichLogs("Device Connected! ", Color.Lime, False, True)
-            Delay(0.5)
+            Delay(0.5R)
+
             If WorkerTodo = "flash" Then
-                Dim product = Fastboot.Command("getvar:product").Payload
-                If product.Contains(LabelProductName.Text) Then
+                textbox.Clear()
+                textbox.Text = Consoles.Fastboot("getvar product", DirectCast(sender, BackgroundWorker), e).Replace("product: ", "")
+                Dim product As String = textbox.Lines(0)
+                If product.Contains(DevicesName) Then
                     totaldo = 0
-                    Using stringReader As StringReader = New StringReader(TodoCommand)
+                    Using stringReader As New StringReader(TodoCommand)
                         While stringReader.Peek() <> -1
-                            Dim str1 As String = stringReader.ReadLine()
-                            Dim command As String
-                            Dim partition As String
-                            Dim oem As String
-                            Dim filename As String
+                            Dim cmd As String = stringReader.ReadLine()
 
-                            If str1 <> String.Empty Then
+                            If Not String.IsNullOrEmpty(cmd) Then
+                                Dim arg As String() = cmd.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
 
-                                Console.WriteLine(str1)
+                                Console.WriteLine(cmd)
 
                                 totaldo += 1
+                                Delay(0.5R)
 
-                                Delay(1)
-
-                                Dim strArrays As String() = str1.Split(" ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
-
-                                If strArrays.Length = 1 Then
-                                    command = strArrays(0)
-                                    RichLogs(command & " ", Color.White, False, False)
-                                    RichLogs(Fastboot.Command(command).Status.ToString, Color.Lime, False, True)
+                                If cmd.Substring(0, 4).Contains("boot") Then
+                                    RichLogs("Booting >> " & Path.GetFileName(cmd.Replace("boot ", "").Replace("""", "")) & " ", Color.WhiteSmoke, False, False)
+                                ElseIf cmd.Substring(0, 5).Contains("erase") Then
+                                    RichLogs("Erasing  >> Partition " & arg(1) & " ", Color.WhiteSmoke, False, False)
+                                ElseIf cmd.Substring(0, 5).Contains("flash") Then
+                                    RichLogs("Flashing >> Partition " & arg(1) & " " & Path.GetFileName(cmd.Replace("flash ", "").Replace(arg(1), "").Replace("""", "")) & " ", Color.WhiteSmoke, False, False)
+                                ElseIf cmd.Substring(0, 3).Contains("oem") Then
+                                    RichLogs("OEM >> Command " & arg(1) & " ", Color.WhiteSmoke, False, False)
+                                ElseIf cmd.Substring(0, 6).Contains("reboot") Then
+                                    RichLogs("Rebooting >> Into System ", Color.WhiteSmoke, False, False)
+                                ElseIf cmd.Substring(0, 10).Contains("reboot-edl") Then
+                                    RichLogs("Rebooting >> Into Emergency Download Mode ", Color.WhiteSmoke, False, False)
                                 End If
 
-                                If strArrays.Length = 2 Then
-                                    command = strArrays(0)
-                                    If command = "erase" Then
-                                        partition = strArrays(1)
-                                        RichLogs(command & " " & partition & " ", Color.White, False, False)
-                                        RichLogs(Fastboot.Command(command & ":" & partition).Status.ToString, Color.Lime, False, True)
-                                    ElseIf command = "boot" Then
-                                        filename = strArrays(1)
-                                        If File.Exists(filename) Then
-                                            Fastboot.UploadData(New FileStream(filename, FileMode.Open))
-                                            RichLogs(Fastboot.Command(command).Status.ToString, Color.Lime, False, True)
-                                        Else
-                                            RichLogs("File Doesn't Exist", Color.Yellow, False, True)
-                                        End If
-                                    ElseIf command = "oem" Then
-                                        oem = strArrays(1)
-                                        RichLogs(Fastboot.Command(command & " " & oem).Status.ToString, Color.Lime, False, True)
-                                    End If
-                                End If
-
-                                If strArrays.Length = 3 Then
-                                    command = strArrays(0)
-                                    If command = "flash" Then
-                                        partition = strArrays(1)
-                                        filename = strArrays(2)
-                                        If File.Exists(filename) Then
-                                            RichLogs(command & " " & partition & " ", Color.White, False, False)
-                                            Fastboot.UploadData(New FileStream(filename, FileMode.Open))
-                                            RichLogs(Fastboot.Command(command & ":" & partition).Status.ToString, Color.Lime, False, True)
-                                        Else
-                                            RichLogs("File Doesn't Exist", Color.Yellow, False, True)
-                                        End If
-                                    ElseIf command = "erase" Then
-                                        partition = strArrays(1)
-                                        RichLogs(Fastboot.Command(command & ":" & partition).Status.ToString, Color.Lime, False, True)
-                                    ElseIf command = "boot" Then
-                                        filename = strArrays(2)
-                                        RichLogs(command & " ", Color.White, False, False)
-                                        If File.Exists(filename) Then
-                                            Fastboot.UploadData(New FileStream(filename, FileMode.Open))
-                                            RichLogs(Fastboot.Command(command).Status.ToString, Color.Lime, False, True)
-                                        Else
-                                            RichLogs("File Doesn't Exist", Color.Yellow, False, True)
-                                        End If
-                                    End If
-
+                                Dim exec As String = Consoles.Fastboot(cmd, DirectCast(sender, BackgroundWorker), e)
+                                If exec.ToLower().Contains("okay") OrElse exec.ToLower().Contains("finished") AndAlso Not exec.ToLower().Contains("failed") Then
+                                    RichLogs("[OK]", Color.Lime, False, True)
+                                Else
+                                    RichLogs("[Failed]", Color.Red, False, True)
                                 End If
                             End If
+
                             If FastbootWorker.CancellationPending Then
                                 Exit While
                             End If
-                            ProcessBar2(totaldo, totalchecked)
+
+                            ProcessBar2(Convert.ToInt64(totaldo), Convert.ToInt64(totalchecked))
+                        End While
+                    End Using
+                Else
+                    RichLogs("Error! Missmatching image" & vbCrLf & vbTab & "This for [ " & DevicesName & " ] " & "but target device is [ " & product & " ].", Color.Red, True, True)
+                End If
+            ElseIf WorkerTodo = "info" Then
+                RichLogs("Reading Device Info : ... ", Color.WhiteSmoke, False, False)
+
+                DataView.Invoke(New Action(Sub() DataView.Rows.Clear()))
+                Dim Result As String = Consoles.Fastboot("getvar all", DirectCast(sender, BackgroundWorker), e)
+                Dim BlockSize As String = ""
+                Dim Ends As String = ""
+                If Result.ToLower().Contains("okay") OrElse Result.ToLower().Contains("finished") AndAlso Not Result.ToLower().Contains("failed") Then
+                    RichLogs("[OK]", Color.Lime, False, True)
+                    Using stringReader As StringReader = New StringReader(Result)
+                        Dim partition As String = ""
+                        Dim partitionType As String = ""
+                        Dim partitionSize As String = ""
+
+                        While stringReader.Peek() <> -1
+                            Dim output As String = stringReader.ReadLine().Replace("(bootloader) ", "")
+
+                            If Not String.IsNullOrEmpty(output) Then
+                                If output.Contains("block-size: 0x200") OrElse output.Contains("block-size:0x200") OrElse output.Contains("block-size: 512") OrElse output.Contains("block-size:512") Then
+                                    BlockSize = 512
+                                ElseIf output.Contains("block-size: 0x1000") OrElse output.Contains("block-size:0x1000") OrElse output.Contains("block-size: 4096") OrElse output.Contains("block-size:4096") Then
+                                    BlockSize = 4096
+                                End If
+                                If output.Contains("partition") Then
+                                    Dim parts() As String = output.Split(":"c)
+                                    If parts.Length = 3 Then
+                                        If parts(2).Trim().Contains("0x") OrElse IsNumeric(parts(2).Trim()) Then
+                                            partition = parts(1).Trim()
+                                            If parts(2).Contains("0x") Then
+                                                Dim decimalValue As Long = Convert.ToInt64(parts(2).Trim, 16)
+                                                partitionSize = decimalValue
+                                            Else
+                                                partitionSize = parts(2).Trim()
+                                            End If
+                                        Else
+                                            partition = parts(1).Trim()
+                                            partitionType = parts(2).Trim().Replace(" data", "")
+                                        End If
+                                        If Not String.IsNullOrEmpty(partitionSize) Then
+                                            If IsNumeric(partitionSize) Then
+                                                RichLogs("partition: " & partition & " " & partitionType & " " & Bismillah.FIREHOSE.FIREHOSE_MANAGER.GetFileSize(partitionSize * BlockSize), Color.WhiteSmoke, False, True)
+                                            End If
+                                            DataView.Invoke(New Action(Sub() DataView.Rows.Add(False, "flash", partition, "double click...", "", "")))
+                                            partitionSize = ""
+                                        End If
+                                    End If
+                                Else
+                                    RichLogs(output, Color.WhiteSmoke, False, True)
+                                End If
+                            End If
                         End While
                     End Using
 
                 Else
-                    Console.WriteLine("From Device : " & Fastboot.Command("getvar:product").Payload & "From Image : " & LabelProductName.Text)
-                    RichLogs("Error! Missmatching image and device.", Color.Red, False, True)
+                    RichLogs("[Failed]", Color.Red, False, True)
                 End If
-
-
-            ElseIf WorkerTodo = "info" Then
-                ReadFastbootDeviceInfo()
-
             ElseIf WorkerTodo = "reboot" Then
-                RichLogs("Rebooting into Android... ", Color.White, False, False)
-                RichLogs(Fastboot.Command("reboot").Status.ToString, Color.Lime, False, True)
-
-            ElseIf WorkerTodo = "EDL" Then
-                RichLogs("Rebooting into EDL Mode... ", Color.White, False, False)
-                RichLogs(Fastboot.Command("reboot-edl").Status.ToString, Color.Lime, False, True)
-
+                RichLogs("Rebooting into Android : ... ", Color.WhiteSmoke, False, False)
+                Dim exec As String = Consoles.Fastboot("reboot", DirectCast(sender, BackgroundWorker), e)
+                If exec.ToLower().Contains("okay") OrElse exec.ToLower().Contains("finished") AndAlso Not exec.ToLower().Contains("failed") Then
+                    RichLogs("[OK]", Color.Lime, False, True)
+                Else
+                    RichLogs("[Failed]", Color.Red, False, True)
+                End If
+            ElseIf WorkerTodo = "EDLold" Then
+                RichLogs("Rebooting into EDL Mode : ... ", Color.WhiteSmoke, False, False)
+                Dim exec As String = Consoles.Fastboot("reboot-edl", DirectCast(sender, BackgroundWorker), e)
+                If exec.ToLower().Contains("okay") OrElse exec.ToLower().Contains("finished") AndAlso Not exec.ToLower().Contains("failed") Then
+                    RichLogs("[OK]", Color.Lime, False, True)
+                Else
+                    RichLogs("[Failed]", Color.Red, False, True)
+                End If
+            ElseIf WorkerTodo = "EDLnew" Then
+                RichLogs("Rebooting into EDL Mode : ... ", Color.WhiteSmoke, False, False)
+                Console.WriteLine("fastboot -s " & serial & " oem edl")
+                Dim exec As String = Consoles.Fastboot("-s " & serial & " oem edl", DirectCast(sender, BackgroundWorker), e)
+                If exec.ToLower().Contains("okay") OrElse exec.ToLower().Contains("finished") AndAlso Not exec.ToLower().Contains("failed") Then
+                    RichLogs("[OK]", Color.Lime, False, True)
+                Else
+                    RichLogs("[Failed]", Color.Red, False, True)
+                End If
             End If
+        Else
+            e.Cancel = True
+            FastbootWorker.CancelAsync()
+            Return
         End If
     End Sub
 

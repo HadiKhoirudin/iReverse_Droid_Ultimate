@@ -162,13 +162,16 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Utility\AdbDotNet\AdbTool.vb" />
+    <Compile Include="Utility\Consoles\Consoles.vb" />
     <Compile Include="Utility\CryptoOperation\CryptoOperation.vb" />
-    <Compile Include="Utility\Direct ISP\DirectISP.Designer.vb">
+    <Compile Include="Utility\DirectISP\DirectISP.Designer.vb">
       <DependentUpon>DirectISP.vb</DependentUpon>
     </Compile>
-    <Compile Include="Utility\Direct ISP\DirectISP.vb">
+    <Compile Include="Utility\DirectISP\DirectISP.vb">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Include="Utility\DirectISP\Eject.vb" />
+    <Compile Include="Utility\DirectISP\eMMCISP.vb" />
     <Compile Include="Utility\DownloadOperation\DownloadOperation.vb" />
     <Compile Include="Utility\HackShield\HackShield.vb" />
     <Compile Include="Utility\HexOperation\HexOperation.vb" />
@@ -186,6 +189,7 @@
     <Compile Include="Utility\AdbDotNet\AdbInvalidResponseException.vb" />
     <Compile Include="Utility\AdbDotNet\AdbSocket.vb" />
     <Compile Include="Utility\AdbDotNet\Tracer.vb" />
+    <Compile Include="Utility\My\clsDiskInfoEx.vb" />
     <Compile Include="Utility\My\Progress.vb" />
     <Compile Include="Utility\My\Radiobuttons.vb">
       <SubType>Component</SubType>
@@ -320,7 +324,7 @@
       <DependentUpon>Main.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Utility\Direct ISP\DirectISP.resx">
+    <EmbeddedResource Include="Utility\DirectISP\DirectISP.resx">
       <DependentUpon>DirectISP.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Utility\My\Settings\Settings.resx">
@@ -400,7 +404,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="iconireverse.ico" />
-    <None Include="Resources\dd.exe" />
+    <None Include="Utility\My\Resources\dd.exe" />
     <None Include="Utility\My\Resources\logospreadtrum.png" />
     <None Include="Utility\My\Resources\logochipspreadtrum.png" />
     <None Include="Utility\My\Resources\logoapple.png" />
@@ -454,6 +458,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Folder Include="Resources\" />
     <Folder Include="Spreadtrum\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />

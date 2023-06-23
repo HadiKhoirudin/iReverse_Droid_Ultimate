@@ -75,7 +75,22 @@ Namespace Bismillah.DISK
 
         Public Shared Function DiskRead(Optional delay As String = "0") As Byte()
             Try
-                Dim hu() As Byte = New Byte(1048576 - 1) {}
+                Dim hu() As Byte = New Byte(524288 - 1) {}
+                Dim z As Integer = New Integer
+
+                ReadFile(OpenWritePort, hu, hu.Length, z, IntPtr.Zero)
+
+                Return hu.Take(z).ToArray
+            Catch ex As Exception
+                Console.WriteLine(ex.ToString)
+                Return {}
+            End Try
+
+        End Function
+
+        Public Shared Function ReadDisk(v1 As Long, v2 As Integer) As Byte()
+            Try
+                Dim hu() As Byte = New Byte(v2 - 1) {}
                 Dim z As Integer = New Integer
 
                 ReadFile(OpenWritePort, hu, hu.Length, z, IntPtr.Zero)

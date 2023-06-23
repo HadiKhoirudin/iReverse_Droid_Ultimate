@@ -5,7 +5,7 @@ Partial Class FastbootUI
     Inherits DevExpress.XtraEditors.XtraUserControl
 
     'UserControl overrides dispose to clean up the component list.
-    <System.Diagnostics.DebuggerNonUserCode()> _
+    <System.Diagnostics.DebuggerNonUserCode()>
     Protected Overrides Sub Dispose(ByVal disposing As Boolean)
         If disposing AndAlso components IsNot Nothing Then
             components.Dispose()
@@ -56,7 +56,8 @@ Partial Class FastbootUI
         Me.TxtFlashRawXML = New Bunifu.Framework.UI.BunifuMaterialTextbox()
         Me.ButtonLoader = New System.Windows.Forms.Button()
         Me.ButtonFlash = New DevExpress.XtraEditors.SimpleButton()
-        Me.ButtonQc_eP = New DevExpress.XtraEditors.SimpleButton()
+        Me.ButtonRebootEDLnew = New DevExpress.XtraEditors.SimpleButton()
+        Me.ButtonRebootEDLold = New DevExpress.XtraEditors.SimpleButton()
         Me.xtraTabPage2 = New DevExpress.XtraTab.XtraTabPage()
         Me.Punif = New DevExpress.XtraEditors.PanelControl()
         Me.PanelControl2 = New DevExpress.XtraEditors.PanelControl()
@@ -90,6 +91,7 @@ Partial Class FastbootUI
         Me.Column5 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column8 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.LabelProductName = New System.Windows.Forms.Label()
+        Me.FastbootWorker = New System.ComponentModel.BackgroundWorker()
         CType(Me.XtraFlash, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XtraFlash.SuspendLayout()
         CType(Me.MainTab, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -157,7 +159,8 @@ Partial Class FastbootUI
         Me.panelControl1.Controls.Add(Me.ButtonReadInfo)
         Me.panelControl1.Controls.Add(Me.panelControl7)
         Me.panelControl1.Controls.Add(Me.ButtonFlash)
-        Me.panelControl1.Controls.Add(Me.ButtonQc_eP)
+        Me.panelControl1.Controls.Add(Me.ButtonRebootEDLnew)
+        Me.panelControl1.Controls.Add(Me.ButtonRebootEDLold)
         Me.panelControl1.Dock = System.Windows.Forms.DockStyle.Fill
         Me.panelControl1.Location = New System.Drawing.Point(0, 0)
         Me.panelControl1.Name = "panelControl1"
@@ -178,19 +181,19 @@ Partial Class FastbootUI
         Me.ButtonRebootSYS.AppearanceHovered.Options.UseImage = True
         Me.ButtonRebootSYS.ImageOptions.Image = CType(resources.GetObject("ButtonRebootSYS.ImageOptions.Image"), System.Drawing.Image)
         Me.ButtonRebootSYS.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
-        Me.ButtonRebootSYS.Location = New System.Drawing.Point(371, 43)
+        Me.ButtonRebootSYS.Location = New System.Drawing.Point(395, 43)
         Me.ButtonRebootSYS.LookAndFeel.UseDefaultLookAndFeel = False
         Me.ButtonRebootSYS.Name = "ButtonRebootSYS"
         Me.ButtonRebootSYS.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
         Me.ButtonRebootSYS.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonRebootSYS.Size = New System.Drawing.Size(114, 28)
+        Me.ButtonRebootSYS.Size = New System.Drawing.Size(129, 28)
         Me.ButtonRebootSYS.TabIndex = 36
         Me.ButtonRebootSYS.Text = "REBOOT SYSTEM"
         '
         'PanelDownload
         '
         Me.PanelDownload.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PanelDownload.Controls.Add(Me.CacheBoxAutoFormatData)
         Me.PanelDownload.Controls.Add(Me.CekSetBootQC)
         Me.PanelDownload.Controls.Add(Me.CekAutoRebootQc)
@@ -262,19 +265,19 @@ Partial Class FastbootUI
         Me.ButtonReadInfo.AppearanceHovered.Options.UseImage = True
         Me.ButtonReadInfo.ImageOptions.Image = CType(resources.GetObject("ButtonReadInfo.ImageOptions.Image"), System.Drawing.Image)
         Me.ButtonReadInfo.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
-        Me.ButtonReadInfo.Location = New System.Drawing.Point(60, 43)
+        Me.ButtonReadInfo.Location = New System.Drawing.Point(9, 43)
         Me.ButtonReadInfo.LookAndFeel.UseDefaultLookAndFeel = False
         Me.ButtonReadInfo.Name = "ButtonReadInfo"
         Me.ButtonReadInfo.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
         Me.ButtonReadInfo.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonReadInfo.Size = New System.Drawing.Size(83, 28)
+        Me.ButtonReadInfo.Size = New System.Drawing.Size(94, 28)
         Me.ButtonReadInfo.TabIndex = 28
         Me.ButtonReadInfo.Text = "READ INFO"
         '
         'panelControl7
         '
         Me.panelControl7.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.panelControl7.Controls.Add(Me.LabelControl1)
         Me.panelControl7.Controls.Add(Me.ButtonBrowse)
         Me.panelControl7.Controls.Add(Me.CheckBoxServer)
@@ -482,35 +485,56 @@ Partial Class FastbootUI
         Me.ButtonFlash.AppearanceHovered.Options.UseImage = True
         Me.ButtonFlash.ImageOptions.Image = CType(resources.GetObject("ButtonFlash.ImageOptions.Image"), System.Drawing.Image)
         Me.ButtonFlash.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
-        Me.ButtonFlash.Location = New System.Drawing.Point(491, 43)
+        Me.ButtonFlash.Location = New System.Drawing.Point(530, 43)
         Me.ButtonFlash.LookAndFeel.UseDefaultLookAndFeel = False
         Me.ButtonFlash.Name = "ButtonFlash"
         Me.ButtonFlash.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
         Me.ButtonFlash.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonFlash.Size = New System.Drawing.Size(68, 28)
+        Me.ButtonFlash.Size = New System.Drawing.Size(94, 28)
         Me.ButtonFlash.TabIndex = 28
         Me.ButtonFlash.Text = "FLASH"
         '
-        'ButtonQc_eP
+        'ButtonRebootEDLnew
         '
-        Me.ButtonQc_eP.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.ButtonQc_eP.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ButtonQc_eP.Appearance.Options.UseBackColor = True
-        Me.ButtonQc_eP.Appearance.Options.UseTextOptions = True
-        Me.ButtonQc_eP.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
-        Me.ButtonQc_eP.AppearanceHovered.Font = New System.Drawing.Font("Tahoma", 9.0!)
-        Me.ButtonQc_eP.AppearanceHovered.Options.UseFont = True
-        Me.ButtonQc_eP.AppearanceHovered.Options.UseImage = True
-        Me.ButtonQc_eP.ImageOptions.Image = Global.Reverse_Tool.My.Resources.Resources.Format22
-        Me.ButtonQc_eP.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
-        Me.ButtonQc_eP.Location = New System.Drawing.Point(149, 43)
-        Me.ButtonQc_eP.LookAndFeel.UseDefaultLookAndFeel = False
-        Me.ButtonQc_eP.Name = "ButtonQc_eP"
-        Me.ButtonQc_eP.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
-        Me.ButtonQc_eP.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonQc_eP.Size = New System.Drawing.Size(118, 28)
-        Me.ButtonQc_eP.TabIndex = 28
-        Me.ButtonQc_eP.Text = "REBOOT EDL"
+        Me.ButtonRebootEDLnew.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ButtonRebootEDLnew.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.ButtonRebootEDLnew.Appearance.Options.UseBackColor = True
+        Me.ButtonRebootEDLnew.Appearance.Options.UseTextOptions = True
+        Me.ButtonRebootEDLnew.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+        Me.ButtonRebootEDLnew.AppearanceHovered.Font = New System.Drawing.Font("Tahoma", 9.0!)
+        Me.ButtonRebootEDLnew.AppearanceHovered.Options.UseFont = True
+        Me.ButtonRebootEDLnew.AppearanceHovered.Options.UseImage = True
+        Me.ButtonRebootEDLnew.ImageOptions.Image = Global.Reverse_Tool.My.Resources.Resources.Format22
+        Me.ButtonRebootEDLnew.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
+        Me.ButtonRebootEDLnew.Location = New System.Drawing.Point(260, 43)
+        Me.ButtonRebootEDLnew.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.ButtonRebootEDLnew.Name = "ButtonRebootEDLnew"
+        Me.ButtonRebootEDLnew.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
+        Me.ButtonRebootEDLnew.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
+        Me.ButtonRebootEDLnew.Size = New System.Drawing.Size(129, 28)
+        Me.ButtonRebootEDLnew.TabIndex = 28
+        Me.ButtonRebootEDLnew.Text = "REBOOT EDL [NEW]"
+        '
+        'ButtonRebootEDLold
+        '
+        Me.ButtonRebootEDLold.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ButtonRebootEDLold.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.ButtonRebootEDLold.Appearance.Options.UseBackColor = True
+        Me.ButtonRebootEDLold.Appearance.Options.UseTextOptions = True
+        Me.ButtonRebootEDLold.Appearance.TextOptions.HAlignment = DevExpress.Utils.HorzAlignment.Near
+        Me.ButtonRebootEDLold.AppearanceHovered.Font = New System.Drawing.Font("Tahoma", 9.0!)
+        Me.ButtonRebootEDLold.AppearanceHovered.Options.UseFont = True
+        Me.ButtonRebootEDLold.AppearanceHovered.Options.UseImage = True
+        Me.ButtonRebootEDLold.ImageOptions.Image = Global.Reverse_Tool.My.Resources.Resources.Format22
+        Me.ButtonRebootEDLold.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
+        Me.ButtonRebootEDLold.Location = New System.Drawing.Point(113, 43)
+        Me.ButtonRebootEDLold.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.ButtonRebootEDLold.Name = "ButtonRebootEDLold"
+        Me.ButtonRebootEDLold.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
+        Me.ButtonRebootEDLold.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
+        Me.ButtonRebootEDLold.Size = New System.Drawing.Size(129, 28)
+        Me.ButtonRebootEDLold.TabIndex = 28
+        Me.ButtonRebootEDLold.Text = "REBOOT EDL [OLD]"
         '
         'xtraTabPage2
         '
@@ -549,7 +573,7 @@ Partial Class FastbootUI
         'PanelControl2
         '
         Me.PanelControl2.Anchor = CType(((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Left) _
-        Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+            Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
         Me.PanelControl2.Controls.Add(Me.CacheBox1)
         Me.PanelControl2.Controls.Add(Me.CacheBox2)
         Me.PanelControl2.Controls.Add(Me.CacheBox3)
@@ -731,7 +755,7 @@ Partial Class FastbootUI
         Me.BtnSAM_FRP_Oem.AppearanceHovered.Font = New System.Drawing.Font("Bahnschrift SemiLight SemiConde", 8.75!)
         Me.BtnSAM_FRP_Oem.AppearanceHovered.Options.UseFont = True
         Me.BtnSAM_FRP_Oem.AppearanceHovered.Options.UseImage = True
-        Me.BtnSAM_FRP_Oem.ImageOptions.Image = Global.Reverse_Tool.My.Resources.Resources.ButtonFormatUser_ImageOptions_Image
+        Me.BtnSAM_FRP_Oem.ImageOptions.Image = CType(resources.GetObject("BtnSAM_FRP_Oem.ImageOptions.Image"), System.Drawing.Image)
         Me.BtnSAM_FRP_Oem.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
         Me.BtnSAM_FRP_Oem.Location = New System.Drawing.Point(473, 75)
         Me.BtnSAM_FRP_Oem.LookAndFeel.UseDefaultLookAndFeel = False
@@ -1076,6 +1100,11 @@ Partial Class FastbootUI
         Me.LabelProductName.Size = New System.Drawing.Size(0, 13)
         Me.LabelProductName.TabIndex = 41
         '
+        'FastbootWorker
+        '
+        Me.FastbootWorker.WorkerReportsProgress = True
+        Me.FastbootWorker.WorkerSupportsCancellation = True
+        '
         'FastbootUI
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -1134,7 +1163,7 @@ Partial Class FastbootUI
     Public WithEvents TxtFlashLoader As Bunifu.Framework.UI.BunifuMaterialTextbox
     Public WithEvents TxtFlashRawXML As Bunifu.Framework.UI.BunifuMaterialTextbox
     Private WithEvents ButtonFlash As SimpleButton
-    Private WithEvents ButtonQc_eP As SimpleButton
+    Private WithEvents ButtonRebootEDLold As SimpleButton
     Private WithEvents xtraTabPage2 As DevExpress.XtraTab.XtraTabPage
     Private WithEvents Punif As PanelControl
     Private WithEvents ButtonMiReset As SimpleButton
@@ -1162,6 +1191,6 @@ Partial Class FastbootUI
     Private WithEvents SimpleButton2 As SimpleButton
 
 
-    Public WithEvents FastbootWorker As New BackgroundWorker
-
+    Private WithEvents ButtonRebootEDLnew As SimpleButton
+    Public WithEvents FastbootWorker As BackgroundWorker
 End Class

@@ -1375,7 +1375,7 @@ Namespace Bismillah.FIREHOSE
             FlushFileBuffers(OpenWritePort)
             Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(NumSect * SectSize), Action))
             Dim imgfile As String = ""
-            Dim dataBytes(16384) As Byte
+            Dim dataBytes(1024) As Byte
             Dim stream As Stream = New MemoryStream(dataBytes)
             If MenuEx = MenuEksekusi.manual Then
                 If Not File.Exists(Filename) Then
@@ -1461,7 +1461,7 @@ Namespace Bismillah.FIREHOSE
                                     su += 1
                                     Dim PartitionName As String = Filename
                                     Dim completed As Boolean = False
-                                    Dim PacketSize As Integer = 1048576
+                                    Dim PacketSize As Integer = 524288 '1048576
                                     Dim NumSec As Long = sectorsizeCunk / SectSize
                                     Dim bytesWritten As Long = 0
                                     Dim ii As Integer = 0
@@ -1577,7 +1577,7 @@ Namespace Bismillah.FIREHOSE
 
                 End If
 
-                Dim PacketSize As Integer = 1048576
+                Dim PacketSize As Integer = 524288 '1048576
 
                 Dim RealsectorSizeToBeWrite As Long = bulat(besarFile / SectorSize)
                 Dim RealBesarNyaFile = RealsectorSizeToBeWrite * SectorSize
@@ -1958,7 +1958,7 @@ Namespace Bismillah.FIREHOSE
 
             Dim totalhapus As Integer = 1048576
             Dim bytesec As Long = 0
-            Dim PacketSize As Integer = 1048576
+            Dim PacketSize As Integer = 524288
             If numPartSect * SectSize >= totalhapus Then
                 bytesec = totalhapus / SectSize
             Else

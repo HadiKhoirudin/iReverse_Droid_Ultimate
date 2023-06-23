@@ -51,6 +51,7 @@ Public Class Main
 
     Public Sub New()
         AddHandler Load, AddressOf LoadMenu
+        AddHandler Load, AddressOf Main_Shown
         server = "http://localhost/iReverseWebsite/datatool/"
         Ports = New SerialPort()
         InitializeComponent()
@@ -96,6 +97,8 @@ Public Class Main
         OFPExtractor.OPFWorkerQC.WorkerReportsProgress = True
         AddHandler OFPExtractor.OPFWorkerQC.DoWork, AddressOf OFPExtractor.BruteKeyQcom
         AddHandler OFPExtractor.OPFWorkerQC.RunWorkerCompleted, AddressOf OFPExtractor.AllDone
+
+
     End Sub
 
 
@@ -454,7 +457,7 @@ Public Class Main
         If MainSelectedChip = "Mediatek" Then
             If MtkFlash.SharedUI.SharedUI.BgwFlashfirmware.IsBusy OrElse MtkUnlock.SharedUI.SharedUI.BgwUnlocked.IsBusy Then
                 RichLogs(" ", Color.Red, True, True)
-                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
+                RichLogs("Button STOP clicked process will end! ", Color.Yellow, True, False)
                 Mediatek.Mediatek_tool.MediatekInt.PathEditor = 0
                 MtkFlash.SharedUI.SharedUI.BgwFlashfirmware.CancelAsync()
                 MtkUnlock.SharedUI.SharedUI.BgwUnlocked.CancelAsync()
@@ -463,13 +466,13 @@ Public Class Main
         Else
             If FirehoseWorker.IsBusy Then
                 RichLogs(" ", Color.Red, True, True)
-                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
+                RichLogs("Button STOP clicked process will end! ", Color.Yellow, True, False)
                 FirehoseWorker.CancelAsync()
                 FirehoseWorker.Dispose()
             End If
             If OFPExtractor.OPFWorkerQC.IsBusy Then
                 RichLogs(" ", Color.Red, True, True)
-                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
+                RichLogs("Button STOP clicked process will end! ", Color.Yellow, True, False)
                 OFPExtractor.OPFWorkerQC.CancelAsync()
                 OFPExtractor.OPFWorkerQC.Dispose()
             End If
@@ -478,10 +481,10 @@ Public Class Main
             End If
             If FastbootUI.SharedUI.FastbootWorker.IsBusy Then
                 RichLogs(" ", Color.Red, True, True)
-                RichLogs("Button STOP clicked process will end ", Color.Red, True, False)
-                Counter = 1
+                RichLogs("Button STOP clicked process will end! ", Color.Yellow, True, False)
                 FastbootUI.SharedUI.FastbootWorker.CancelAsync()
                 FastbootUI.SharedUI.FastbootWorker.Dispose()
+                KillCommand.ProcessKill()
             End If
         End If
     End Sub
