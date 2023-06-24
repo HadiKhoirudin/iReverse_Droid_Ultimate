@@ -6,6 +6,7 @@ Imports System.Drawing
 Imports System.IO
 Imports System.IO.Ports
 Imports System.Net
+Imports System.Runtime.InteropServices
 Imports System.Threading
 Imports System.Windows.Forms
 Imports DevExpress.XtraEditors
@@ -111,6 +112,27 @@ Public Class Main
         SectorSize = "512"
     End Sub
 
+    <DllImport("kernel32.dll", CharSet:=CharSet.Auto, SetLastError:=True)>
+    Public Shared Function SetThreadExecutionState(ByVal esFlags As EXECUTION_STATE) As EXECUTION_STATE
+    End Function
+
+    ' Constants for EXECUTION_STATE
+    Public Enum EXECUTION_STATE As UInteger
+        ES_SYSTEM_REQUIRED = &H1
+        ES_DISPLAY_REQUIRED = &H2
+        ES_CONTINUOUS = &H80000000UI
+    End Enum
+
+    ' Method to prevent Windows from entering sleep mode
+    Public Shared Sub PreventSleep()
+        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS Or EXECUTION_STATE.ES_SYSTEM_REQUIRED Or EXECUTION_STATE.ES_DISPLAY_REQUIRED)
+    End Sub
+
+    ' Method to allow Windows to enter sleep mode
+    Public Shared Sub AllowSleep()
+        SetThreadExecutionState(EXECUTION_STATE.ES_CONTINUOUS)
+    End Sub
+
     Private Sub XtraMain_Load(sender As Object, e As EventArgs) Handles MyBase.Load
         RichLogs("<+++++++++++++++++++  iREVERSE DROID ULTIMATE  ++++++++++++++++++++>", Color.White, True, True)
         RichLogs("► Software       : ", Color.White, True, False)
@@ -125,6 +147,32 @@ Public Class Main
         RichLogs("► Websites       : https://hadikhoirudin.github.io/ireverse", Color.White, True, True)
         RichLogs("  ==================================================================", Color.White, True, True)
         RichLogs("", Color.White, True, True)
+        PreventSleep() ' Call this method when your program starts to prevent sleep mode
+    End Sub
+
+    Private Sub XtraMain_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        AllowSleep() ' Call this method when your program is closing to allow sleep mode
+        KillCommand.ProcessKill()
+        Thread.Sleep(100)
+
+        If Directory.Exists(Path.GetDirectoryName(Mediatek.Authentication.Pythonfile.DElet)) Then
+        End If
+
+        Thread.Sleep(100)
+
+        If Directory.Exists(Path.GetDirectoryName(Mediatek.Mediatek_tool.Extraxpath.FolderFont)) Then
+            ClearDirectory.DeleteDirrectory(Path.GetDirectoryName(Mediatek.Mediatek_tool.Extraxpath.FolderFont))
+        End If
+
+        Thread.Sleep(100)
+
+        If Directory.Exists(Path.GetDirectoryName(Mediatek.Mediatek_tool.Flashpath.Flashtoolexe)) Then
+        End If
+
+        Thread.Sleep(100)
+
+        SystemIsExit = True
+        Windows.Forms.Application.[Exit]()
     End Sub
 
     Public Sub LoadMenu(sender As Object, e As EventArgs)
@@ -198,30 +246,6 @@ Public Class Main
             }
         Next
     End Sub
-    Private Sub DXFORM_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
-        KillCommand.ProcessKill()
-        Thread.Sleep(100)
-
-        If Directory.Exists(Path.GetDirectoryName(Mediatek.Authentication.Pythonfile.DElet)) Then
-        End If
-
-        Thread.Sleep(100)
-
-        If Directory.Exists(Path.GetDirectoryName(Mediatek.Mediatek_tool.Extraxpath.FolderFont)) Then
-            ClearDirectory.DeleteDirrectory(Path.GetDirectoryName(Mediatek.Mediatek_tool.Extraxpath.FolderFont))
-        End If
-
-        Thread.Sleep(100)
-
-        If Directory.Exists(Path.GetDirectoryName(Mediatek.Mediatek_tool.Flashpath.Flashtoolexe)) Then
-        End If
-
-        Thread.Sleep(100)
-
-        SystemIsExit = True
-        Windows.Forms.Application.[Exit]()
-    End Sub
-
     Private Sub MenuOneClick(merk As String)
         ReDim loader(-1)
         ReDim OutDecripted(-1)
@@ -935,10 +959,25 @@ Public Class Main
 
     Public Sub labelControlADBIdent_Click(sender As Object, e As EventArgs) Handles labelControlADBIdent.Click
         RichTextBox.Clear()
-        LabelTimer.Visible = True
-        RichLogs("Reading Device Info : ... ", Color.White, False, True)
+        If comboUSB.Text.Contains("PHYSICALDRIVE") Then
+            RichLogs("Operation  : ", Color.White, True, False)
+            RichLogs("IDENTIFY", Color.Orange, True, True)
+            RichLogs(" Connect   : ", Color.White, True, False)
+            RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+            RichLogs(" Disk      : ", Color.White, True, False)
+            RichLogs(comboUSB.Text, Color.DeepSkyBlue, True, True)
+            RichLogs(" ", Color.DeepSkyBlue, True, True)
+            RichLogs(" ", Color.DeepSkyBlue, True, True)
+            Delay(3)
+
+            Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.Identity)
+            thread.Start()
+
+        End If
+        'LabelTimer.Visible = True
+        'RichLogs("Reading Device Info : ... ", Color.White, False, True)
         'RichLogs(Fastboot.Command("getvar:all").Payload, Color.White, False, True)
-        AdbDotNet.RunWorkerAsync()
+        'AdbDotNet.RunWorkerAsync()
     End Sub
 
     Private Sub AdbDotNet_DoWork(sender As Object, e As DoWorkEventArgs) Handles AdbDotNet.DoWork

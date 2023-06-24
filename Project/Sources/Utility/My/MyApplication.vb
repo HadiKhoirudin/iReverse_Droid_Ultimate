@@ -13,13 +13,13 @@ Friend Class MyApplication
         End Sub
 
 
-        <STAThread()>
-        Friend Shared Sub Main(args As String())
-            Application.Run(args)
+    <STAThread()>
+    Friend Shared Sub Main(args As String())
+        checkerdump()
+        Application.Run(args)
         End Sub
 
     Protected Overrides Sub OnCreateMainForm()
-        checkerdump()
         MainForm = Forms.Login
     End Sub
 End Class

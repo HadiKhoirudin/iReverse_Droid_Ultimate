@@ -1,10 +1,8 @@
 ﻿Imports System
 Imports System.Runtime.InteropServices
-Imports System.IO
-Imports System.Windows.Forms
 Imports System.Threading
 
-Public Class Eject
+Public Class EjectUSB
     <DllImport("kernel32.dll", SetLastError:=True, CharSet:=CharSet.Auto)>
     Private Shared Function CreateFile(ByVal lpFileName As String, ByVal dwDesiredAccess As Integer, ByVal dwShareMode As Integer, ByVal SecurityAttributes As IntPtr, ByVal dwCreationDisposition As Integer, ByVal dwFlagsAndAttributes As Integer, ByVal hTemplateFile As IntPtr) As IntPtr
     End Function
@@ -42,7 +40,7 @@ Public Class Eject
             result = True
         End If
 
-        'CloseHandle(handle)
+        CloseHandle(handle)
         Return result
     End Function
 
@@ -52,7 +50,7 @@ Public Class Eject
         For i As Integer = 0 To 10 - 1
 
             If DeviceIoControl(handle, FSCTL_LOCK_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, byteReturned, IntPtr.Zero) Then
-                System.Windows.Forms.MessageBox.Show("Lock success!")
+                Console.WriteLine("Lock success!")
                 Return True
             Else
                 Console.WriteLine("Lock failed! " & i)
@@ -75,9 +73,9 @@ Public Class Eject
         Dim byteReturned As Integer
         Dim flag As Boolean = DeviceIoControl(handle, FSCTL_DISMOUNT_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, byteReturned, IntPtr.Zero)
         If flag Then
-            System.Windows.Forms.MessageBox.Show("Dismount success!")
+            Console.WriteLine("Dismount success!")
         Else
-            System.Windows.Forms.MessageBox.Show("Dismount failed!")
+            Console.WriteLine("Dismount failed!")
         End If
         Return flag
     End Function

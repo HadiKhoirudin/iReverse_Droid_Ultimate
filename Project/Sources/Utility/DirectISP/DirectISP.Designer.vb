@@ -275,7 +275,6 @@ Partial Class DirectISP
         Me.ComboBox1.Properties.Appearance.Options.UseForeColor = True
         Me.ComboBox1.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
         Me.ComboBox1.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.UltraFlat
-        Me.ComboBox1.Properties.Items.AddRange(New Object() {"Qualcomm", "Mediatek", "Spreadtrum"})
         Me.ComboBox1.Properties.LookAndFeel.SkinName = "DevExpress Dark Style"
         Me.ComboBox1.Properties.LookAndFeel.UseDefaultLookAndFeel = False
         Me.ComboBox1.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor

@@ -71,7 +71,7 @@ Public Class DirectISP
                                     RichTextBox2.AppendText(Environment.NewLine)
                                 End Sub)
         Else
-            RichTextBox2.SelectionStart = Main.SharedUI.RichTextBox.Text.Length
+            RichTextBox2.SelectionStart = RichTextBox2.Text.Length
             RichTextBox2.AppendText(msg)
             RichTextBox2.AppendText(Environment.NewLine)
         End If
@@ -228,6 +228,7 @@ Public Class DirectISP
     Private Sub ButtonRefresh_Click(sender As Object, e As EventArgs) Handles ButtonRefresh.Click
         eMMCISP.Watch.Start()
         Logs1Clear()
+        Logs2Clear()
         DGV_C()
         RichLogs("Operation  : ", Color.White, True, False)
         RichLogs("REFRESH DISK", Color.Orange, True, True)
@@ -269,7 +270,7 @@ Public Class DirectISP
         }
         If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
             Logs1Clear()
-            RichTextBox2.Clear()
+            Logs2Clear()
             eMMCISP.ListView1.Clear()
             eMMCISP.ListView2.Clear()
             eMMCISP.ListView1.Items.Clear()
@@ -298,7 +299,8 @@ Public Class DirectISP
         }
         If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
             Logs1Clear()
-            RichTextBox2.Clear()
+            Logs2Clear()
+            Logs2Clear()
             eMMCISP.ListView1.Clear()
             eMMCISP.ListView2.Clear()
             eMMCISP.ListView1.Items.Clear()
@@ -337,7 +339,7 @@ Public Class DirectISP
             RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
             RichLogs(" ", Color.DeepSkyBlue, True, True)
             RichLogs(" ", Color.DeepSkyBlue, True, True)
-            RichTextBox2.Clear()
+            Logs2Clear()
             eMMCISP.ListView1.Clear()
             eMMCISP.ListView2.Clear()
             eMMCISP.ListView1.Items.Clear()
@@ -371,7 +373,7 @@ Public Class DirectISP
             Else
                 eMMCISP.cekerror = False
                 Logs1Clear()
-                RichTextBox2.Clear()
+                Logs2Clear()
                 eMMCISP.ListView1.Clear()
                 eMMCISP.ListView2.Clear()
                 eMMCISP.ListView1.Items.Clear()
@@ -408,6 +410,7 @@ Public Class DirectISP
                             ' 3 size bytes
                             ' 4 offset
                             ' 5 location
+
                             eMMCISP.Totaltodo += 1
                             eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
                             Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & item.Cells(5).Value & " ")
@@ -439,7 +442,7 @@ Public Class DirectISP
                 eMMCISP.asu = ""
                 eMMCISP.cekerror = False
                 Logs1Clear()
-                RichTextBox2.Clear()
+                Logs2Clear()
                 eMMCISP.ListView1.Clear()
                 eMMCISP.ListView2.Clear()
                 eMMCISP.ListView1.Items.Clear()
@@ -460,6 +463,7 @@ Public Class DirectISP
                 RichLogs(" ", Color.DeepSkyBlue, True, True)
                 Delay(3)
 
+                Dim location As String = ""
                 For Each item As DataGridViewRow In DataView.Rows
 
                     If item.Cells(0).Value = True Then
@@ -469,9 +473,14 @@ Public Class DirectISP
                         ' 3 size bytes
                         ' 4 offset
                         ' 5 location
+                        If String.IsNullOrEmpty(item.Cells(5).Value) Then
+                            location = "none"
+                        Else
+                            location = item.Cells(5).Value
+                        End If
                         eMMCISP.Totaltodo += 1
-                        eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
-                        Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & item.Cells(5).Value & " ")
+                        eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", location & Environment.NewLine & "")
+                        Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & location & " ")
 
                     End If
                 Next
@@ -503,7 +512,7 @@ Public Class DirectISP
                 eMMCISP.asu = ""
                 eMMCISP.cekerror = False
                 Logs1Clear()
-                RichTextBox2.Clear()
+                Logs2Clear()
                 eMMCISP.ListView1.Clear()
                 eMMCISP.ListView2.Clear()
                 eMMCISP.ListView1.Items.Clear()
@@ -561,7 +570,7 @@ Public Class DirectISP
                 }
             If (folderBrowserDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
                 Logs1Clear()
-                RichTextBox2.Clear()
+                Logs2Clear()
                 eMMCISP.folderdersave = folderBrowserDialog.SelectedPath
                 Dim rootFolder As Environment.SpecialFolder = folderBrowserDialog.RootFolder
 
@@ -590,7 +599,7 @@ Public Class DirectISP
                 XtraMessageBox.Show("Please select dump file", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
             Else
                 Logs1Clear()
-                RichTextBox2.Clear()
+                Logs2Clear()
                 eMMCISP.m = "f"
 
                 RichLogs("Operation  : ", Color.White, True, False)
