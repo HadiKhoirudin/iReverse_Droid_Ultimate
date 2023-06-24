@@ -7,6 +7,7 @@ Imports System.Runtime.CompilerServices
 Imports System.Security.Cryptography
 Imports System.Text
 Imports System.Windows.Forms
+Imports DevExpress.XtraEditors
 Imports Microsoft.VisualBasic.CompilerServices
 
 Public Class Login
@@ -117,23 +118,28 @@ Public Class Login
             streamWriter1.WriteLine(String.Concat("password:", password))
             streamWriter1.Close()
         End If
-        dataToSend("username") = BunifuMaterialTextboxUsername.Text
-        dataToSend("password") = BunifuMaterialTextboxPassword.Text
 
-        Dim GetData As String = Encoding.UTF8.GetString(wc.UploadValues("http://localhost/iReverseWebsite/api/mtklogin.php", dataToSend))
+        Try
+            dataToSend("username") = BunifuMaterialTextboxUsername.Text
+            dataToSend("password") = BunifuMaterialTextboxPassword.Text
 
-        If GetData = "noconn" Then
-            MessageBox.Show("Pastikan Komputer Terhubung Ke Internet!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
-        ElseIf GetData = "nodata" Then
-            MessageBox.Show("Username/Password Tidak Boleh Kosong!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
-        ElseIf GetData = "Expired" Then
-            MessageBox.Show("Akun Anda Telah Expired!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
-        ElseIf GetData = "Register" Then
-            MessageBox.Show("Akun Anda Belum Terdaftar!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
-        ElseIf GetData = "True" Then
-            My.Forms.Main.Show()
-            Me.Hide()
-        End If
+            Dim GetData As String = Encoding.UTF8.GetString(wc.UploadValues("http://localhost/iReverseWebsite/api/mtklogin.php", dataToSend))
+
+            If GetData = "noconn" Then
+                MessageBox.Show("Pastikan Komputer Terhubung Ke Internet!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+            ElseIf GetData = "nodata" Then
+                MessageBox.Show("Username/Password Tidak Boleh Kosong!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+            ElseIf GetData = "Expired" Then
+                MessageBox.Show("Akun Anda Telah Expired!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+            ElseIf GetData = "Register" Then
+                MessageBox.Show("Akun Anda Belum Terdaftar!", "Error", MessageBoxButtons.OK, MessageBoxIcon.[Error])
+            ElseIf GetData = "True" Then
+                My.Forms.Main.Show()
+                Me.Hide()
+            End If
+        Catch ex As Exception
+            XtraMessageBox.Show(ex.ToString(), "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+        End Try
 
     End Sub
     Private Sub loginbutton_Click(sender As Object, e As EventArgs) Handles loginbutton.Click

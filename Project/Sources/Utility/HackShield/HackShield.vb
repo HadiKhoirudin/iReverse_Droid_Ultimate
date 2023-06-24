@@ -69,7 +69,6 @@ Module HackShield
             "fiddler",
             "httpanalyzer",
             "httpdebug",
-            "hxd",
             "ida",
             "ida64",
             "idag",
