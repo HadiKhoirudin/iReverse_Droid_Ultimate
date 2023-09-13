@@ -151,19 +151,32 @@
     <AppDesigner Include="My Project\" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Android_Unlock\Qualcomm\EDL.vb" />
+    <Compile Include="Android_Unlock\Qualcomm\EFS.vb" />
+    <Compile Include="Android_Unlock\Qualcomm\MTP.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
+    <Compile Include="My\MyResolver.vb" />
     <Compile Include="Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Android_Unlock\Unlock.Designer.vb">
+      <DependentUpon>Unlock.vb</DependentUpon>
+    </Compile>
+    <Compile Include="Android_Unlock\Unlock.vb">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Android_Unlock\ListDevice.vb" />
     <Compile Include="Utility\AdbDotNet\AdbTool.vb" />
+    <Compile Include="Utility\Android\Android.vb" />
     <Compile Include="Utility\Consoles\Consoles.vb" />
     <Compile Include="Utility\CryptoOperation\CryptoOperation.vb" />
+    <Compile Include="Utility\DirectISP\CRC32.vb" />
     <Compile Include="Utility\DirectISP\DirectISP.Designer.vb">
       <DependentUpon>DirectISP.vb</DependentUpon>
     </Compile>
@@ -171,11 +184,11 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utility\DirectISP\Eject.vb" />
-    <Compile Include="Utility\DirectISP\eMMCISP.vb" />
+    <Compile Include="Utility\DirectISP\EMMCISP.vb" />
     <Compile Include="Utility\DownloadOperation\DownloadOperation.vb" />
     <Compile Include="Utility\HackShield\HackShield.vb" />
     <Compile Include="Utility\HexOperation\HexOperation.vb" />
-    <Compile Include="Utility\My\CacheBox.vb">
+    <Compile Include="My\CacheBox.vb">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Utility\AdbDotNet\AdbAppInfo.vb" />
@@ -189,17 +202,17 @@
     <Compile Include="Utility\AdbDotNet\AdbInvalidResponseException.vb" />
     <Compile Include="Utility\AdbDotNet\AdbSocket.vb" />
     <Compile Include="Utility\AdbDotNet\Tracer.vb" />
-    <Compile Include="Utility\My\clsDiskInfoEx.vb" />
-    <Compile Include="Utility\My\Progress.vb" />
-    <Compile Include="Utility\My\Radiobuttons.vb">
+    <Compile Include="My\clsDiskInfoEx.vb" />
+    <Compile Include="My\Progress.vb" />
+    <Compile Include="My\Radiobuttons.vb">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Utility\My\ClearDirectory.vb" />
-    <Compile Include="Utility\My\KillCommand.vb" />
-    <Compile Include="Qualcomm\loadxml.Designer.vb">
+    <Compile Include="My\ClearDirectory.vb" />
+    <Compile Include="My\KillCommand.vb" />
+    <Compile Include="Android_Qualcomm\loadxml.Designer.vb">
       <DependentUpon>loadxml.vb</DependentUpon>
     </Compile>
-    <Compile Include="Qualcomm\loadxml.vb">
+    <Compile Include="Android_Qualcomm\loadxml.vb">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Login.Designer.vb">
@@ -208,79 +221,79 @@
     <Compile Include="Login.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Mediatek\Authentication\Spdlpath.vb" />
-    <Compile Include="Mediatek\Authentication\Pythonfile.vb" />
-    <Compile Include="Mediatek\Authentication\Python.vb" />
-    <Compile Include="Mediatek\Disksize\SizeSize.vb" />
-    <Compile Include="Mediatek\Mediatek_list\Addresformat.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\Ext4.vb" />
-    <Compile Include="Mediatek\Mediatek_list\ListPath.vb" />
-    <Compile Include="Mediatek\Mediatek_list\ListDevice.vb" />
-    <Compile Include="Mediatek\Mediatek_list\Datarows.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\Android.vb" />
-    <Compile Include="Mediatek\Metamode\Meta.vb" />
-    <Compile Include="Qualcomm\Qualcomm_list\Datarows.vb" />
-    <Compile Include="Qualcomm\Qualcomm_list\ListDevice.vb" />
-    <Compile Include="Qualcomm\Qualcomm_list\Modellist.vb" />
-    <Compile Include="Qualcomm\Qualcomm_tool\FIREHOSE.vb" />
-    <Compile Include="Qualcomm\Qualcomm_tool\FIREHOSE_MANAGER.vb" />
-    <Compile Include="Qualcomm\Qualcomm_tool\SAHARA.vb" />
-    <Compile Include="Qualcomm\Qualcomm_tool\SAHARA_MANAGER.vb" />
-    <Compile Include="Utility\My\RichLog.vb" />
-    <Compile Include="Utility\My\clsComputerInfo.vb" />
-    <Compile Include="Qualcomm\Qualcomm_tool\DiskWriter.vb" />
-    <Compile Include="Mediatek\Mediatek_list\Listport.vb" />
-    <Compile Include="Mediatek\Mediatek_list\Modellist.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\Flash_Tool.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\Mtkxml.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\MediatekInt.vb" />
-    <Compile Include="Mediatek\Mediatek_tool\Flashpath.vb" />
-    <Compile Include="Mediatek\MtkFlash.Designer.vb">
+    <Compile Include="Android_Mediatek\Authentication\Spdlpath.vb" />
+    <Compile Include="Android_Mediatek\Authentication\Pythonfile.vb" />
+    <Compile Include="Android_Mediatek\Authentication\Python.vb" />
+    <Compile Include="Android_Mediatek\Disksize\SizeSize.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\Addresformat.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\Ext4.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\ListPath.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\ListDevice.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\Datarows.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\Android.vb" />
+    <Compile Include="Android_Mediatek\Metamode\Meta.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_list\Datarows.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_list\ListDevice.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_list\Modellist.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_tool\FIREHOSE.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_tool\FIREHOSE_MANAGER.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_tool\SAHARA.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_tool\SAHARA_MANAGER.vb" />
+    <Compile Include="My\RichLog.vb" />
+    <Compile Include="My\clsComputerInfo.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_tool\DiskWriter.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\Listport.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_list\Modellist.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\Flash_Tool.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\Mtkxml.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\MediatekInt.vb" />
+    <Compile Include="Android_Mediatek\Mediatek_tool\Flashpath.vb" />
+    <Compile Include="Android_Mediatek\MtkFlash.Designer.vb">
       <DependentUpon>MtkFlash.vb</DependentUpon>
     </Compile>
-    <Compile Include="Mediatek\MtkFlash.vb">
+    <Compile Include="Android_Mediatek\MtkFlash.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Mediatek\MtkUnlock.Designer.vb">
+    <Compile Include="Android_Mediatek\MtkUnlock.Designer.vb">
       <DependentUpon>MtkUnlock.vb</DependentUpon>
     </Compile>
-    <Compile Include="Mediatek\MtkUnlock.vb">
+    <Compile Include="Android_Mediatek\MtkUnlock.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="My Project\AssemblyInfo.vb" />
-    <Compile Include="Utility\My\MyApplication.vb" />
-    <Compile Include="Utility\My\MyComputer.vb" />
-    <Compile Include="Utility\My\MyProject.vb" />
-    <Compile Include="Utility\My\MySettings.Designer.vb">
+    <Compile Include="My\MyApplication.vb" />
+    <Compile Include="My\MyComputer.vb" />
+    <Compile Include="My\MyProject.vb" />
+    <Compile Include="My\MySettings.Designer.vb">
       <DependentUpon>MySettings.settings</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Utility\My\MySettingsProperty.vb" />
-    <Compile Include="Utility\My\Resources\Resources.vb" />
-    <Compile Include="Qualcomm\QcFlash.Designer.vb">
+    <Compile Include="My\MySettingsProperty.vb" />
+    <Compile Include="My\MyResources.vb" />
+    <Compile Include="Android_Qualcomm\QcFlash.Designer.vb">
       <DependentUpon>QcFlash.vb</DependentUpon>
     </Compile>
-    <Compile Include="Qualcomm\QcFlash.vb">
+    <Compile Include="Android_Qualcomm\QcFlash.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Qualcomm\QcUnlock.Designer.vb">
+    <Compile Include="Android_Qualcomm\QcUnlock.Designer.vb">
       <DependentUpon>QcUnlock.vb</DependentUpon>
     </Compile>
-    <Compile Include="Qualcomm\QcUnlock.vb">
+    <Compile Include="Android_Qualcomm\QcUnlock.vb">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Qualcomm\Qualcomm_list\QcListport.vb" />
+    <Compile Include="Android_Qualcomm\Qualcomm_list\QcListport.vb" />
     <Compile Include="Main.Designer.vb">
       <DependentUpon>Main.vb</DependentUpon>
     </Compile>
     <Compile Include="Main.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Utility\My\Settings\Settings.Designer.vb">
+    <Compile Include="Settings\Settings.Designer.vb">
       <DependentUpon>Settings.vb</DependentUpon>
     </Compile>
-    <Compile Include="Utility\My\Settings\Settings.vb">
+    <Compile Include="Settings\Settings.vb">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Utility\OFPExtractor\OFPExtractor.vb" />
@@ -294,24 +307,24 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Qualcomm\loadxml.resx">
+    <EmbeddedResource Include="Android_Qualcomm\loadxml.resx">
       <DependentUpon>loadxml.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Login.resx">
       <DependentUpon>Login.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Mediatek\MtkFlash.resx">
+    <EmbeddedResource Include="Android_Mediatek\MtkFlash.resx">
       <DependentUpon>MtkFlash.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Mediatek\MtkUnlock.resx">
+    <EmbeddedResource Include="Android_Mediatek\MtkUnlock.resx">
       <DependentUpon>MtkUnlock.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="My Project\licenses.licx" />
-    <EmbeddedResource Include="Qualcomm\QcFlash.resx">
+    <EmbeddedResource Include="Android_Qualcomm\QcFlash.resx">
       <DependentUpon>QcFlash.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Qualcomm\QcUnlock.resx">
+    <EmbeddedResource Include="Android_Qualcomm\QcUnlock.resx">
       <DependentUpon>QcUnlock.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources.resx">
@@ -324,10 +337,13 @@
       <DependentUpon>Main.vb</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="Android_Unlock\Unlock.resx">
+      <DependentUpon>Unlock.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Utility\DirectISP\DirectISP.resx">
       <DependentUpon>DirectISP.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Utility\My\Settings\Settings.resx">
+    <EmbeddedResource Include="Settings\Settings.resx">
       <DependentUpon>Settings.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Utility\PotatoFastboot\FastbootUI.resx">
@@ -340,110 +356,136 @@
     </None>
     <None Include="App.config" />
     <None Include="app.manifest" />
-    <None Include="Utility\My\MySettings.settings">
+    <None Include="ClassDiagram1.cd" />
+    <None Include="My\MySettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>MySettings.Designer.vb</LastGenOutput>
     </None>
     <None Include="packages.config" />
-    <None Include="Utility\My\Resources\safeformat_ufs" />
-    <None Include="Utility\My\Resources\safeformat_emmc" />
-    <None Include="Utility\My\Resources\skip" />
+    <None Include="Resources\amd64_libusb0_sys.sys" />
+    <None Include="Resources\amd64_libusbK_sys.sys" />
+    <None Include="Resources\cat_SAMSUNG_Android.cat" />
+    <None Include="Resources\safeformat_ufs" />
+    <None Include="Resources\safeformat_emmc" />
+    <None Include="Resources\skip" />
+    <None Include="Resources\x86_libusb0_sys.sys" />
+    <None Include="Resources\x86_libusbk_sys.sys" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Utility\My\Resources\Android-icon.png" />
-    <None Include="Utility\My\Resources\logoireverse.png" />
-    <None Include="Utility\My\Resources\logochipqualcomm.png" />
-    <None Include="Utility\My\Resources\logochipmediatek.png" />
-    <None Include="Utility\My\Resources\logohuawei.png" />
-    <None Include="Utility\My\Resources\logoinfinix.png" />
-    <None Include="Utility\My\Resources\logomediatek.png" />
-    <None Include="Utility\My\Resources\logomeizu.png" />
-    <None Include="Utility\My\Resources\logomi.png" />
-    <None Include="Utility\My\Resources\logonokia.png" />
-    <None Include="Utility\My\Resources\logooppo.png" />
-    <None Include="Utility\My\Resources\logoqualcomm.png" />
-    <None Include="Utility\My\Resources\logosamsung.png" />
-    <None Include="Utility\My\Resources\logovivo.png" />
-    <None Include="Utility\My\Resources\logorealme.png" />
-    <None Include="Utility\My\Resources\logoasus.png" />
-    <None Include="Utility\My\Resources\logoasus1.jpg" />
-    <None Include="Utility\My\Resources\logorealme.jpg" />
-    <None Include="Utility\My\Resources\logoinfinix.jpg" />
-    <None Include="Utility\My\Resources\logohuawei.jpg" />
-    <None Include="Utility\My\Resources\logosamsung.jpg" />
-    <None Include="Utility\My\Resources\logonokia.jpg" />
-    <None Include="Utility\My\Resources\logoasus.jpg" />
-    <None Include="Utility\My\Resources\logomeizu.jpg" />
-    <None Include="Utility\My\Resources\logooppo.jpg" />
-    <None Include="Utility\My\Resources\logovivo.jpg" />
-    <None Include="Utility\My\Resources\logomi.jpg" />
-    <None Include="Utility\My\Resources\logomediatek.jpg" />
-    <None Include="Utility\My\Resources\logoqualcomm.jpg" />
-    <None Include="Utility\My\Resources\logoLG.jpg" />
-    <None Include="Utility\My\Resources\logo_fix2.png" />
-    <None Include="Utility\My\Resources\Stop30.png" />
-    <None Include="Utility\My\Resources\Stop_30.png" />
-    <None Include="Utility\My\Resources\Save22px.png" />
-    <None Include="Utility\My\Resources\Save22.png" />
-    <None Include="Utility\My\Resources\Safe22px.png" />
-    <None Include="Utility\My\Resources\Safe22.png" />
-    <None Include="Utility\My\Resources\Readinfo22.png" />
-    <None Include="Utility\My\Resources\OpenLock.png" />
-    <None Include="Utility\My\Resources\miremof.png" />
-    <None Include="Utility\My\Resources\MiCloud22.png" />
-    <None Include="Utility\My\Resources\Format22.png" />
-    <None Include="Utility\My\Resources\Factory.png" />
-    <None Include="Utility\My\Resources\Erasefrp.png" />
-    <None Include="Utility\My\Resources\Erase22.png" />
-    <None Include="Utility\My\Resources\cyber.png" />
-    <None Include="Utility\My\Resources\Spdata.txt" />
-    <None Include="Utility\My\Resources\process.txt" />
-    <None Include="Utility\My\Resources\logs1.txt" />
-    <None Include="Utility\My\Resources\logs.txt" />
-    <None Include="Utility\My\Resources\C4.exe" />
+    <None Include="Resources\Android-icon.png" />
+    <None Include="Resources\logoireverse.png" />
+    <None Include="Resources\logochipqualcomm.png" />
+    <None Include="Resources\logochipmediatek.png" />
+    <None Include="Resources\logohuawei.png" />
+    <None Include="Resources\logoinfinix.png" />
+    <None Include="Resources\logomediatek.png" />
+    <None Include="Resources\logomeizu.png" />
+    <None Include="Resources\logomi.png" />
+    <None Include="Resources\logonokia.png" />
+    <None Include="Resources\logooppo.png" />
+    <None Include="Resources\logoqualcomm.png" />
+    <None Include="Resources\logosamsung.png" />
+    <None Include="Resources\logovivo.png" />
+    <None Include="Resources\logorealme.png" />
+    <None Include="Resources\logoasus.png" />
+    <None Include="Resources\logoasus1.jpg" />
+    <None Include="Resources\logorealme.jpg" />
+    <None Include="Resources\logoinfinix.jpg" />
+    <None Include="Resources\logohuawei.jpg" />
+    <None Include="Resources\logosamsung.jpg" />
+    <None Include="Resources\logonokia.jpg" />
+    <None Include="Resources\logoasus.jpg" />
+    <None Include="Resources\logomeizu.jpg" />
+    <None Include="Resources\logooppo.jpg" />
+    <None Include="Resources\logovivo.jpg" />
+    <None Include="Resources\logomi.jpg" />
+    <None Include="Resources\logomediatek.jpg" />
+    <None Include="Resources\logoqualcomm.jpg" />
+    <None Include="Resources\logoLG.jpg" />
+    <None Include="Resources\logo_fix2.png" />
+    <None Include="Resources\Stop30.png" />
+    <None Include="Resources\Stop_30.png" />
+    <None Include="Resources\Save22px.png" />
+    <None Include="Resources\Save22.png" />
+    <None Include="Resources\Safe22px.png" />
+    <None Include="Resources\Safe22.png" />
+    <None Include="Resources\Readinfo22.png" />
+    <None Include="Resources\OpenLock.png" />
+    <None Include="Resources\miremof.png" />
+    <None Include="Resources\MiCloud22.png" />
+    <None Include="Resources\Format22.png" />
+    <None Include="Resources\Factory.png" />
+    <None Include="Resources\Erasefrp.png" />
+    <None Include="Resources\Erase22.png" />
+    <None Include="Resources\cyber.png" />
+    <None Include="Resources\Spdata.txt" />
+    <None Include="Resources\process.txt" />
+    <None Include="Resources\logs1.txt" />
+    <None Include="Resources\logs.txt" />
+    <None Include="Resources\C4.exe" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="iconireverse.ico" />
-    <None Include="Utility\My\Resources\dd.exe" />
-    <None Include="Utility\My\Resources\logospreadtrum.png" />
-    <None Include="Utility\My\Resources\logochipspreadtrum.png" />
-    <None Include="Utility\My\Resources\logoapple.png" />
+    <None Include="Resources\x86_winusbcoinstaller2.dll" />
+    <None Include="Resources\x86_wdfcoinstaller01009.dll" />
+    <None Include="Resources\x86_libusbk.dll" />
+    <None Include="Resources\x86_libusb0_x86.dll" />
+    <None Include="Resources\x86_libusb0.dll" />
+    <None Include="Resources\SAMSUNG_Android.inf" />
+    <None Include="Resources\linux-adk.exe" />
+    <None Include="Resources\install_x86.exe" />
+    <None Include="Resources\install_x64.exe" />
+    <None Include="Resources\cygwin1.dll" />
+    <None Include="Resources\cygusb-1.0.dll" />
+    <None Include="Resources\cyggcc_s-1.dll" />
+    <None Include="Resources\amd64_winusbcoinstaller2.dll" />
+    <None Include="Resources\amd64_WdfCoInstaller01009.dll" />
+    <None Include="Resources\amd64_libusbK_x86.dll" />
+    <None Include="Resources\amd64_libusbK.dll" />
+    <None Include="Resources\amd64_libusb-1.0_x86.dll" />
+    <None Include="Resources\amd64_libusb0_x86.dll" />
+    <None Include="Resources\amd64_libusb0.dll" />
+    <None Include="Resources\adk-libusb-1.0.dll" />
+    <None Include="Resources\dd.exe" />
+    <None Include="Resources\logospreadtrum.png" />
+    <None Include="Resources\logochipspreadtrum.png" />
+    <None Include="Resources\logoapple.png" />
     <None Include="My Project\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-    <None Include="Utility\My\Resources\labelControl1.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\labelControlRefresh.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\SimpleButtonReboot.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonWrNvram.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonUniNvBackup.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonUBL.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonRPMBwrite.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonRpmbErase.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonRelockUBL.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonRebbot.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonReadInfo.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonReadGPT.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonRDrpmb.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonQc_ReadP.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonQc_Idnt.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonQc_eP.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonNvErase.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonMiReset.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonMiDisable.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonLoader.Image.png" />
-    <None Include="Utility\My\Resources\ButtonGptWrite.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonFRP_SAM.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonFormatUser.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonFlashQc.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonEraseGPT.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonEMI.Image.png" />
-    <None Include="Utility\My\Resources\ButtonAuth.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\ButtonAllFRP.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\BtnSAM_FRP_Oem.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\BtnGPTread.ImageOptions.Image.png" />
-    <None Include="Utility\My\Resources\Btn_RawXML.Image.png" />
-    <None Include="Utility\My\Resources\Btn_PatchXML.Image.png" />
+    <None Include="Resources\labelControl1.ImageOptions.Image.png" />
+    <None Include="Resources\labelControlRefresh.ImageOptions.Image.png" />
+    <None Include="Resources\SimpleButtonReboot.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonWrNvram.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonUniNvBackup.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonUBL.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonRPMBwrite.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonRpmbErase.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonRelockUBL.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonRebbot.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonReadInfo.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonReadGPT.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonRDrpmb.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonQc_ReadP.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonQc_Idnt.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonQc_eP.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonNvErase.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonMiReset.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonMiDisable.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonLoader.Image.png" />
+    <None Include="Resources\ButtonGptWrite.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonFRP_SAM.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonFormatUser.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonFlashQc.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonEraseGPT.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonEMI.Image.png" />
+    <None Include="Resources\ButtonAuth.ImageOptions.Image.png" />
+    <None Include="Resources\ButtonAllFRP.ImageOptions.Image.png" />
+    <None Include="Resources\BtnSAM_FRP_Oem.ImageOptions.Image.png" />
+    <None Include="Resources\BtnGPTread.ImageOptions.Image.png" />
+    <None Include="Resources\Btn_RawXML.Image.png" />
+    <None Include="Resources\Btn_PatchXML.Image.png" />
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.7.2">
@@ -458,8 +500,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Resources\" />
-    <Folder Include="Spreadtrum\" />
+    <Folder Include="Android_Unisoc\" />
+    <Folder Include="Android_Unlock\Mediatek\" />
+    <Folder Include="Android_Unlock\Spreadtrum\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
 </Project>

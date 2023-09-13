@@ -23,8 +23,8 @@ Public Class Login
     Public Shared password As String
     Private ReadOnly server As String
     Public Shared Property TimeBinding As String
-    Private wc As WebClient = New WebClient()
-    Private dataToSend As NameValueCollection = New NameValueCollection()
+    Private wc As New WebClient()
+    Private dataToSend As New NameValueCollection()
 
     Public Sub New()
         AddHandler Load, AddressOf Main_Load
@@ -79,18 +79,18 @@ Public Class Login
             inputString = RuntimeHelpers.GetObjectValue(objArray1(0))
         End If
         Dim numArray As Byte() = sHA512.ComputeHash(DirectCast(obj, Byte()))
-        Dim stringBuilder As StringBuilder = New StringBuilder()
+        Dim stringBuilder As New StringBuilder()
         Dim length As Integer = numArray.Length - 1
         Dim num As Integer = 0
         Do
             stringBuilder.Append(numArray(num).ToString("X2"))
-            num = num + 1
+            num += 1
         Loop While num <= length
         Return stringBuilder.ToString()
     End Function
 
     Public Shared Function Get_HWID() As String
-        Dim _clsComputerInfo As ClsComputerInfo = New ClsComputerInfo()
+        Dim _clsComputerInfo As New ClsComputerInfo()
         Dim processorId As String = _clsComputerInfo.GetProcessorId()
         Dim motherBoardID As String = _clsComputerInfo.GetMotherBoardID()
         _clsComputerInfo.GetMACAddress()

@@ -29,13 +29,13 @@ Public Class HexOperation
         Loop
     End Function
     Public Shared Function ByteArraySearch(SearchIn() As Byte, SearchFor() As Byte) As Integer
-        Dim SearchInIndex As Integer = 0
         Dim SearchForIndex As Integer = 0
         Dim FoundIndex As Integer = -1
         If SearchFor Is Nothing Then Return FoundIndex
         If SearchFor.Length = 0 Then Return FoundIndex
         If SearchIn Is Nothing Then Return FoundIndex
         If SearchIn.Length = 0 Then Return FoundIndex
+        Dim SearchInIndex As Integer
         For SearchInIndex = 0 To SearchIn.Length - 1
             If SearchIn(SearchInIndex).Equals(SearchFor(SearchForIndex)) Then
                 If SearchForIndex = 0 Then

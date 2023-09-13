@@ -15,10 +15,12 @@ Imports System.Threading
 Imports System.Windows.Forms
 Imports System.Xml
 Imports System.Runtime.CompilerServices
+Imports Reverse_Tool.Android
+Imports Reverse_Tool.Sourcefile
 Imports Reverse_Tool.Bismillah.FIREHOSE.FIREHOSE_MANAGER
 Imports Reverse_Tool.EjectUSB
 
-Public Class eMMCISP
+Public Class EMMCISP
 
 #Region "Deklarasi"
     Public Shared asu As String = ""
@@ -59,7 +61,7 @@ Public Class eMMCISP
     Public Shared iu As String = "  is_upgradable: "
     Public Shared ebn As String = "  empty_boot_needed: "
     Public Shared re As String = "  reserve: "
-    Public Shared da As String = String.Concat(FileSystem.CurDir(), "\spft\MTK_AllInOne_DA.bin")
+    Public Shared da As String = String.Concat(CurDir(), "\spft\MTK_AllInOne_DA.bin")
     Public Shared foldersave As String = ""
     Public Shared gen As String = "- general: MTK_PLATFORM_CFG"
     Public Shared info As String = "  info: "
@@ -101,6 +103,7 @@ Public Class eMMCISP
 
     Public Shared num8 As Double = 0
 
+    Public Shared SelectedCommand As String = ""
     Public Shared TodoCommand As String = ""
     Public Shared Totaltodo As Integer = 0
 
@@ -112,7 +115,7 @@ Public Class eMMCISP
     Public Shared ListBox6 As ListBox
     Public Shared ListBox7 As ListBox
 
-    Public Shared Property lvi As ListViewItem
+    Public Shared Property Lvi As ListViewItem
     Public Shared Property ListView1 As New ListView
     Public Shared Property ListView2 As New ListView
     Public Shared proc As Process
@@ -124,66 +127,78 @@ Public Class eMMCISP
     Public Shared prosesnya As Object
     Public Shared allprosess As Object
 
-
-    Public Shared Watch As Stopwatch = New Stopwatch()
+    Public Shared Watch As New Stopwatch()
 
 #End Region
-    Public Shared Sub Refresh_Disk()
+
+    Public Shared Sub Refresh_Disk(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         Dim enumerator As ManagementObjectCollection.ManagementObjectEnumerator = Nothing
         asu = ""
         drivename = ""
-        Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Properties.Items.Clear(), Action))
+        Main.SharedUI.comboUSB.Invoke(Sub()
+                                          If Main.SharedUI.comboUSB.Properties.Items.Count > 0 Then
+                                              Main.SharedUI.comboUSB.Properties.Items.Clear()
+                                              Main.SharedUI.comboUSB.Text = ""
+                                          End If
+                                      End Sub)
+
         Dim flag As Boolean = False
-        Using managementObjectSearcher As System.Management.ManagementObjectSearcher = New System.Management.ManagementObjectSearcher(New WqlObjectQuery("SELECT * FROM Win32_DiskDrive"))
+        Dim flagdisk As Boolean = False
+        Using managementObjectSearcher As New System.Management.ManagementObjectSearcher(New WqlObjectQuery("SELECT * FROM Win32_DiskDrive"))
             enumerator = managementObjectSearcher.[Get]().GetEnumerator()
             While enumerator.MoveNext()
                 Dim current As ManagementObject = DirectCast(enumerator.Current, ManagementObject)
-                If Conversions.ToBoolean(If(Not Conversions.ToBoolean(Operators.CompareObjectGreater(current("MediaType"), Nothing, False)), False, current("MediaType").ToString().Contains("Removable"))) Then
-                    str = "eTHR eMMC Interface Black Edition" 'current("Model").ToString()
-                    uks = current("size").ToString()
-                    str2 = current("DeviceID").ToString().Replace("\\.\", "")
-                    str3 = String.Concat("MediaType:	", current("MediaType").ToString())
-                    drivename = str2
-                    RichLogs(" Found     : ", Color.White, True, False)
-                    RichLogs(String.Concat(str2, " [ ", str, " ] "), Color.DeepSkyBlue, True, True)
-                    Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Properties.Items.Add(String.Concat(str2, " [ ", str, " ] ")), Action))
-                    Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.SelectedItem = String.Concat(str2, " [ ", str, " ] "), Action))
-                    flag = True
+
+                If Conversions.ToBoolean(Conversions.ToBoolean(Operators.CompareObjectGreater(current("MediaType"), Nothing, False)) AndAlso current("MediaType").ToString().Contains("Removable")) Then
+
+                    flagdisk = True
+                    If Conversions.ToBoolean(Conversions.ToBoolean(Operators.CompareObjectGreater(current("MediaType"), Nothing, False)) AndAlso current("MediaType").ToString().Contains("Removable")) Then
+                        str = "eTHR eMMC Red Edition" 'current("Model").ToString()
+                        uks = current("size").ToString()
+                        str2 = current("DeviceID").ToString().Replace("\\.\", "")
+                        str3 = String.Concat("MediaType:	", current("MediaType").ToString())
+                        drivename = str2
+                        RichLogs(" Found     : ", Color.White, True, False)
+                        RichLogs(String.Concat(str2, " [ ", str, " ] "), Color.DeepSkyBlue, True, True)
+                        Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Properties.Items.Add(String.Concat(str2, " [ ", str, " ] ")), Action))
+                        Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.SelectedItem = String.Concat(str2, " [ ", str, " ] "), Action))
+                        flag = True
+                    End If
                 End If
             End While
         End Using
         If flag Then
-            ComboboxDisk_Selected()
+            ComboboxDisk_Selected(e)
         Else
-            Main.SharedUI.comboUSB.Invoke(CType(Sub() Main.SharedUI.comboUSB.Properties.Items.Clear(), Action))
+            If flagdisk Then
+                RichLogs(" Error !   : ", Color.Crimson, True, False)
+                RichLogs("Disk Detected", Color.Crimson, True, True)
+                RichLogs("             But EIP-Tool or eTHR or MFE Interface Doesn't Found... ", Color.Crimson, True, True)
+                RichLogs("             Get It From -> https://www.smart-connects.com ", Color.WhiteSmoke, True, True)
+            Else
+                RichLogs(" Error !   : ", Color.Crimson, True, False)
+                RichLogs("Disk Doesn't Detected.", Color.Crimson, True, True)
+                RichLogs("             Please Check Direct ISP Pinout Connection And Try Again... ", Color.Crimson, True, True)
+            End If
         End If
     End Sub
 
-    Public Shared Sub ComboboxDisk_Selected()
-        Dim enumerator As ManagementObjectCollection.ManagementObjectEnumerator = Nothing
+    Public Shared Sub ComboboxDisk_Selected(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
+        Dim USBSelected As String = ""
+        Main.SharedUI.comboUSB.Invoke(CType(Sub() USBSelected = Main.SharedUI.comboUSB.Text, Action))
+        selecteddisk = USBSelected.Replace("[ " & str & " ]", "").Replace("PHYSICALDRIVE", "").Replace(" ", "")
         Dim managementObjectEnumerator As ManagementObjectCollection.ManagementObjectEnumerator = Nothing
-        Dim objectValue As Object = RuntimeHelpers.GetObjectValue(Main.SharedUI.comboUSB.SelectedItem)
-        objectValue = RuntimeHelpers.GetObjectValue(NewLateBinding.LateGet(objectValue, Nothing, "replace", New Object() {String.Concat("[ ", str, " ]"), ""}, Nothing, Nothing, Nothing))
-        selecteddisk = Conversions.ToString(NewLateBinding.LateGet(objectValue, Nothing, "Replace", New Object() {"PHYSICALDRIVE", ""}, Nothing, Nothing, Nothing))
-        selecteddisk = selecteddisk.Replace(" ", "")
-        Console.WriteLine("Selected disk : " & selecteddisk)
-        Dim wqlObjectQuery As System.Management.WqlObjectQuery = New System.Management.WqlObjectQuery(String.Concat("SELECT * FROM Win32_DiskDrive WHERE DeviceID = ""\\\\.\\PHYSICALDRIVE", selecteddisk, """"))
-        Using managementObjectSearcher As System.Management.ManagementObjectSearcher = New System.Management.ManagementObjectSearcher(wqlObjectQuery)
-            enumerator = managementObjectSearcher.[Get]().GetEnumerator()
-            While enumerator.MoveNext()
-                Dim current As System.Management.ManagementObject = DirectCast(enumerator.Current, System.Management.ManagementObject)
-                If Conversions.ToBoolean(If(Not Conversions.ToBoolean(Operators.CompareObjectGreater(current("MediaType"), Nothing, False)), False, current("MediaType").ToString().Contains("Removable"))) Then
-                    str = current("Model").ToString()
-                    uks = current("size").ToString()
-                    str2 = current("DeviceID").ToString().Replace("\\.\", "")
-                    str3 = String.Concat("MediaType:  	", current("MediaType").ToString())
-                    drivename = str2
-                End If
-            End While
-        End Using
         ListBox1.Items.Clear()
-        Dim wqlObjectQuery1 As System.Management.WqlObjectQuery = New System.Management.WqlObjectQuery(String.Concat("SELECT * FROM Win32_Diskpartition Where Diskindex = '", selecteddisk, "'"))
-        Dim managementObjectSearcher1 As System.Management.ManagementObjectSearcher = New System.Management.ManagementObjectSearcher(wqlObjectQuery1)
+        Dim wqlObjectQuery1 As New System.Management.WqlObjectQuery(String.Concat("SELECT * FROM Win32_Diskpartition Where Diskindex = '", selecteddisk, "'"))
+        Dim managementObjectSearcher1 As New System.Management.ManagementObjectSearcher(wqlObjectQuery1)
         Using managementObjectSearcher1
             Dim num As Integer = 0
             managementObjectEnumerator = managementObjectSearcher1.[Get]().GetEnumerator()
@@ -200,41 +215,17 @@ Public Class eMMCISP
             RichLogs(" ", Color.Red, True, True)
             RichLogs(" ", Color.Red, True, True)
             RichLogs("Error!", Color.Red, True, True)
-            RichLogs(" eMMC has no partition or blank or encrypted partition label", Color.Yellow, True, True)
-            RichLogs(" Trying Make a New RAW partition....", Color.Yellow, True, False)
-
-            ' Get the drive using WMI
-            Dim drive As New ManagementObject($"Win32_DiskDrive.DeviceID='\\\\.\\PHYSICALDRIVE{selecteddisk}'")
-
-            ' Get the associated partitions of the drive
-            Dim partitions As New ManagementObjectSearcher($"ASSOCIATORS OF {{Win32_DiskDrive.DeviceID='\\\\.\\PHYSICALDRIVE{selecteddisk}'}} WHERE AssocClass = Win32_DiskDriveToDiskPartition")
-
-            ' Loop through the partitions
-            For Each partition As ManagementObject In partitions.Get()
-                ' Get the associated logical disks of the partition
-                Dim logicalDisks As New ManagementObjectSearcher($"ASSOCIATORS OF {{Win32_DiskPartition.DeviceID='{partition("DeviceID")}'}} WHERE AssocClass = Win32_LogicalDiskToPartition")
-
-                ' Loop through the logical disks
-                For Each logicalDisk As ManagementObject In logicalDisks.Get()
-                    ' Check if the logical disk is already formatted
-                    If CStr(logicalDisk("FileSystem")) <> "RAW" Then
-                        ' Format the logical disk to RAW filesystem
-                        logicalDisk.InvokeMethod("Format", New Object() {"NTFS", True, 0, 0, "RAW"})
-                        Console.WriteLine($"Converted {logicalDisk("DeviceID")} to RAW filesystem.")
-                    End If
-                Next
-            Next
-
-            RichLogs("Done  ✓", Color.Yellow, True, True)
-            Delay(1)
-            ComboboxDisk_Selected()
+            RichLogs(" eMMC has no partition or blank or encrypted partition label", Color.FromArgb(97, 197, 84), True, True)
+            RichLogs(" Please Write PrimaryGPT or Write Dump File...", Color.FromArgb(97, 197, 84), True, True)
+            RichLogs(" ", Color.Red, True, True)
+            secc = 1048576
         End If
-        Eject(USBEject(selecteddisk))
-        AllDone()
     End Sub
-    Public Shared Sub Scan_Partition()
-        'Button8.Enabled = False
-        'Button7.Enabled = False
+    Public Shared Sub Scan_Partition(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         asu = ""
         m = "readgpt"
         ListView1.Clear()
@@ -246,34 +237,42 @@ Public Class eMMCISP
         ListBox3.Items.Clear()
         Dim num As Long = secc
         ListBox3.Items.Clear()
-        If Equals(Main.SharedUI.comboUSB.Text, "") Then
-            Interaction.MsgBox("Please select disk", MsgBoxStyle.OkOnly, Nothing)
+
+        Dim strusb As String = ""
+        Main.SharedUI.comboUSB.Invoke(CType(Sub() strusb = Main.SharedUI.comboUSB.Text, Action))
+        If (Equals(strusb, "")) Then
+            MsgBox("Please select disk", MsgBoxStyle.OkOnly, Nothing)
         Else
-            DirectISP.SharedUI.Logs1("reading GPT...")
+            DirectISP.SharedUI.Logs1("Reading PrimaryGPT & Create Auto Backup ...")
             Try
                 Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
                 Try
                     If File.Exists("Tools\process\file\readgpt.bin") Then
                         File.Delete("Tools\process\file\readgpt.bin")
                     End If
-                    Dim fileStream As System.IO.FileStream = New System.IO.FileStream("Tools\process\file\readgpt.bin", FileMode.Append, FileAccess.Write)
+
+                    Dim fileStream As New System.IO.FileStream("Tools\process\file\readgpt.bin", FileMode.Append, FileAccess.Write)
                     Try
                         Using fileStream
                             Dim numArray As Byte() = emmc.ReadSector(CLng(0), CInt(num), _streamer)
                             fileStream.Write(numArray, 0, CInt(num))
                         End Using
+                    Catch exfs As Exception
+                        MsgBox(exfs.ToString())
                     Finally
                         fileStream.Close()
                     End Try
                 Finally
                     emmc.DropStream(_streamer)
                 End Try
+
+
                 ListView1.Clear()
                 ListView1.Items.Clear()
                 DirectISP.SharedUI.Logs2("done")
-                Dim process As System.Diagnostics.Process = New System.Diagnostics.Process()
+                Dim process As New System.Diagnostics.Process()
                 DirectISP.SharedUI.Logs2("Analyzing partition Table ....")
-                Dim process1 As System.Diagnostics.Process = New System.Diagnostics.Process()
+                Dim process1 As New System.Diagnostics.Process()
                 Dim startInfo As ProcessStartInfo = process1.StartInfo
                 startInfo.FileName = "Tools\process\file\7z.exe"
                 startInfo.Arguments = " l Tools\process\file\readgpt.bin -slt"
@@ -290,29 +289,29 @@ Public Class eMMCISP
                 Dim nums As Integer = 0
                 While Not process1.StandardOutput.EndOfStream
                     Dim str As String = standardOutput.ReadLine().Replace("Errors: 1", "")
-                    nums = nums + 1
+                    nums += 1
 
                     If nums > lineskip Then
-                        txtBabble(str)
+                        TxtBabble(str)
                     End If
 
                 End While
                 process1.Dispose()
-                Dim textBox As System.Windows.Forms.TextBox = New System.Windows.Forms.TextBox() With
-                {
-                    .Text = DirectISP.SharedUI.RichTextBox2.Text
-                }
+
+                Dim textBox As New TextBox
+                Main.SharedUI.RichTextBoxOutput.Invoke(CType(Sub() textBox.Text = Main.SharedUI.RichTextBoxOutput.Text, Action))
+
                 ListBox1.Items.Add("PrimaryGPT")
                 ListBox2.Items.Add("17408")
                 ListBox3.Items.Add("0")
-                If If(textBox.Text.Contains("Path"), True, textBox.Text.Contains("Size")) Then
+                If textBox.Text.Contains("Path") OrElse textBox.Text.Contains("Size") Then
                     Dim strArrays(2) As String
                     Dim strArrays1(2) As String
                     Dim lines As String() = textBox.Lines
                     Dim num1 As Integer = 0
                     While num1 < CInt(lines.Length)
                         Dim str1 As String = lines(num1)
-                        If If(str1.Contains("Path = Tools\process\file\readgpt.bin"), False, Not str1.Contains("Physical Size")) Then
+                        If Not str1.Contains("Path = Tools\process\file\readgpt.bin") AndAlso Not str1.Contains("Physical Size") Then
                             If str1.Contains("Path") Then
                                 str1 = Regex.Replace(str1, "Path = ", "")
                                 str1 = Regex.Replace(str1, ".ntfs", "")
@@ -320,19 +319,19 @@ Public Class eMMCISP
                                 ListBox1.Items.Add(str1)
                             End If
                         End If
-                        If If(str1.Contains("Physical Size"), False, Not str1.Contains("Path = Tools\process\file\readgpt.bin")) Then
+                        If Not str1.Contains("Physical Size") AndAlso Not str1.Contains("Path = Tools\process\file\readgpt.bin") Then
                             If str1.Contains("Size") Then
                                 str1 = Regex.Replace(str1, "Size = ", "")
                                 ListBox2.Items.Add(str1)
                             End If
                         End If
-                        If If(str1.Contains("Physical Size"), False, Not str1.Contains("Path = Tools\process\file\readgpt.bin")) Then
+                        If Not str1.Contains("Physical Size") AndAlso Not str1.Contains("Path = Tools\process\file\readgpt.bin") Then
                             If str1.Contains("Offset") Then
                                 str1 = Regex.Replace(str1, "Offset = ", "")
                                 ListBox3.Items.Add(str1)
                             End If
                         End If
-                        num1 = num1 + 1
+                        num1 += 1
                     End While
                 End If
 
@@ -340,14 +339,14 @@ Public Class eMMCISP
                 Dim count As Integer = ListBox1.Items.Count - 1
                 i = 0
                 While i <= count
-                    lvi = New ListViewItem() With
-                    {
-                        .Text = Conversions.ToString(ListBox1.Items(i))
-                    }
+                    Lvi = New ListViewItem() With
+            {
+                .Text = Conversions.ToString(ListBox1.Items(i))
+            }
                     Dim num2 As Integer = i
                     Dim num3 As Integer = num2
                     Dim item(0) As Object
-                    Dim subItems As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                    Dim subItems As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                     Dim items As ListBox.ObjectCollection = ListBox1.Items
                     Dim objectValue As ListBox.ObjectCollection = items
                     item(0) = items(num2)
@@ -360,7 +359,7 @@ Public Class eMMCISP
                         objectValue(num3) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                     End If
 
-                    Dim listViewSubItemCollections As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                    Dim listViewSubItemCollections As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                     Dim item1(0) As Object
                     Dim objectCollections As ListBox.ObjectCollection = ListBox2.Items
                     objectValue = objectCollections
@@ -375,7 +374,7 @@ Public Class eMMCISP
                         objectValue(num3) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                     End If
 
-                    Dim subItems1 As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                    Dim subItems1 As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                     Dim objArray1(0) As Object
                     Dim items1 As ListBox.ObjectCollection = ListBox3.Items
                     objectValue = items1
@@ -389,11 +388,11 @@ Public Class eMMCISP
                     If flagArray1(0) Then
                         objectValue(num3) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                     End If
-                    lvi.SubItems.Add("")
+                    Lvi.SubItems.Add("")
 
-                    ListView1.Items.Add(lvi)
+                    ListView1.Items.Add(Lvi)
 
-                    i = i + 1
+                    i += 1
                 End While
 
 
@@ -409,7 +408,34 @@ Public Class eMMCISP
                         location = ""
                     End If
                     lvItem = {bool, ListView1.Items(i).SubItems(1).Text, "double click...", ListView1.Items(i).SubItems(2).Text, ListView1.Items(i).SubItems(3).Text, location}
-                    DirectISP.SharedUI.DataView.Rows.Add(lvItem)
+                    DirectISP.SharedUI.DataView.Invoke(CType(Sub() DirectISP.SharedUI.DataView.Rows.Add(lvItem), Action))
+                Next
+
+                For Each row As DataGridViewRow In DirectISP.SharedUI.DataView.Rows
+
+                    If row.Cells(1).Value.ToString() = "modem" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst1" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst2" _
+                     OrElse row.Cells(1).Value.ToString() = "fsg" _
+                     OrElse row.Cells(1).Value.ToString() = "proinfo" _
+                     OrElse row.Cells(1).Value.ToString() = "nvdata" _
+                     OrElse row.Cells(1).Value.ToString() = "nvram" _
+                     OrElse row.Cells(1).Value.ToString() = "secro" _
+                     OrElse row.Cells(1).Value.ToString() = "ProdNV" _
+                     OrElse row.Cells(1).Value.ToString() = "Modem_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_WCN" _
+                     OrElse row.Cells(1).Value.ToString() = "PrimaryGPT" _
+                     OrElse row.Cells(1).Value.ToString() = "persist" _
+                     OrElse row.Cells(1).Value.ToString() = "persistbak" _
+                     OrElse row.Cells(1).Value.ToString() = "persistent" _
+                     OrElse row.Cells(1).Value.ToString() = "oppodycnvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "oppostanvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "EFS" _
+                     OrElse row.Cells(1).Value.ToString() = "config" _
+                     Then
+                        row.DefaultCellStyle.ForeColor = Color.Red
+                    End If
                 Next
 
                 process1.Dispose()
@@ -422,15 +448,39 @@ Public Class eMMCISP
                 ProjectData.ClearProjectError()
             End Try
         End If
-        AllDone()
-        'Identity()
+
+        For Each row As DataGridViewRow In DirectISP.SharedUI.DataView.Rows
+            If Equals(row.Cells(DirectISP.SharedUI.DataView.Columns(1).Index).Value.ToString(), "PrimaryGPT") Then
+                Console.WriteLine("Identify search PrimaryGPT ..." & row.Cells(DirectISP.SharedUI.DataView.Columns(3).Index).Value.ToString())
+                If File.Exists("Backup\GPT\gpt_main0.bin") Then
+                    File.Delete("Backup\GPT\gpt_main0.bin")
+                End If
+                folderdersave = "Backup\GPT"
+                Totaltodo += 1
+                TodoCommand = ""
+                TodoCommand = String.Concat(TodoCommand, row.Cells(0).Value, "|", row.Cells(1).Value, "|", row.Cells(3).Value, "|", row.Cells(4).Value, "|", row.Cells(5).Value & Environment.NewLine & "")
+                Read(e)
+            End If
+        Next
+
+        Delay(1)
+        Dim Saveas As String = CLng(DateTime.Now.Subtract(New DateTime()).TotalMilliseconds)
+        If File.Exists("Backup\GPT\gpt_main0.bin") Then
+            File.Move("Backup\GPT\gpt_main0.bin", "Backup\GPT\" & Saveas & "_AutoBackup_PrimaryGPT.bin")
+            Delay(1)
+        End If
+
+        RichLogs("PrimaryGPT Saved   : ", Color.WhiteSmoke, False, False)
+        RichLogs(Saveas & "_AutoBackup_PrimaryGPT.bin", Color.WhiteSmoke, False, True)
+
         check = False
     End Sub
 
-    Public Shared Sub Scan_Dump()
-        'Button8.Enabled = False
-        'Button7.Enabled = False
-        Dim richTextBox As System.Windows.Forms.RichTextBox
+    Public Shared Sub Scan_Dump(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         Dim enumerator As IEnumerator = Nothing
         asu = ""
         ListView1.Items.Clear()
@@ -439,7 +489,7 @@ Public Class eMMCISP
         ListBox2.Items.Clear()
         ListBox3.Items.Clear()
 
-        Dim process As System.Diagnostics.Process = New System.Diagnostics.Process()
+        Dim process As New System.Diagnostics.Process()
         Dim startInfo As ProcessStartInfo = process.StartInfo
         startInfo.FileName = "Tools\process\file\7z.exe"
         startInfo.Arguments = String.Concat(" l """, DirectISP.SharedUI.TxtRawDump.Text, """ -slt")
@@ -458,61 +508,61 @@ Public Class eMMCISP
         While Not process.StandardOutput.EndOfStream
 
             Dim str As String = standardOutput.ReadLine().Replace("Errors: 1", "")
-            nums = nums + 1
+            nums += 1
 
             If nums > lineskip Then
-                txtBabble(str)
+                TxtBabble(str)
             End If
 
         End While
 
         process.Dispose()
-        Dim textBox As System.Windows.Forms.TextBox = New System.Windows.Forms.TextBox() With
-        {
-            .Text = DirectISP.SharedUI.RichTextBox2.Text
-        }
+
+        Dim textBox As New TextBox
+        Main.SharedUI.RichTextBoxOutput.Invoke(CType(Sub() textBox.Text = Main.SharedUI.RichTextBoxOutput.Text, Action))
+
         ListBox1.Items.Add("PrimaryGPT")
         ListBox2.Items.Add("")
         ListBox3.Items.Add("0")
-        If If(textBox.Text.Contains("Path"), True, textBox.Text.Contains("Size")) Then
+        If textBox.Text.Contains("Path") OrElse textBox.Text.Contains("Size") Then
             Dim strArrays(2) As String
             Dim strArrays1(2) As String
             Dim lines As String() = textBox.Lines
             Dim num As Integer = 0
             While num < CInt(lines.Length)
                 Dim str1 As String = lines(num)
-                If If(str1.Contains(DirectISP.SharedUI.TxtRawDump.Text), False, Not str1.Contains("Physical Size")) Then
+                If Not str1.Contains(DirectISP.SharedUI.TxtRawDump.Text) AndAlso Not str1.Contains("Physical Size") Then
                     If str1.Contains("Path") Then
                         str1 = Regex.Replace(str1, "Path = ", "")
                         str1 = Regex.Replace(str1, ".img", "")
-                        strArrays = str1.Split(New Char() {Strings.ChrW(32)})
+                        strArrays = str1.Split(New Char() {ChrW(32)})
                         ListBox1.Items.Add(str1)
                     End If
                 End If
-                If If(str1.Contains(DirectISP.SharedUI.TxtRawDump.Text), False, Not str1.Contains("Physical Size")) Then
+                If Not str1.Contains(DirectISP.SharedUI.TxtRawDump.Text) AndAlso Not str1.Contains("Physical Size") Then
                     If str1.Contains("Size") Then
                         str1 = Regex.Replace(str1, "Size = ", "")
                         ListBox2.Items.Add(str1)
                     End If
                 End If
-                If If(str1.Contains(DirectISP.SharedUI.TxtRawDump.Text), False, Not str1.Contains("Physical Size")) Then
+                If Not str1.Contains(DirectISP.SharedUI.TxtRawDump.Text) AndAlso Not str1.Contains("Physical Size") Then
                     If str1.Contains("Offset") Then
                         str1 = Regex.Replace(str1, "Offset = ", "")
                         ListBox3.Items.Add(str1)
                     End If
                 End If
-                num = num + 1
+                num += 1
             End While
             ListBox2.Items(0) = RuntimeHelpers.GetObjectValue(ListBox3.Items(1))
             ListView1.Items.Clear()
             Dim count As Integer = ListBox1.Items.Count - 1
             i = 0
             While i <= count
-                lvi = New ListViewItem() With
-                {
-                    .Text = Conversions.ToString(ListBox1.Items(i))
-                }
-                Dim subItems As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                Lvi = New ListViewItem() With
+        {
+            .Text = Conversions.ToString(ListBox1.Items(i))
+        }
+                Dim subItems As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                 Dim item(0) As Object
                 Dim items As ListBox.ObjectCollection = ListBox1.Items
                 Dim objectValue As ListBox.ObjectCollection = items
@@ -526,7 +576,7 @@ Public Class eMMCISP
                 If flagArray1(0) Then
                     objectValue(num2) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                 End If
-                Dim listViewSubItemCollections As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                Dim listViewSubItemCollections As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                 Dim item1(0) As Object
                 Dim objectCollections As ListBox.ObjectCollection = ListBox2.Items
                 objectValue = objectCollections
@@ -540,7 +590,7 @@ Public Class eMMCISP
                 If flagArray1(0) Then
                     objectValue(num2) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                 End If
-                Dim subItems1 As ListViewItem.ListViewSubItemCollection = lvi.SubItems
+                Dim subItems1 As ListViewItem.ListViewSubItemCollection = Lvi.SubItems
                 Dim objArray1(0) As Object
                 Dim items1 As ListBox.ObjectCollection = ListBox3.Items
                 objectValue = items1
@@ -555,16 +605,43 @@ Public Class eMMCISP
                     objectValue(num2) = RuntimeHelpers.GetObjectValue(RuntimeHelpers.GetObjectValue(objArray(0)))
                 End If
                 If Not Operators.ConditionalCompareObjectEqual(ListBox1.Items(i), "", False) Then
-                    ListView1.Items.Add(lvi)
+                    ListView1.Items.Add(Lvi)
                 End If
-                i = i + 1
+                i += 1
             End While
 
 
             Dim lvItem() As String
             For i As Integer = 0 To ListView1.Items.Count - 1
                 lvItem = {False, ListView1.Items(i).SubItems(1).Text, "double click...", ListView1.Items(i).SubItems(2).Text, ListView1.Items(i).SubItems(3).Text, ""}
-                DirectISP.SharedUI.DataView.Rows.Add(lvItem)
+                DirectISP.SharedUI.DataView.Invoke(CType(Sub() DirectISP.SharedUI.DataView.Rows.Add(lvItem), Action))
+            Next
+
+            For Each row As DataGridViewRow In DirectISP.SharedUI.DataView.Rows
+
+                If row.Cells(1).Value.ToString() = "modem" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst1" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst2" _
+                     OrElse row.Cells(1).Value.ToString() = "fsg" _
+                     OrElse row.Cells(1).Value.ToString() = "proinfo" _
+                     OrElse row.Cells(1).Value.ToString() = "nvdata" _
+                     OrElse row.Cells(1).Value.ToString() = "nvram" _
+                     OrElse row.Cells(1).Value.ToString() = "secro" _
+                     OrElse row.Cells(1).Value.ToString() = "ProdNV" _
+                     OrElse row.Cells(1).Value.ToString() = "Modem_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_WCN" _
+                     OrElse row.Cells(1).Value.ToString() = "PrimaryGPT" _
+                     OrElse row.Cells(1).Value.ToString() = "persist" _
+                     OrElse row.Cells(1).Value.ToString() = "persistbak" _
+                     OrElse row.Cells(1).Value.ToString() = "persistent" _
+                     OrElse row.Cells(1).Value.ToString() = "oppodycnvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "oppostanvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "EFS" _
+                     OrElse row.Cells(1).Value.ToString() = "config" _
+                     Then
+                    row.DefaultCellStyle.ForeColor = Color.Red
+                End If
             Next
 
             If File.Exists("build.prop") Then
@@ -583,18 +660,28 @@ Public Class eMMCISP
                         If Conversions.ToDouble(text1) >= 536870912 Then
                             num5 = CLng(536870912)
                         End If
-                        Dim fileStream As System.IO.FileStream = New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
-                        Dim fileStream1 As System.IO.FileStream = New System.IO.FileStream("build.prop", FileMode.Append, FileAccess.Write)
+                        Dim fileStream As New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
+                        Dim fileStream1 As New System.IO.FileStream("build.prop", FileMode.Append, FileAccess.Write)
                         Try
                             Try
                                 Using fileStream
+                                    Dim Stopwatch As New Stopwatch()
+                                    Stopwatch.Start()
                                     Dim num6 As Integer = 1048576
                                     Dim num7 As Double = Conversions.ToDouble(text1) / CDbl(num6)
-                                    num7 = Conversion.Int(num7)
+                                    num7 = Int(num7)
                                     fileStream.Position = Conversions.ToLong(text)
                                     Dim num8 As Integer = CInt(Math.Round(num7))
                                     i = 0
                                     While i <= num8
+
+                                        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                            e.Cancel = True
+                                            Stopwatch.Stop()
+                                            fileStream.Close()
+                                            Return
+                                        End If
+
                                         If CDbl(i) = num7 Then
                                             num6 = CInt(Math.Round(Conversions.ToDouble(text1) - num7 * CDbl(num6)))
                                             If num6 = 0 Then
@@ -606,43 +693,36 @@ Public Class eMMCISP
                                         Dim num10 As Double = Conversions.ToDouble(text) + CDbl(num5)
                                         fileStream.Read(numArray, 0, num6)
                                         If Not UnicodeBytesToString(numArray).Contains("begin build prop") Then
-                                            i = i + 1
+                                            i += 1
                                         Else
                                             fileStream1.Write(numArray, 0, num6)
                                             fileStream1.Close()
-                                            RichLogs("Reading Dump Info ....", Color.DeepSkyBlue, False, True)
-                                            RichLogs(" ", Color.DeepSkyBlue, False, True)
-                                            Dim StringLog As String
-                                            Dim streamReader As System.IO.StreamReader = MyProject.Computer.FileSystem.OpenTextFileReader("build.prop")
+                                            RichLogs("Reading Dump Info ....", Color.DarkOrchid, False, True)
+                                            RichLogs(" ", Color.DarkOrchid, False, True)
+
+                                            Dim streamReader As System.IO.StreamReader = Computer.FileSystem.OpenTextFileReader("build.prop")
                                             While True
                                                 Dim str2 As String = streamReader.ReadLine()
                                                 If str2.Contains("ro.product.model") Then
-                                                    Dim log As String = String.Concat(log, "Model    : ", str2.Replace("ro.product.model=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Model    : " & str2.Replace("ro.product.model=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.product.brand") Then
-                                                    Dim log As String = String.Concat(log, "Brand    : ", str2.Replace("ro.product.brand=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Brand    : " & str2.Replace("ro.product.brand=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.product.locale.region") Then
-                                                    Dim log As String = String.Concat(log, "Region   : ", str2.Replace("ro.product.locale.region=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Region   : " & str2.Replace("ro.product.locale.region=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.product.name") Then
-                                                    Dim log As String = String.Concat(log, "Codename : ", str2.Replace("ro.product.name=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Codename : " & str2.Replace("ro.product.name=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.build.display.id") Then
-                                                    Dim log As String = String.Concat(log, "Build ID : ", str2.Replace("ro.build.display.id=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Build ID : " & str2.Replace("ro.build.display.id=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.build.version.security_patch") Then
-                                                    Dim log As String = String.Concat(log, "Security : ", str2.Replace("ro.build.version.security_patch=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("Security : " & str2.Replace("ro.build.version.security_patch=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("ro.frp.pst=") Then
-                                                    Dim log As String = String.Concat(log, "FRP Part : ", str2.Replace("ro.frp.pst=", ""))
-                                                    RichLogs(log, Color.WhiteSmoke, False, True)
+                                                    RichLogs("FRP Part : " & str2.Replace("ro.frp.pst=", ""), Color.WhiteSmoke, False, True)
                                                 End If
                                                 If str2.Contains("end build prop") Then
                                                     Exit While
@@ -655,9 +735,7 @@ Public Class eMMCISP
                                 End Using
                             Catch exception As System.Exception
                                 ProjectData.SetProjectError(exception)
-                                DirectISP.SharedUI.lb1(String.Concat("Error: at ", Conversions.ToString(karung)))
-                                Dim log As String = String.Concat(log, "   Error at ", Conversions.ToString(karung))
-                                DirectISP.SharedUI.Logs2(log)
+                                DirectISP.SharedUI.Logs2("  Error at " & Conversions.ToString(karung))
                                 ProjectData.ClearProjectError()
                             End Try
                         Finally
@@ -665,116 +743,77 @@ Public Class eMMCISP
                         End Try
                     End If
                 End While
-            Finally
-                AllDone()
+            Catch ex As Exception
+                '
             End Try
         End If
     End Sub
-    Public Shared Sub txtBabble(ByVal text As String)
+    Public Shared Sub TxtBabble(ByVal text As String)
         DirectISP.SharedUI.Logs2(text)
-        Dim str As String = ""
+
         If Equals(asu, "inisparse") Then
             If text.Contains("filename") Then
-                str = text.Replace(".sparse", "")
+                Dim str As String = text.Replace(".sparse", "")
                 str = str.Replace("filename", "")
                 str = str.Replace(" ", "")
                 Dim num As Double = (Conversions.ToDouble(totalchunk) - Conversions.ToDouble(str)) / (Conversions.ToDouble(totalchunk) - 1) * 100
                 DirectISP.SharedUI.PB2(CInt(Math.Round(num)))
             End If
-            Dim fileInfo As System.IO.FileInfo = New System.IO.FileInfo("unsparse.img")
+            Dim fileInfo As New System.IO.FileInfo("unsparse.img")
         End If
     End Sub
-    Public Shared Sub Identity()
-        Dim str As String
+    Public Shared Sub Identity(e As DoWorkEventArgs)
         If DirectISP.SharedUI.DataView.RowCount > 0 Then
+            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                e.Cancel = True
+                Return
+            End If
             Console.WriteLine("Identify start ...")
             For Each row As DataGridViewRow In DirectISP.SharedUI.DataView.Rows
-                If Equals(row.Cells(DirectISP.SharedUI.DataView.Columns(1).Index).Value.ToString(), "system") Then
-                    Console.WriteLine("Identify search system ..." & row.Cells(DirectISP.SharedUI.DataView.Columns(3).Index).Value.ToString())
-                    Dim text As String = row.Cells(DirectISP.SharedUI.DataView.Columns(3).Index).Value.ToString()
-                    Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
-                    Dim text1 As String = row.Cells(DirectISP.SharedUI.DataView.Columns(3).Index).Value.ToString()
-                    If File.Exists("build.prop") Then
-                        File.Delete("build.prop")
+                If Equals(row.Cells(DirectISP.SharedUI.DataView.Columns(1).Index).Value.ToString(), "recovery") Then
+                    Console.WriteLine("Identify search recovery ..." & row.Cells(DirectISP.SharedUI.DataView.Columns(3).Index).Value.ToString())
+
+                    If Not File.Exists(Andoidpath) Then
+                        Directory.CreateDirectory(Path.GetDirectoryName(Andoidpath))
+                        File.WriteAllBytes(Andoidpath, My.Resources.C4)
                     End If
-                    Dim [integer] As Integer = 1048576
-                    Dim objectValue As Object = Operators.DivideObject(uks, [integer])
-                    Dim fileStream As System.IO.FileStream = New System.IO.FileStream("build.prop", FileMode.Append, FileAccess.Write)
-                    Dim num As Long = CLng(0)
-                    If Conversions.ToDouble(text1) >= 536870912 Then
-                        num = CLng(536870912)
+
+                    If File.Exists(Dumped) Then
+                        File.Delete(Dumped)
                     End If
-                    Try
-                        Dim num1 As Long = CLng(0)
-                        objectValue = RuntimeHelpers.GetObjectValue(Conversion.Int(RuntimeHelpers.GetObjectValue(objectValue)))
-                        Dim num2 As Long = Conversions.ToLong(objectValue)
-                        num1 = CLng(0)
-                        Dim Stopwatch As Stopwatch = New Stopwatch()
-                        Stopwatch.Start()
-                        RichLogs("Reading Device Info ....", Color.DeepSkyBlue, False, True)
-                        RichLogs(" ", Color.Cyan, False, True)
 
-                        While num1 <= num2
-                            If Operators.ConditionalCompareObjectEqual(num1, objectValue, False) Then
-                                [integer] = Conversions.ToInteger(Operators.SubtractObject(uks, Operators.MultiplyObject(objectValue, [integer])))
-                            End If
-                            If [integer] <> 0 Then
-                                Dim numArray As Byte() = emmc.ReadSector(CLng(Math.Round(CDbl(num1 * CLng([integer])) + Conversions.ToDouble(text) + CDbl(num))), [integer], _streamer)
+                    folderdersave = Directorypath
+                    Totaltodo += 1
+                    TodoCommand = ""
+                    TodoCommand = String.Concat(TodoCommand, row.Cells(0).Value, "|", row.Cells(1).Value, "|", row.Cells(3).Value, "|", row.Cells(4).Value, "|", row.Cells(5).Value & Environment.NewLine & "")
 
-                                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(Conversions.ToLong(text)), Action))
-                                Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(CDbl(num1 * CLng([integer]))), Action))
 
-                                ' Menghitung Waktu yang telah berlalu
-                                Dim elapsed As TimeSpan = Stopwatch.Elapsed
-                                Dim speed As Double = num1 * CLng([integer]) / elapsed.TotalSeconds
-                                If speed > 0 Then
-                                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
-                                End If
+                    Read(e)
 
-                                If UnicodeBytesToString(numArray).Contains("begin build prop") Then
-                                    fileStream.Write(numArray, 0, [integer])
-                                    fileStream.Close()
-                                    emmc.DropStream(_streamer)
-                                    Dim StringLog As String
-                                    Dim streamReader As System.IO.StreamReader = MyProject.Computer.FileSystem.OpenTextFileReader("build.prop")
-                                    Do
-                                        Dim str2 As String = streamReader.ReadLine()
-                                        If str2.Contains("ro.product.model") Then
-                                            Dim log As String = String.Concat(log, "Model    : ", str2.Replace("ro.product.model=", ""))
-                                            RichLogs(log, Color.WhiteSmoke, False, True)
-                                        End If
-                                        If str2.Contains("ro.product.brand") Then
-                                            Dim log As String = String.Concat(log, "Brand    : ", str2.Replace("ro.product.brand=", ""))
-                                            RichLogs(log, Color.WhiteSmoke, False, True)
-                                        End If
-                                        If str2.Contains("ro.product.locale.region") Then
-                                            Dim log As String = String.Concat(log, "Region   : ", str2.Replace("ro.product.locale.region=", ""))
-                                            RichLogs(log, Color.WhiteSmoke, False, True)
-                                        End If
-                                        If str2.Contains("ro.product.name") Then
-                                            Dim log As String = String.Concat(log, "Codename : ", str2.Replace("ro.product.name=", ""))
-                                            RichLogs(log, Color.WhiteSmoke, False, True)
-                                        End If
-                                        If str2.Contains("end build prop") Then
-                                            Continue Do
-                                        End If
-                                        streamReader.Close()
-                                        Return
-                                    Loop While str IsNot Nothing
-                                End If
-                                num1 = num1 + CLng(1)
-                            Else
-                                Stopwatch.Stop()
-                                Exit While
-                            End If
-                        End While
-                        Stopwatch.Stop()
-                    Finally
-                        emmc.DropStream(_streamer)
-                        DirectISP.SharedUI.PB1(100)
-                        TaskbarManager.Instance().SetProgressValue(0, 100)
-                        TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
-                    End Try
+                    RichLogs(" ", Color.Orange, True, True)
+                    RichLogs("Reading Device Info : ... ", Color.WhiteSmoke, True, True)
+
+                    If File.Exists(Directorypath & "/recovery.img") Then
+                        File.Move(Directorypath & "/recovery.img", Directorypath & "/boot.img")
+                    End If
+
+                    If File.Exists(Directorypath & "/boot.img") Then
+                        AndroidUnpack(Path.GetFileName(Dumped), Path.GetDirectoryName(Andoidpath) & "\initrd\", DirectISP.SharedUI.eMMCISPWorker, e)
+
+                        Dim directory As New DirectoryInfo(Path.GetDirectoryName(Andoidpath))
+
+                        For Each file As FileInfo In directory.EnumerateFiles()
+                            file.Delete()
+                        Next
+
+                        For Each subDirectory As DirectoryInfo In directory.EnumerateDirectories()
+                            subDirectory.Delete(True)
+                        Next
+
+                        directory.Delete(True)
+
+                    End If
+
                 End If
             Next
         End If
@@ -787,26 +826,26 @@ Public Class eMMCISP
         Dim enumerator As IEnumerator = Nothing
         DirectISP.SharedUI.DGV_C()
         If File.Exists(DirectISP.SharedUI.TxtFlashRawXML.Text) Then
-            Dim xmlReader As System.Xml.XmlReader = System.Xml.XmlReader.Create(DirectISP.SharedUI.TxtFlashRawXML.Text)
+            Dim xmlReader As System.Xml.XmlReader = XmlReader.Create(DirectISP.SharedUI.TxtFlashRawXML.Text)
             While xmlReader.Read()
-                If (If(xmlReader.NodeType <> XmlNodeType.Element, False, Operators.CompareString(xmlReader.Name, "program", False) = 0)) Then
-                    lvi = New System.Windows.Forms.ListViewItem()
-                    lvi.SubItems.Add(xmlReader.GetAttribute("label"))
-                    lvi.SubItems.Add(Conversions.ToString(Conversions.ToDouble(xmlReader.GetAttribute("num_partition_sectors")) * 512))
+                If (xmlReader.NodeType = XmlNodeType.Element AndAlso Operators.CompareString(xmlReader.Name, "program", False) = 0) Then
+                    Lvi = New System.Windows.Forms.ListViewItem()
+                    Lvi.SubItems.Add(xmlReader.GetAttribute("label"))
+                    Lvi.SubItems.Add(Conversions.ToString(Conversions.ToDouble(xmlReader.GetAttribute("num_partition_sectors")) * 512))
                     If Not xmlReader.GetAttribute("start_sector").Contains("NUM_DISK_SECTORS") Then
-                        lvi.SubItems.Add(Conversions.ToString(Conversions.ToDouble(xmlReader.GetAttribute("start_sector")) * 512))
+                        Lvi.SubItems.Add(Conversions.ToString(Conversions.ToDouble(xmlReader.GetAttribute("start_sector")) * 512))
                     Else
                         Dim str2 As String = xmlReader.GetAttribute("start_sector").Replace("NUM_DISK_SECTORS-", "").Replace(".", "")
-                        NewLateBinding.LateCall(lvi.SubItems, Nothing, "Add", New Object() {Operators.SubtractObject(uks, Conversions.ToDouble(str2) * 512)}, Nothing, Nothing, Nothing, True)
+                        NewLateBinding.LateCall(Lvi.SubItems, Nothing, "Add", New Object() {Operators.SubtractObject(uks, Conversions.ToDouble(str2) * 512)}, Nothing, Nothing, Nothing, True)
                     End If
 
                     If Not Equals(xmlReader.GetAttribute("filename"), "") Then
-                        lvi.SubItems.Add(If(String.Concat(Path.GetDirectoryName(DirectISP.SharedUI.TxtFlashRawXML.Text), "\", xmlReader.GetAttribute("filename")), ""))
+                        Lvi.SubItems.Add(If(String.Concat(Path.GetDirectoryName(DirectISP.SharedUI.TxtFlashRawXML.Text), "\", xmlReader.GetAttribute("filename")), ""))
                     Else
-                        lvi.SubItems.Add("none")
+                        Lvi.SubItems.Add("none")
                     End If
-                    ListView1.Items.Add(lvi)
-                    lvi.Checked = True
+                    ListView1.Items.Add(Lvi)
+                    Lvi.Checked = True
                 End If
             End While
             Try
@@ -829,6 +868,34 @@ Public Class eMMCISP
                 End While
 
 
+                For Each row As DataGridViewRow In DirectISP.SharedUI.DataView.Rows
+
+                    If row.Cells(1).Value.ToString() = "modem" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst1" _
+                     OrElse row.Cells(1).Value.ToString() = "modemst2" _
+                     OrElse row.Cells(1).Value.ToString() = "fsg" _
+                     OrElse row.Cells(1).Value.ToString() = "proinfo" _
+                     OrElse row.Cells(1).Value.ToString() = "nvdata" _
+                     OrElse row.Cells(1).Value.ToString() = "nvram" _
+                     OrElse row.Cells(1).Value.ToString() = "secro" _
+                     OrElse row.Cells(1).Value.ToString() = "ProdNV" _
+                     OrElse row.Cells(1).Value.ToString() = "Modem_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_W" _
+                     OrElse row.Cells(1).Value.ToString() = "NV_WCN" _
+                     OrElse row.Cells(1).Value.ToString() = "PrimaryGPT" _
+                     OrElse row.Cells(1).Value.ToString() = "persist" _
+                     OrElse row.Cells(1).Value.ToString() = "persistbak" _
+                     OrElse row.Cells(1).Value.ToString() = "persistent" _
+                     OrElse row.Cells(1).Value.ToString() = "oppodycnvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "oppostanvbk" _
+                     OrElse row.Cells(1).Value.ToString() = "EFS" _
+                     OrElse row.Cells(1).Value.ToString() = "config" _
+                     Then
+                        row.DefaultCellStyle.ForeColor = Color.Red
+                    End If
+
+                Next
+
             Finally
                 If (TypeOf enumerator Is IDisposable) Then
                     TryCast(enumerator, IDisposable).Dispose()
@@ -838,15 +905,14 @@ Public Class eMMCISP
     End Sub
 
     Public Shared Sub Open_ScatterTXT()
-        Dim enumerator As IEnumerator = Nothing
         Dim enumerator1 As IEnumerator = Nothing
         Dim directoryName As String = Path.GetDirectoryName(DirectISP.SharedUI.TxtScatterFile.Text)
         Dim str3 As String = String.Concat(directoryName, "\temp.xml")
         If File.Exists(str3) Then
-            MyProject.Computer.FileSystem.DeleteFile(str3)
+            Computer.FileSystem.DeleteFile(str3)
         End If
-        lvi = New System.Windows.Forms.ListViewItem()
-        Dim streamWriter As System.IO.StreamWriter = MyProject.Computer.FileSystem.OpenTextFileWriter(str3, True)
+        Lvi = New System.Windows.Forms.ListViewItem()
+        Dim streamWriter As System.IO.StreamWriter = Computer.FileSystem.OpenTextFileWriter(str3, True)
         Dim strArrays As String() = File.ReadAllLines(DirectISP.SharedUI.TxtScatterFile.Text)
         streamWriter.WriteLine("<?xml version=""1.0"" ?>")
         streamWriter.WriteLine(" <data>")
@@ -859,8 +925,7 @@ Public Class eMMCISP
                 str5.Replace(" ", "")
             End If
             If str4.Contains(tstor) Then
-                Dim str6 As String = str4
-                str6 = str4.Replace(tstor, "")
+                Dim str6 As String = str4.Replace(tstor, "")
                 If Not str6.Contains("EMMC") Then
                     If str6.Contains("UFS") Then
                     End If
@@ -889,9 +954,9 @@ Public Class eMMCISP
             If str4.Contains(ps) Then
                 Dim str15 As String = str4.Replace(ps, "")
                 Dim str16 As String = str15.Replace(" ", "")
-                streamWriter.Write(String.Concat("Size=""", str16, """ />" & vbCrLf & ""))
+                streamWriter.Write(String.Concat("Size=""", str16, """ />" & Environment.NewLine & ""))
             End If
-            num = num + 1
+            num += 1
         End While
         streamWriter.Write("</data>")
         streamWriter.Close()
@@ -900,20 +965,20 @@ Public Class eMMCISP
             Dim directoryName1 As String = Path.GetDirectoryName(DirectISP.SharedUI.TxtScatterFile.Text)
             Dim str17 As String = String.Concat(directoryName, "\temp.xml")
             If File.Exists(str17) Then
-                Dim xmlReader1 As System.Xml.XmlReader = System.Xml.XmlReader.Create(str17)
+                Dim xmlReader1 As System.Xml.XmlReader = XmlReader.Create(str17)
                 While xmlReader1.Read()
-                    If If(xmlReader1.NodeType <> XmlNodeType.Element, False, Equals(xmlReader1.Name, "program")) Then
-                        lvi = New System.Windows.Forms.ListViewItem()
-                        lvi.SubItems.Add(xmlReader1.GetAttribute(1))
+                    If xmlReader1.NodeType = XmlNodeType.Element AndAlso Equals(xmlReader1.Name, "program") Then
+                        Lvi = New System.Windows.Forms.ListViewItem()
+                        Lvi.SubItems.Add(xmlReader1.GetAttribute(1))
                         Dim str18 As String = xmlReader1.GetAttribute(4).Replace("0x", "")
                         Dim num1 As Long = Convert.ToInt64(str18, 16)
-                        lvi.SubItems.Add(Conversions.ToString(num1))
+                        Lvi.SubItems.Add(Conversions.ToString(num1))
                         Dim str19 As String = xmlReader1.GetAttribute(3).Replace("0x", "")
                         Dim num2 As Long = Convert.ToInt64(str19, 16)
-                        lvi.SubItems.Add(Conversions.ToString(num2))
-                        lvi.SubItems.Add(String.Concat(directoryName1, "\", xmlReader1.GetAttribute(2)))
-                        ListView1.Items.Add(lvi)
-                        lvi.Checked = True
+                        Lvi.SubItems.Add(Conversions.ToString(num2))
+                        Lvi.SubItems.Add(String.Concat(directoryName1, "\", xmlReader1.GetAttribute(2)))
+                        ListView1.Items.Add(Lvi)
+                        Lvi.Checked = True
                     End If
                 End While
                 Try
@@ -967,17 +1032,24 @@ Public Class eMMCISP
             End If
         End If
     End Sub
-    Public Shared Sub read()
+    Public Shared Sub Read(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         Eject(USBEject(selecteddisk))
         Delay(1)
         Dim num As Integer = 1
         DirectISP.SharedUI.PB1(0)
         DirectISP.SharedUI.PB2(0)
         Try
-            Using stringReader As StringReader = New StringReader(TodoCommand)
+            Using stringReader As New StringReader(TodoCommand)
                 While stringReader.Peek() <> -1
                     Dim cmd As String = stringReader.ReadLine()
-
+                    If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                        e.Cancel = True
+                        Return
+                    End If
                     If cmd <> String.Empty Then
 
                         Dim exec As String = Nothing
@@ -988,10 +1060,11 @@ Public Class eMMCISP
                         ' 3 offset
                         ' 4 location
 
-                        RichLogs("Reading ", Color.White, True, False)
-                        RichLogs(arg(1) & " : ", Color.DeepSkyBlue, True, False)
+                        RichLogs("Reading ", Color.WhiteSmoke, True, False)
+                        RichLogs(arg(1), Color.DarkOrchid, True, False)
+                        RichLogs(" : ", Color.WhiteSmoke, True, False)
                         RichLogs("Start Sector => ", Color.Orange, True, False)
-                        RichLogs(arg(2) & " : ", Color.Aqua, True, False)
+                        RichLogs(arg(2), Color.FromArgb(128, 128, 255), True, True)
 
                         Dim num1 As Integer = 1048576
 
@@ -1012,21 +1085,28 @@ Public Class eMMCISP
                         Dim num2 As Double = CDbl(psize) / CDbl(num1)
                         Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
                         Try
-                            If File.Exists(folderdersave & "\" & Bismillah.FIREHOSE.FIREHOSE_MANAGER.getfilenames(str)) Then
-                                File.Delete(folderdersave & "\" & Bismillah.FIREHOSE.FIREHOSE_MANAGER.getfilenames(str))
+                            If File.Exists(folderdersave & "\" & Getfilenames(str)) Then
+                                File.Delete(folderdersave & "\" & Getfilenames(str))
                                 Delay(1)
                             End If
-                            Dim fileStream As System.IO.FileStream = New System.IO.FileStream(folderdersave & "\" & Bismillah.FIREHOSE.FIREHOSE_MANAGER.getfilenames(str), FileMode.Append, FileAccess.Write)
+                            Dim fileStream As New System.IO.FileStream(folderdersave & "\" & Getfilenames(str), FileMode.Append, FileAccess.Write)
                             Try
                                 Dim num3 As Long = CLng(0)
-                                Dim Stopwatch As Stopwatch = New Stopwatch()
+                                Dim Stopwatch As New Stopwatch()
                                 Stopwatch.Start()
                                 Using fileStream
-                                    num2 = Conversion.Int(num2)
+                                    num2 = Int(num2)
                                     Dim num4 As Integer = num1
                                     Dim num5 As Long = CLng(Math.Round(num2))
                                     num3 = CLng(0)
                                     Do
+                                        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                            e.Cancel = True
+                                            Stopwatch.Stop()
+                                            emmc.DropStream(_streamer)
+                                            fileStream.Close()
+                                            Return
+                                        End If
                                         If CDbl(num3) = num2 Then
                                             num1 = CInt(Math.Round(CDbl(psize) - num2 * CDbl(num1)))
                                             If num1 = 0 Then
@@ -1051,10 +1131,10 @@ Public Class eMMCISP
                                         Else
                                             num8 = 100
                                         End If
-                                        DirectISP.SharedUI.PB1(CInt(Math.Round(Conversion.Int(num8))))
+                                        DirectISP.SharedUI.PB1(CInt(Math.Round(Int(num8))))
                                         TaskbarManager.Instance().SetProgressValue(CInt(Math.Round(num8)), 100)
                                         TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
-                                        num3 = num3 + CLng(1)
+                                        num3 += CLng(1)
                                     Loop While num3 <= num5
                                     Stopwatch.Stop()
                                 End Using
@@ -1069,12 +1149,12 @@ Public Class eMMCISP
                         Dim num6 As Integer = CInt(Math.Round(CDbl(num) / CDbl(Totaltodo) * 100))
                         DirectISP.SharedUI.PB2(num6)
 
-                        num = num + 1
+                        num += 1
                     End If
                     If cekerror Then
                         RichLogs("Failed!", Color.Red, True, True)
                     Else
-                        RichLogs("Done  ✓", Color.Yellow, True, True)
+                        RichLogs("Done  ✓", Color.FromArgb(97, 197, 84), True, True)
                     End If
                 End While
             End Using
@@ -1083,41 +1163,53 @@ Public Class eMMCISP
             Console.WriteLine(exception)
         End Try
 
-        AllDone()
+
     End Sub
 
-    Public Shared Sub readfull()
-        RichLogs("Dumping " & Main.SharedUI.comboUSB.Text & " ", Color.WhiteSmoke, False, False)
+    Public Shared Sub Readfull(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
+        Dim StrUSB As String = ""
+        Main.SharedUI.comboUSB.Invoke(CType(Sub() StrUSB = Main.SharedUI.comboUSB.Text, Action))
+        RichLogs("Dumping " & StrUSB & " ", Color.WhiteSmoke, False, True)
         Eject(USBEject(selecteddisk))
         Delay(1)
         Dim enumerator As IEnumerator = Nothing
-        If Equals(Main.SharedUI.comboUSB.Text, "8mb") Then
+        Dim StrUkrDmp As String = ""
+        DirectISP.SharedUI.ComboBoxSizeDump.Invoke(CType(Sub() StrUkrDmp = DirectISP.SharedUI.ComboBoxSizeDump.Text, Action))
+        If Equals(StrUkrDmp, "8 MB Size Dump") Then
             uks = 8388608
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "16mb") Then
+        ElseIf Equals(StrUkrDmp, "16 MB Size Dump") Then
             uks = 16777216
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "32mb") Then
+        ElseIf Equals(StrUkrDmp, "32 MB Size Dump") Then
             uks = 33554432
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "64mb") Then
+        ElseIf Equals(StrUkrDmp, "64 MB Size Dump") Then
             uks = 67108864
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "128mb") Then
+        ElseIf Equals(StrUkrDmp, "128 MB Size Dump") Then
             uks = 134217728
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "256mb") Then
+        ElseIf Equals(StrUkrDmp, "256mb") Then
             uks = 268435456
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "512mb") Then
+        ElseIf Equals(StrUkrDmp, "512 MB Size Dump") Then
             uks = 536870912
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "1gb") Then
+        ElseIf Equals(StrUkrDmp, "1 GB Size Dump") Then
             uks = 1073741824
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "2gb") Then
+        ElseIf Equals(StrUkrDmp, "2 GB Size Dump") Then
             uks = -2147483648
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "4gb") Then
+        ElseIf Equals(StrUkrDmp, "4 GB Size Dump") Then
             uks = 4294967296L
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "auto") Then
+        ElseIf Equals(StrUkrDmp, "Auto Size Dump") Then
             uks = RuntimeHelpers.GetObjectValue(uks)
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "ExcludeUserdata") Then
+        ElseIf Equals(StrUkrDmp, "Without Userdata Dump") Then
             If ListView1.Items.Count <> 0 Then
                 Try
                     enumerator = ListView1.Items.GetEnumerator()
                     While enumerator.MoveNext()
+                        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                            e.Cancel = True
+                            Return
+                        End If
                         Dim current As ListViewItem = DirectCast(enumerator.Current, ListViewItem)
                         If Equals(current.SubItems(1).Text, "userdata") Then
                             uks = current.SubItems(3).Text
@@ -1135,30 +1227,37 @@ Public Class eMMCISP
             End If
         End If
 
-        RichLogs("Reading ", Color.White, True, False)
-        RichLogs("DUMP : ", Color.DeepSkyBlue, True, False)
+        RichLogs("Reading ", Color.WhiteSmoke, True, False)
+        RichLogs("DUMP : ", Color.DarkOrchid, True, False)
         RichLogs("Start Sector => ", Color.Orange, True, False)
-        RichLogs(uks & " : ", Color.Aqua, True, False)
+        RichLogs(uks & " : ", Color.FromArgb(128, 128, 255), True, False)
         Try
             Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
             Try
                 Try
-                    If File.Exists(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin") Then
-                        File.Delete(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin")
+                    If File.Exists(folderdersave & "\" & StrUSB.Replace(" ", "_") & "dump.bin") Then
+                        File.Delete(folderdersave & "\" & StrUSB.Replace(" ", "_") & "dump.bin")
                     End If
                     Dim [integer] As Integer = 1048576 * 8
                     Dim objectValue As Object = Operators.DivideObject(uks, [integer])
-                    Dim fileStream As System.IO.FileStream = New System.IO.FileStream(folderdersave & "\" & Main.SharedUI.comboUSB.Text.Replace(" ", "_") & "dump.bin", FileMode.Append, FileAccess.Write)
+                    Dim fileStream As New System.IO.FileStream(folderdersave & "\" & StrUSB.Replace(" ", "_") & "dump.bin", FileMode.Append, FileAccess.Write)
                     Try
                         Try
                             Dim num As Long = CLng(0)
                             Using fileStream
-                                objectValue = RuntimeHelpers.GetObjectValue(Conversion.Int(RuntimeHelpers.GetObjectValue(objectValue)))
+                                objectValue = RuntimeHelpers.GetObjectValue(Int(RuntimeHelpers.GetObjectValue(objectValue)))
                                 Dim num1 As Long = Conversions.ToLong(objectValue)
                                 num = CLng(0)
-                                Dim Stopwatch As Stopwatch = New Stopwatch()
+                                Dim Stopwatch As New Stopwatch()
                                 Stopwatch.Start()
                                 While num <= num1
+                                    If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                        e.Cancel = True
+                                        Stopwatch.Stop()
+                                        emmc.DropStream(_streamer)
+                                        fileStream.Close()
+                                        Return
+                                    End If
                                     If Operators.ConditionalCompareObjectEqual(num, objectValue, False) Then
                                         [integer] = Conversions.ToInteger(Operators.SubtractObject(uks, Operators.MultiplyObject(objectValue, [integer])))
                                     End If
@@ -1178,7 +1277,7 @@ Public Class eMMCISP
                                         DirectISP.SharedUI.PB1(CInt(Math.Round(num8)))
                                         TaskbarManager.Instance().SetProgressValue(CInt(Math.Round(num8)), 100)
                                         TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
-                                        num = num + CLng(1)
+                                        num += CLng(1)
                                     Else
                                         Stopwatch.Stop()
                                         Exit While
@@ -1199,7 +1298,6 @@ Public Class eMMCISP
                     End Try
                 Catch exception1 As System.Exception
                     ProjectData.SetProjectError(exception1)
-                    DirectISP.SharedUI.lb1("ERROR: Can't Open File")
                     ProjectData.ClearProjectError()
                 End Try
             Finally
@@ -1207,19 +1305,17 @@ Public Class eMMCISP
             End Try
         Catch exception2 As System.Exception
             ProjectData.SetProjectError(exception2)
-            DirectISP.SharedUI.lb1("ERROR: Can't Open File")
             ProjectData.ClearProjectError()
         End Try
 
         If cekerror Then
             RichLogs("Failed!", Color.Red, True, True)
         Else
-            RichLogs("Done  ✓", Color.Yellow, True, True)
+            RichLogs("Done  ✓", Color.FromArgb(97, 197, 84), True, True)
         End If
-        AllDone()
     End Sub
 
-    Public Shared Sub writedump()
+    Public Shared Sub Writedump(e As DoWorkEventArgs)
         Eject(USBEject(selecteddisk))
         Delay(1)
         Dim num As Double
@@ -1227,68 +1323,72 @@ Public Class eMMCISP
         Dim num1 As Long = filesize
         Dim num2 As Long = filesize
         Dim length As Long = New FileInfo(openfile).Length
-        If Equals(Main.SharedUI.comboUSB.Text, "8mb") Then
+
+        Dim StrUkrDmp As String = ""
+        DirectISP.SharedUI.ComboBoxSizeDump.Invoke(CType(Sub() StrUkrDmp = DirectISP.SharedUI.ComboBoxSizeDump.Text, Action))
+
+        If Equals(StrUkrDmp, "8 MB Size Dump") Then
             If length < CLng(8388608) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(8388608)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "16mb") Then
+        ElseIf Equals(StrUkrDmp, "16 MB Size Dump") Then
             If length < CLng(16777216) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(16777216)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "32mb") Then
+        ElseIf Equals(StrUkrDmp, "32 MB Size Dump") Then
             If length < CLng(33554432) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(33554432)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "64mb") Then
+        ElseIf Equals(StrUkrDmp, "64 MB Size Dump") Then
             If length < CLng(67108864) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(67108864)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "128mb") Then
+        ElseIf Equals(StrUkrDmp, "128 MB Size Dump") Then
             If length < CLng(134217728) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(134217728)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "256mb") Then
+        ElseIf Equals(StrUkrDmp, "256mb") Then
             If length < CLng(268435456) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(268435456)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "512mb") Then
+        ElseIf Equals(StrUkrDmp, "512 MB Size Dump") Then
             If length < CLng(536870912) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(536870912)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "1gb") Then
+        ElseIf Equals(StrUkrDmp, "1 GB Size Dump") Then
             If length < CLng(1073741824) Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(1073741824)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "2gb") Then
+        ElseIf Equals(StrUkrDmp, "2 GB Size Dump") Then
             If length < -2147483648 Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = CLng(-2147483648)
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "4gb") Then
+        ElseIf Equals(StrUkrDmp, "4 GB Size Dump") Then
             If length < 4294967296L Then
-                Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
             Else
                 length = 4294967296L
             End If
-        ElseIf Equals(Main.SharedUI.comboUSB.Text, "auto") Then
-            If Equals(Main.SharedUI.comboUSB.Text, "ExcludeUserdata") Then
+        ElseIf Equals(StrUkrDmp, "Auto Size Dump") Then
+            If Equals(StrUkrDmp, "Without Userdata Dump") Then
                 If ListView1.Items.Count <> 0 Then
                     Try
                         enumerator = ListView1.Items.GetEnumerator()
@@ -1296,20 +1396,20 @@ Public Class eMMCISP
                             Dim current As ListViewItem = DirectCast(enumerator.Current, ListViewItem)
                             If Equals(current.SubItems(1).Text, "userdata") Then
                                 If CDbl(length) < Conversions.ToDouble(current.SubItems(3).Text) Then
-                                    Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                                    MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
                                 Else
                                     length = Conversions.ToLong(current.SubItems(3).Text)
                                 End If
                                 Console.WriteLine(length)
                             ElseIf Equals(current.SubItems(1).Text, "usrdata") Then
                                 If CDbl(length) < Conversions.ToDouble(current.SubItems(3).Text) Then
-                                    Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                                    MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
                                 Else
                                     length = Conversions.ToLong(current.SubItems(3).Text)
                                 End If
                             ElseIf Equals(current.SubItems(1).Text, "data") Then
                                 If CDbl(length) < Conversions.ToDouble(current.SubItems(3).Text) Then
-                                    Interaction.MsgBox("file size is smaller than file size in seting to writen" & vbCrLf & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
+                                    MsgBox("file size is smaller than file size in seting to writen" & Environment.NewLine & "using seting with actual size file", MsgBoxStyle.OkOnly, Nothing)
                                 Else
                                     length = Conversions.ToLong(current.SubItems(3).Text)
                                 End If
@@ -1327,22 +1427,28 @@ Public Class eMMCISP
         Dim num4 As Integer = CInt(Math.Round(CDbl(num2) / CDbl(num3)))
         Dim num5 As Long = CLng(0)
 
-        RichLogs("Writing ", Color.White, True, False)
-        RichLogs("DUMP" & " : ", Color.DeepSkyBlue, True, False)
+        RichLogs("Writing ", Color.WhiteSmoke, True, False)
+        RichLogs("DUMP" & " : ", Color.DarkOrchid, True, False)
         RichLogs("Start Sector => ", Color.Orange, True, False)
-        RichLogs(length & " : ", Color.Aqua, True, False)
+        RichLogs(length & " : ", Color.FromArgb(128, 128, 255), True, False)
 
-        Dim fileStream As System.IO.FileStream = New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
+        Dim fileStream As New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
         Try
             Try
                 Dim i As Long = CLng(0)
                 Using fileStream
                     num4 = CInt(Math.Round(CDbl(length) / CDbl(num3)))
-                    num4 = Conversion.Int(num4)
+                    num4 = Int(num4)
                     Dim num6 As Long = CLng(num4)
-                    Dim Stopwatch As Stopwatch = New Stopwatch()
+                    Dim Stopwatch As New Stopwatch()
                     Stopwatch.Start()
                     For i = CLng(0) To num6 Step CLng(1)
+                        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                            e.Cancel = True
+                            Stopwatch.Stop()
+                            fileStream.Close()
+                            Return
+                        End If
                         If i = CLng(num4) Then
                             num3 = length - CLng(num4) * num3
                             If num3 = CLng(0) Then
@@ -1354,8 +1460,8 @@ Public Class eMMCISP
                         karung = offset
                         Dim numArray(CInt(num3 - CLng(1)) + 1 - 1) As Byte
                         fileStream.Read(numArray, 0, CInt(num3))
-                        ekse(offset, num3, numArray)
-                        'DirectISP.SharedUI.lb5("Writing")
+                        Ekse(offset, num3, numArray)
+                        'Main.SharedUI.lb5("Writing")
                         num = If(num4 <> 0, CDbl(i * num3 * CLng(100)) / CDbl(length), 100)
                         DirectISP.SharedUI.PB1(CInt(Math.Round(num)))
 
@@ -1377,7 +1483,6 @@ Public Class eMMCISP
                 End Using
             Catch exception As System.Exception
                 ProjectData.SetProjectError(exception)
-                DirectISP.SharedUI.lb1(String.Concat("Error: load file at ", Conversions.ToString(offset)))
                 ProjectData.ClearProjectError()
             End Try
         Finally
@@ -1386,22 +1491,28 @@ Public Class eMMCISP
         If cekerror Then
             RichLogs("Failed!", Color.Red, True, True)
         Else
-            RichLogs("Done  ✓", Color.Yellow, True, True)
+            RichLogs("Done  ✓", Color.FromArgb(97, 197, 84), True, True)
         End If
-        AllDone()
     End Sub
 
-    Public Shared Sub writeselected()
+    Public Shared Sub Writeselected(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         Eject(USBEject(selecteddisk))
         Delay(1)
         Dim num As Integer = 0
         DirectISP.SharedUI.PB2(0)
-        Using stringReader As StringReader = New StringReader(TodoCommand)
+        Using stringReader As New StringReader(TodoCommand)
             While stringReader.Peek() <> -1
                 Dim cmd As String = stringReader.ReadLine()
 
                 If cmd <> String.Empty Then
-
+                    If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                        e.Cancel = True
+                        Return
+                    End If
                     Dim exec As String = Nothing
                     Dim arg As String() = cmd.Split("|".ToCharArray(), StringSplitOptions.RemoveEmptyEntries)
                     ' 0 bool
@@ -1413,10 +1524,10 @@ Public Class eMMCISP
                     If Not arg(4) = "none" AndAlso File.Exists(arg(4)) Then
                         Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(arg(2)), Action))
                         cekerror = False
-                        RichLogs("Writing ", Color.White, True, False)
-                        RichLogs(arg(1) & " : ", Color.DeepSkyBlue, True, False)
+                        RichLogs("Writing ", Color.WhiteSmoke, True, False)
+                        RichLogs(arg(1) & " : ", Color.DarkOrchid, True, False)
                         RichLogs("Start Sector => ", Color.Orange, True, False)
-                        RichLogs(arg(2) & " : ", Color.Aqua, True, False)
+                        RichLogs(arg(2) & " : ", Color.FromArgb(128, 128, 255), True, False)
 
                         DirectISP.SharedUI.Logs2Clear()
                         ListBox1.Items.Clear()
@@ -1425,7 +1536,7 @@ Public Class eMMCISP
                         ListView2.Items.Clear()
                         partname = arg(1)
                         sentot = arg(3)
-                        Dim process As System.Diagnostics.Process = New System.Diagnostics.Process()
+                        Dim process As New System.Diagnostics.Process()
                         Dim startInfo As ProcessStartInfo = process.StartInfo
                         startInfo.FileName = "Tools\process\file\checksparse.exe"
                         startInfo.Arguments = String.Concat("""", arg(4), """")
@@ -1439,37 +1550,109 @@ Public Class eMMCISP
                         process.Start()
                         Dim standardOutput As System.IO.StreamReader = process.StandardOutput
                         While Not process.StandardOutput.EndOfStream
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                e.Cancel = True
+                                Return
+                            End If
                             Dim str As String = standardOutput.ReadLine()
-                            txtBabble(String.Concat(str, "" & vbCrLf & ""))
+                            TxtBabble(String.Concat(str, "" & Environment.NewLine & ""))
                         End While
                         process.Dispose()
-                        Dim output As String
-                        DirectISP.SharedUI.RichTextBox2.Invoke(CType(Sub() output = DirectISP.SharedUI.RichTextBox2.Text, Action))
-                        Dim textBox As System.Windows.Forms.TextBox = New System.Windows.Forms.TextBox() With
-                            {
-                                .Text = output
-                            }
+
+                        Dim textBox As New TextBox
+                        Main.SharedUI.RichTextBoxOutput.Invoke(CType(Sub() textBox.Text = Main.SharedUI.RichTextBoxOutput.Text, Action))
+
                         ListBox1.Items.Add("0")
                         If textBox.Text.Contains("notsparse") Then
                             openfile = arg(4)
-                            Dim fileInfo As System.IO.FileInfo = New System.IO.FileInfo(openfile)
+                            Dim fileInfo As New System.IO.FileInfo(openfile)
                             filesize = Conversions.ToLong(arg(2))
                             awales = Conversions.ToLong(arg(3))
                             partname = arg(1)
                             asu = "notsparse"
-                            Dim fileInfo1 As System.IO.FileInfo = New System.IO.FileInfo(arg(4))
+                            Dim fileInfo1 As New System.IO.FileInfo(arg(4))
                             If CDbl(fileInfo1.Length) <= Conversions.ToDouble(arg(2)) Then
 
 
                                 If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                     Application.DoEvents()
+
+                                    If arg(1).Contains("PrimaryGPT") Then
+                                        RichLogs("Applying GPT ", Color.FromArgb(97, 197, 84), True, False)
+
+                                        Delay(1)
+                                        If File.Exists(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin") Then
+                                            File.Delete(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin")
+                                        End If
+
+                                        Delay(1)
+                                        If File.Exists(Path.GetDirectoryName(arg(4)) & "/gpt_main0.bak___.bin") Then
+                                            File.Delete(Path.GetDirectoryName(arg(4)) & "/gpt_main0.bak___.bin")
+                                        End If
+
+                                        Delay(1)
+                                        File.Copy(arg(4), Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin")
+
+                                        Delay(1)
+                                        ' Reset Checksum CRC32 Sector 1
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H210, "00 00 00 00")
+
+                                        Delay(1)
+                                        ' Add First Usable LBA
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H220, CRC32.ReverseStrings(CRC32.First_usable_LBA.ToString("X8")))
+
+                                        Delay(1)
+                                        ' Add Last Usable LBA
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H230, CRC32.ReverseStrings(CRC32.Last_usable_LBA.ToString("X8")))
+
+                                        Delay(1)
+                                        ' Count Sector 2 Size
+                                        CRC32.Offsets_Sector2 = (CRC32.GetHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H250, 4) _
+                                                               * CRC32.GetHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H254, 4) + 1024 - 1)
+
+                                        Delay(1)
+                                        ' Find Userdata Offset
+                                        CRC32.Offsets_Userdata = CRC32.FindOffsetInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", "75 00 73 00 65 00 72 00 64 00 61 00 74 00 61")
+
+                                        Delay(1)
+                                        ' Fix Userdata Last Usable LBA
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", CRC32.Offsets_Userdata - 16, CRC32.ReverseStrings(CRC32.Last_usable_LBA.ToString("X8")))
+
+                                        Delay(1)
+                                        ' Checksum CRC32 Sector 2
+                                        CRC32.CRC32_Sector2 = CRC32.CalculateCRC32(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", 1024, CRC32.Offsets_Sector2)
+
+                                        Delay(1)
+                                        ' Update CRC32 Sector 2 From Sector 1
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H258, CRC32.CRC32_Sector2)
+
+                                        Delay(1)
+                                        ' Count Sector 1 Size
+                                        CRC32.Offsets_Sector1 = (CRC32.GetHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H20C, 4) + 512 - 1)
+
+                                        Delay(1)
+                                        ' Checksum CRC32 Sector 1
+                                        CRC32.CRC32_Sector1 = CRC32.CalculateCRC32(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", 512, CRC32.Offsets_Sector1)
+
+                                        Delay(1)
+                                        ' Update CRC32 Sector 1 From Sector 1
+                                        CRC32.ReplaceHexInFile(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", &H210, CRC32.CRC32_Sector1)
+
+                                        Delay(1)
+                                        File.Move(arg(4), Path.GetDirectoryName(arg(4)) & "/gpt_main0.bak___.bin")
+
+                                        Delay(1)
+                                        File.Move(Path.GetDirectoryName(arg(4)) & "/temp.main_gpt.bin", arg(4))
+
+                                    End If
+
                                     DirectISP.SharedUI.DirectISPWorker.RunWorkerAsync()
                                     waitEvent.WaitOne()
                                     Thread.Sleep(300)
                                 End If
                             Else
-                                If MessageBox.Show(String.Concat(New String() {"file Size ", fileInfo1.Name, " is bigger than partition size of ", arg(1), "" & vbCrLf & "if yes, not all sector will be writen" & vbCrLf & "if no ,file will skiping"}), "Warning", MessageBoxButtons.YesNo) <> System.Windows.Forms.DialogResult.Yes Then
-                                    RichLogs(" skiping " & fileInfo1.Name, Color.LimeGreen, False, True)
+                                If MessageBox.Show(String.Concat(New String() {"file Size ", fileInfo1.Name, " is bigger than partition size of ", arg(1), "" & Environment.NewLine & "if yes, not all sector will be writen" & Environment.NewLine & "if no ,file will skiping"}), "Warning", MessageBoxButtons.YesNo) <> DialogResult.Yes Then
+                                    RichLogs("skiping " & fileInfo1.Name, Color.FromArgb(97, 197, 84), True, False)
                                 Else
 
 
@@ -1483,23 +1666,27 @@ Public Class eMMCISP
                             End If
                         End If
                         If textBox.Text.Contains("inisparse") Then
-                            Dim richTextBox22 As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
+                            Dim richTextBox22 As System.Windows.Forms.RichTextBox = Main.SharedUI.RichTextBoxOutput
                             asu = "inisparse"
                             If textBox.Text.Contains("total") Then
                                 Dim lines As String() = textBox.Lines
                                 Dim num1 As Integer = 0
                                 While num1 < CInt(lines.Length)
+                                    If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                        e.Cancel = True
+                                        Return
+                                    End If
                                     Dim str1 As String = lines(num1)
                                     If str1.Contains("total") Then
                                         str1 = Regex.Replace(str1, "total chunk =", "")
                                         str1 = Regex.Replace(str1, "sparse", "")
                                         totalchunk = str1
                                     End If
-                                    num1 = num1 + 1
+                                    num1 += 1
                                 End While
                             End If
-                            DirectISP.SharedUI.lb2("parsing image ")
-                            Dim process1 As System.Diagnostics.Process = New System.Diagnostics.Process()
+                            Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "Parsing *IMG", Action))
+                            Dim process1 As New System.Diagnostics.Process()
                             Dim aSCII As ProcessStartInfo = process1.StartInfo
                             aSCII.FileName = "Tools\process\file\simg2imgv2.exe"
                             aSCII.Arguments = String.Concat("""", arg(4), """")
@@ -1513,20 +1700,19 @@ Public Class eMMCISP
                             process1.Start()
                             Dim streamReader As System.IO.StreamReader = process1.StandardOutput
                             While Not process1.StandardOutput.EndOfStream
+                                If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                    e.Cancel = True
+                                    Return
+                                End If
                                 Dim str2 As String = streamReader.ReadLine()
-                                txtBabble(String.Concat(str2, "" & vbCrLf & ""))
+                                TxtBabble(String.Concat(str2, "" & Environment.NewLine & ""))
                             End While
                             process1.Dispose()
-                            Dim outputdump As String
-                            DirectISP.SharedUI.RichTextBox2.Invoke(CType(Sub() outputdump = DirectISP.SharedUI.RichTextBox2.Text, Action))
-                            Dim TxtRawDump As System.Windows.Forms.TextBox = New System.Windows.Forms.TextBox() With
-                                {
-                                    .Text = outputdump
-                                }
-
+                            Dim TxtRawDump As New TextBox()
+                            Main.SharedUI.RichTextBoxOutput.Invoke(CType(Sub() TxtRawDump.Text = Main.SharedUI.RichTextBoxOutput.Text, Action))
                             openfile = "unsparse.img"
                             filesize = New System.IO.FileInfo(openfile).Length
-                            Dim fileInfo2 As System.IO.FileInfo = New System.IO.FileInfo("unsparse.img")
+                            Dim fileInfo2 As New System.IO.FileInfo("unsparse.img")
                             If CDbl(fileInfo2.Length) <= Conversions.ToDouble(arg(2)) Then
                                 If Not DirectISP.SharedUI.DirectISPWorker.IsBusy Then
                                     Application.DoEvents()
@@ -1534,8 +1720,8 @@ Public Class eMMCISP
                                     waitEvent.WaitOne()
                                     Thread.Sleep(300)
                                 End If
-                            ElseIf MessageBox.Show(String.Concat(New String() {"file Size ", fileInfo2.Name, " is bigger than partition size of ", arg(1), "" & vbCrLf & "if yes, not all sector will be writen" & vbCrLf & "if no ,file will skiping"}), "Warning", MessageBoxButtons.YesNo) <> System.Windows.Forms.DialogResult.Yes Then
-                                RichLogs(" skiping  " & arg(1), Color.Yellow, True, True)
+                            ElseIf MessageBox.Show(String.Concat(New String() {"file Size ", fileInfo2.Name, " is bigger than partition size of ", arg(1), "" & Environment.NewLine & "if yes, not all sector will be writen" & Environment.NewLine & "if no ,file will skiping"}), "Warning", MessageBoxButtons.YesNo) <> DialogResult.Yes Then
+                                RichLogs("skiping " & arg(1), Color.FromArgb(97, 197, 84), True, False)
                             Else
 
 
@@ -1546,33 +1732,38 @@ Public Class eMMCISP
                                     Thread.Sleep(300)
                                 End If
                             End If
-                            Dim files As String() = Directory.GetFiles(FileSystem.CurDir(), "*", SearchOption.AllDirectories)
+                            Dim files As String() = Directory.GetFiles(CurDir(), "*", SearchOption.AllDirectories)
                             Dim num2 As Integer = 0
                             While num2 < CInt(files.Length)
+                                If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                    e.Cancel = True
+                                    Return
+                                End If
                                 Dim str3 As String = files(num2)
                                 If str3.Contains("unsparse.img") Then
-                                    MyProject.Computer.FileSystem.DeleteFile(str3)
+                                    Computer.FileSystem.DeleteFile(str3)
                                 End If
-                                num2 = num2 + 1
+                                num2 += 1
                             End While
                         End If
-                        num = num + 1
+                        num += 1
                         DirectISP.SharedUI.PB2(CInt(Math.Round(CDbl(num * 100) / CDbl(Totaltodo))))
                     Else
                         If String.IsNullOrEmpty(DirectISP.SharedUI.TxtRawDump.Text) Then
-                            RichLogs("Writing ", Color.White, True, False)
-                            RichLogs(arg(1) & " : ", Color.DeepSkyBlue, True, False)
+                            RichLogs("Writing ", Color.WhiteSmoke, True, False)
+                            RichLogs(arg(1) & " : ", Color.DarkOrchid, True, False)
                             RichLogs("Start Sector => ", Color.Orange, True, False)
-                            RichLogs(arg(2) & " : ", Color.Aqua, True, False)
-                            RichLogs(" skiping : ", Color.Yellow, True, False)
+                            RichLogs(arg(2) & " : ", Color.FromArgb(128, 128, 255), True, False)
+                            RichLogs("skiping : ", Color.FromArgb(97, 197, 84), True, False)
                             RichLogs("File doesn't exist!", Color.Red, True, True)
                         Else
 
                             cekerror = False
-                            RichLogs("Writing ", Color.White, True, False)
-                            RichLogs(arg(1) & " : ", Color.DeepSkyBlue, True, False)
+                            Console.WriteLine("Writing from dump " & arg(1))
+                            RichLogs("Writing ", Color.WhiteSmoke, True, False)
+                            RichLogs(arg(1) & " : ", Color.DarkOrchid, True, False)
                             RichLogs("Start Sector => ", Color.Orange, True, False)
-                            RichLogs(arg(2) & " : ", Color.Aqua, True, False)
+                            RichLogs(arg(2) & " : ", Color.FromArgb(128, 128, 255), True, False)
 
                             m = "p"
                             Dim length As Long = New FileInfo(openfile).Length
@@ -1590,33 +1781,28 @@ Public Class eMMCISP
                                 waitEvent.WaitOne()
                                 Thread.Sleep(300)
                                 DirectISP.SharedUI.PB2(CInt(Math.Round(CDbl(num * 100) / CDbl(Totaltodo))))
-                                num = num + 1
-                            Else
-                                'Dim richTextBox As System.Windows.Forms.RichTextBox = DirectISP.SharedUI.RichTextBox2
-                                'RichTextBox.Text = String.Concat(richTextBox.Text, "sector size to be writen is biger than file size")
+                                num += 1
                             End If
                             m = "wp"
                         End If
-
                     End If
                     If arg(1).Contains("PrimaryGPT") Then
-                        RichLogs(" Applying GPT ", Color.Lime, True, False)
-                        Delay(3)
-                        Eject(USBEject(selecteddisk))
-                        Delay(7)
+                        Delay(10)
+                        File.Delete(arg(4))
+                        Delay(1)
+                        File.Move(Path.GetDirectoryName(arg(4)) & "/gpt_main0.bak___.bin", arg(4))
                     End If
                 End If
-                    If cekerror Then
+                If cekerror Then
                     RichLogs("Failed!", Color.Red, True, True)
                 Else
-                    RichLogs("Done  ✓", Color.Yellow, True, True)
+                    RichLogs("Done  ✓", Color.FromArgb(97, 197, 84), True, True)
                 End If
             End While
-            AllDone()
         End Using
     End Sub
 
-    Public Shared Sub ekse(ByVal offset As Long, ByVal count As Long, ByVal buffer As Byte())
+    Public Shared Sub Ekse(ByVal offset As Long, ByVal count As Long, ByVal buffer As Byte())
         Dim _streamer As emmc.streamer = emmc.CreateStream(String.Concat("\\.\PHYSICALDRIVE", selecteddisk), FileAccess.ReadWrite)
         Try
             Try
@@ -1630,15 +1816,22 @@ Public Class eMMCISP
         End Try
     End Sub
 
-    Public Shared Sub erases()
+    Public Shared Sub Erases(e As DoWorkEventArgs)
+        If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+            e.Cancel = True
+            Return
+        End If
         Eject(USBEject(selecteddisk))
         Delay(1)
         Dim num As Integer = 0
         DirectISP.SharedUI.PB2(0)
-        Using stringReader As StringReader = New StringReader(TodoCommand)
+        Using stringReader As New StringReader(TodoCommand)
             While stringReader.Peek() <> -1
                 Dim cmd As String = stringReader.ReadLine()
-
+                If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                    e.Cancel = True
+                    Return
+                End If
                 If cmd <> String.Empty Then
                     cekerror = False
 
@@ -1649,10 +1842,10 @@ Public Class eMMCISP
                     ' 3 offset
                     ' 4 location
 
-                    RichLogs("Erasing ", Color.White, True, False)
-                    RichLogs(arg(1) & " : ", Color.DeepSkyBlue, True, False)
+                    RichLogs("Erasing ", Color.WhiteSmoke, True, False)
+                    RichLogs(arg(1) & " : ", Color.DarkOrchid, True, False)
                     RichLogs("Start Sector => ", Color.Orange, True, False)
-                    RichLogs(arg(2) & " : ", Color.Aqua, True, False)
+                    RichLogs(arg(2) & " : ", Color.FromArgb(128, 128, 255), True, False)
 
 
                     poffsets = Conversions.ToLong(arg(3))
@@ -1671,33 +1864,62 @@ Public Class eMMCISP
                         Thread.Sleep(300)
                     End If
 
-                    num = num + 1
+                    num += 1
                     Dim num1 As Double = CDbl(num * 100) / CDbl(Totaltodo)
                     DirectISP.SharedUI.PB2(CInt(Math.Round(num1)))
                 End If
                 If cekerror Then
                     RichLogs("Failed!", Color.Red, True, True)
                 Else
-                    RichLogs("Done  ✓", Color.Yellow, True, True)
+                    RichLogs("Done  ✓", Color.FromArgb(97, 197, 84), True, True)
                 End If
             End While
         End Using
-        AllDone()
         DirectISP.SharedUI.PB1(100)
         DirectISP.SharedUI.PB2(100)
+    End Sub
+
+
+    Public Shared Sub EMMCISPWorker_DoWork(ByVal sender As Object, ByVal e As DoWorkEventArgs)
+        Delay(3)
+
+        If SelectedCommand = "Refresh_Disk" Then
+            Refresh_Disk(e)
+        ElseIf SelectedCommand = "Scan_Partition" Then
+            Scan_Partition(e)
+        ElseIf SelectedCommand = "Scan_Dump" Then
+            Scan_Dump(e)
+        ElseIf SelectedCommand = "read" Then
+            Read(e)
+        ElseIf SelectedCommand = "writeselected" Then
+            Writeselected(e)
+        ElseIf SelectedCommand = "erases" Then
+            Erases(e)
+        ElseIf SelectedCommand = "readfull" Then
+            Readfull(e)
+        ElseIf SelectedCommand = "writedump" Then
+            Writedump(e)
+        ElseIf SelectedCommand = "identify" Then
+            Identity(e)
+        End If
+
+    End Sub
+
+    Public Shared Sub EMMCISPWorker_RunWorkerComplete(ByVal sender As Object, ByVal e As RunWorkerCompletedEventArgs)
+        AllDone()
+        SelectedCommand = ""
     End Sub
 
     Public Shared Sub DirectISPWorker_DoWork(ByVal sender As Object, ByVal e As DoWorkEventArgs)
         Console.WriteLine("DoWork Start....")
         Dim num As Double
-        Dim richTextBox As System.Windows.Forms.RichTextBox
         Dim num1 As Long = filesize
         Dim num2 As Long = filesize
         Dim length As Long = (New FileInfo(openfile)).Length
         Dim num3 As Long = CLng(1048576)
         Dim num4 As Integer = CInt(Math.Round(CDbl(num2) / CDbl(num3)))
         Dim num5 As Long = CLng(0)
-        Dim fileStream As System.IO.FileStream = New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
+        Dim fileStream As New System.IO.FileStream(openfile, FileMode.Open, FileAccess.Read)
         Try
             Try
                 Dim i As Long = CLng(0)
@@ -1706,34 +1928,37 @@ Public Class eMMCISP
                         num3 = length
                         Dim numArray(CInt((num3 - CLng(1))) + 1 - 1) As Byte
                         fileStream.Read(numArray, 0, CInt(num3))
-                        ekse(miscpart, num3, numArray)
+                        Ekse(miscpart, num3, numArray)
                     End If
                     If (Operators.CompareString(m, "frp", False) = 0) Then
                         num3 = dawane
                         Dim numArray1(CInt((num3 - CLng(1))) + 1 - 1) As Byte
-                        ekse(configpart, num3, numArray1)
+                        Ekse(configpart, num3, numArray1)
                     End If
                     If (Operators.CompareString(m, "micloudmtk1", False) = 0) Then
                         num3 = dawane
                         Dim numArray2(CInt((num3 - CLng(1))) + 1 - 1) As Byte
-                        ekse(configpart, num3, numArray2)
+                        Ekse(configpart, num3, numArray2)
                     End If
                     If (Operators.CompareString(m, "micloudmtk2", False) = 0) Then
                         num3 = dawane
                         Dim numArray3(CInt((num3 - CLng(1))) + 1 - 1) As Byte
-                        ekse(configpart, num3, numArray3)
+                        Ekse(configpart, num3, numArray3)
                     End If
                     If (Operators.CompareString(m, "factreset", False) = 0) Then
-                        Dim richTextBox2 As System.Windows.Forms.RichTextBox = richTextBox2
-                        richTextBox2.Text = String.Concat(richTextBox2.Text, "writing userdata")
                         Dim num6 As Double = CDbl(length) / CDbl(num3)
-                        num6 = Conversion.Int(num6)
+                        num6 = Int(num6)
                         Dim num7 As Long = CLng(Math.Round(num6))
                         For i = CLng(0) To num7 Step CLng(1)
-                            If (CDbl(i) = num6) Then
-                                num3 = CLng(Math.Round(CDbl(length) - num6 * CDbl(num3)))
-                                If (num3 = CLng(0)) Then
-                                    Exit For
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                e.Cancel = True
+                                Exit For
+                            Else
+                                If (CDbl(i) = num6) Then
+                                    num3 = CLng(Math.Round(CDbl(length) - num6 * CDbl(num3)))
+                                    If (num3 = CLng(0)) Then
+                                        Exit For
+                                    End If
                                 End If
                             End If
                             Dim numArray4(CInt((num3 - CLng(1))) + 1 - 1) As Byte
@@ -1742,7 +1967,7 @@ Public Class eMMCISP
                             karung = num9
                             fileStream.Read(numArray4, 0, CInt(num3))
                             'Label5.Text = "writing userdata"
-                            ekse(num9, num3, numArray4)
+                            Ekse(num9, num3, numArray4)
                             num = If(num6 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(length), 100)
                             DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
                             fileStream.Flush()
@@ -1752,18 +1977,24 @@ Public Class eMMCISP
                     If (Operators.CompareString(m, "p", False) = 0) Then
                         num3 = CLng(1048576)
                         Dim num10 As Double = CDbl(psize) / CDbl(num3)
-                        num10 = Conversion.Int(num10)
+                        num10 = Int(num10)
                         fileStream.Position = poffsets
                         'RichLogs("writing... " & pname, Color.WhiteSmoke, False, False)
                         Dim num11 As Long = CLng(Math.Round(num10))
-                        Dim Stopwatch As Stopwatch = New Stopwatch()
+                        Dim Stopwatch As New Stopwatch()
                         Stopwatch.Start()
                         For i = CLng(0) To num11 Step CLng(1)
-                            If (CDbl(i) = num10) Then
-                                num3 = CLng(Math.Round(CDbl(psize) - num10 * CDbl(num3)))
-                                If (num3 = CLng(0)) Then
-                                    Stopwatch.Stop()
-                                    Exit For
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                Stopwatch.Stop()
+                                e.Cancel = True
+                                Exit For
+                            Else
+                                If (CDbl(i) = num10) Then
+                                    num3 = CLng(Math.Round(CDbl(psize) - num10 * CDbl(num3)))
+                                    If (num3 = CLng(0)) Then
+                                        Stopwatch.Stop()
+                                        Exit For
+                                    End If
                                 End If
                             End If
                             Dim numArray5(CInt((num3 - CLng(1))) + 1 - 1) As Byte
@@ -1771,7 +2002,7 @@ Public Class eMMCISP
                             Dim num13 As Long = poffsets + num12
                             karung = num13
                             fileStream.Read(numArray5, 0, CInt(num3))
-                            ekse(num13, num3, numArray5)
+                            Ekse(num13, num3, numArray5)
                             'nLabel5.Text = String.Concat("Writing ", pname)
                             If (num10 <> 0) Then
                                 num = If(num10 <> 1, CDbl((i * num3 * CLng(100))) / CDbl(psize), 100)
@@ -1796,23 +2027,29 @@ Public Class eMMCISP
                     End If
                     If (Operators.CompareString(m, "f", False) = 0) Then
                         num4 = CInt(Math.Round(CDbl(length) / CDbl(num3)))
-                        num4 = Conversion.Int(num4)
+                        num4 = Int(num4)
                         Dim num14 As Long = CLng(num4)
-                        Dim Stopwatch As Stopwatch = New Stopwatch()
+                        Dim Stopwatch As New Stopwatch()
                         Stopwatch.Start()
                         For i = CLng(0) To num14 Step CLng(1)
-                            If (i = CLng(num4)) Then
-                                num3 = length - CLng(num4) * num3
-                                If (num3 = CLng(0)) Then
-                                    Stopwatch.Stop()
-                                    Exit For
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                Stopwatch.Stop()
+                                e.Cancel = True
+                                Exit For
+                            Else
+                                If (i = CLng(num4)) Then
+                                    num3 = length - CLng(num4) * num3
+                                    If (num3 = CLng(0)) Then
+                                        Stopwatch.Stop()
+                                        Exit For
+                                    End If
                                 End If
                             End If
                             offset = i * num3
                             karung = offset
                             Dim numArray6(CInt((num3 - CLng(1))) + 1 - 1) As Byte
                             fileStream.Read(numArray6, 0, CInt(num3))
-                            ekse(offset, num3, numArray6)
+                            Ekse(offset, num3, numArray6)
                             num = If(num4 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(length), 100)
 
                             DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
@@ -1832,42 +2069,48 @@ Public Class eMMCISP
                     If (Operators.CompareString(m, "erase", False) = 0) Then
                         num3 = CLng(1048576)
                         Dim num15 As Double = CDbl(psize) / CDbl(num3)
-                        num15 = Conversion.Int(num15)
+                        num15 = Int(num15)
                         Dim num16 As Long = CLng(Math.Round(num15))
                         i = CLng(0)
 
                         ' Membuat objek Stopwatch untuk mengukur waktu
-                        Dim Stopwatch As Stopwatch = New Stopwatch()
+                        Dim Stopwatch As New Stopwatch()
                         Stopwatch.Start()
 
                         While i <= num16
-                            If (CDbl(i) = num15) Then
-                                num3 = CLng(Math.Round(CDbl(psize) - num15 * CDbl(num3)))
-                            End If
-                            If (num3 <> CLng(0)) Then
-                                Dim numArray7(CInt((num3 - CLng(1))) + 1 - 1) As Byte
-                                berapakali = i * num3
-                                Dim num17 As Long = poffsets + berapakali
-                                'Label5.Text = String.Concat("erasing ", pname)
-                                ekse(num17, num3, numArray7)
-                                num = If(num15 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(psize), 100)
-                                DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
-                                i = i + CLng(1)
-                                Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(psize), Action))
-                                Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(CDbl(num3 * i)), Action))
-
-                                ' Menghitung Waktu yang telah berlalu
-                                Dim elapsed As TimeSpan = Stopwatch.Elapsed
-                                Dim speed As Double = num3 * i / elapsed.TotalSeconds
-                                If speed > 0 Then
-                                    Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
-                                End If
-                                DirectISP.SharedUI.PB1(CInt(Math.Round(num)))
-                                TaskbarManager.Instance().SetProgressValue(CInt(Math.Round(num)), 100)
-                                TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
-                            Else
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
                                 Stopwatch.Stop()
+                                e.Cancel = True
                                 Exit While
+                            Else
+                                If (CDbl(i) = num15) Then
+                                    num3 = CLng(Math.Round(CDbl(psize) - num15 * CDbl(num3)))
+                                End If
+                                If (num3 <> CLng(0)) Then
+                                    Dim numArray7(CInt((num3 - CLng(1))) + 1 - 1) As Byte
+                                    berapakali = i * num3
+                                    Dim num17 As Long = poffsets + berapakali
+                                    'Label5.Text = String.Concat("erasing ", pname)
+                                    Ekse(num17, num3, numArray7)
+                                    num = If(num15 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(psize), 100)
+                                    DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
+                                    i += CLng(1)
+                                    Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(psize), Action))
+                                    Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(CDbl(num3 * i)), Action))
+
+                                    ' Menghitung Waktu yang telah berlalu
+                                    Dim elapsed As TimeSpan = Stopwatch.Elapsed
+                                    Dim speed As Double = num3 * i / elapsed.TotalSeconds
+                                    If speed > 0 Then
+                                        Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = GetFileSize(speed) & " /s", Action))
+                                    End If
+                                    DirectISP.SharedUI.PB1(CInt(Math.Round(num)))
+                                    TaskbarManager.Instance().SetProgressValue(CInt(Math.Round(num)), 100)
+                                    TaskbarManager.Instance().SetOverlayIcon(Main.SharedUI.Icon, "")
+                                Else
+                                    Stopwatch.Stop()
+                                    Exit While
+                                End If
                             End If
                         End While
                         Stopwatch.Stop()
@@ -1875,23 +2118,29 @@ Public Class eMMCISP
                     If (Operators.CompareString(m, "wp", False) = 0) Then
                         If (Operators.CompareString(asu, "inisparse", False) = 0) Then
 
-                            'RichLogs("Writing ", Color.White, True, False)
-                            'RichLogs(partname & " : ", Color.DeepSkyBlue, True, False)
+                            'RichLogs("Writing ", Color.WhiteSmoke, True, False)
+                            'RichLogs(partname & " : ", Color.DarkOrchid, True, False)
                             'RichLogs("Start Sector => ", Color.Orange, True, False)
-                            'RichLogs(filesize & " : ", Color.Aqua, True, False)
+                            'RichLogs(filesize & " : ", Color.FromArgb(128, 128, 255), True, False)
 
                             Dim num18 As Long = Conversions.ToLong(sentot)
                             Dim num19 As Double = CDbl(filesize) / CDbl(num3)
-                            num19 = Conversion.Int(num19)
+                            num19 = Int(num19)
                             Dim num20 As Long = CLng(Math.Round(num19))
-                            Dim Stopwatch As Stopwatch = New Stopwatch()
+                            Dim Stopwatch As New Stopwatch()
                             Stopwatch.Start()
                             For i = CLng(0) To num20 Step CLng(1)
-                                If (CDbl(i) = num19) Then
-                                    num3 = CLng(Math.Round(CDbl(filesize) - num19 * CDbl(num3)))
-                                    If (num3 = CLng(0)) Then
-                                        Stopwatch.Stop()
-                                        Exit For
+                                If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                    Stopwatch.Stop()
+                                    e.Cancel = True
+                                    Exit For
+                                Else
+                                    If (CDbl(i) = num19) Then
+                                        num3 = CLng(Math.Round(CDbl(filesize) - num19 * CDbl(num3)))
+                                        If (num3 = CLng(0)) Then
+                                            Stopwatch.Stop()
+                                            Exit For
+                                        End If
                                     End If
                                 End If
                                 Dim numArray8(CInt((num3 - CLng(1))) + 1 - 1) As Byte
@@ -1899,7 +2148,7 @@ Public Class eMMCISP
                                 karung = num21
                                 fileStream.Read(numArray8, 0, CInt(num3))
                                 'Label5.Text = String.Concat("writing ", partname)
-                                ekse(num21, num3, numArray8)
+                                Ekse(num21, num3, numArray8)
                                 num = If(num19 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(filesize), 100)
                                 DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
                                 Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(CDbl(num3 * i)), Action))
@@ -1919,22 +2168,28 @@ Public Class eMMCISP
                         End If
                         If (Operators.CompareString(asu, "notsparse", False) = 0) Then
 
-                            'RichLogs("Writing ", Color.White, True, False)
-                            'RichLogs(partname & " : ", Color.DeepSkyBlue, True, False)
+                            'RichLogs("Writing ", Color.WhiteSmoke, True, False)
+                            'RichLogs(partname & " : ", Color.DarkOrchid, True, False)
                             'RichLogs("Start Sector => ", Color.Orange, True, False)
-                            'RichLogs(filesize & " : ", Color.Aqua, True, False)
+                            'RichLogs(filesize & " : ", Color.FromArgb(128, 128, 255), True, False)
 
-                            num4 = Conversion.Int(num4)
+                            num4 = Int(num4)
                             num3 = CLng(1048576)
                             Dim num22 As Long = CLng(num4)
-                            Dim Stopwatch As Stopwatch = New Stopwatch()
+                            Dim Stopwatch As New Stopwatch()
                             Stopwatch.Start()
                             For i = CLng(0) To num22 Step CLng(1)
-                                If (i = CLng(num4)) Then
-                                    num3 = filesize - CLng(num4) * num3
-                                    If (num3 = CLng(0)) Then
-                                        Stopwatch.Stop()
-                                        Exit For
+                                If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                    Stopwatch.Stop()
+                                    e.Cancel = True
+                                    Exit For
+                                Else
+                                    If (i = CLng(num4)) Then
+                                        num3 = filesize - CLng(num4) * num3
+                                        If (num3 = CLng(0)) Then
+                                            Stopwatch.Stop()
+                                            Exit For
+                                        End If
                                     End If
                                 End If
                                 Dim num23 As Long = i * num3
@@ -1943,7 +2198,7 @@ Public Class eMMCISP
                                 karung = num24
                                 fileStream.Read(numArray9, 0, CInt(num3))
                                 'Label5.Text = String.Concat("writing ", partname)
-                                ekse(num24, num3, numArray9)
+                                Ekse(num24, num3, numArray9)
                                 num = If(num4 <> 0, CDbl((i * num3 * CLng(100))) / CDbl(filesize), 100)
                                 DirectISP.SharedUI.DirectISPWorker.ReportProgress(CInt(Math.Round(num)))
                                 Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = GetFileSize(CDbl(num3 * i)), Action))
@@ -1963,22 +2218,28 @@ Public Class eMMCISP
                     If (Operators.CompareString(m, "erasefull", False) = 0) Then
                         Dim obj As Object = Operators.DivideObject(uks, num3)
                         Dim num25 As Long = Conversions.ToLong(obj)
-                        Dim Stopwatch As Stopwatch = New Stopwatch()
+                        Dim Stopwatch As New Stopwatch()
                         Stopwatch.Start()
                         For i = CLng(0) To num25 Step CLng(1)
-                            If (Operators.ConditionalCompareObjectEqual(i, obj, False)) Then
-                                num3 = Conversions.ToLong(Operators.SubtractObject(uks, Operators.MultiplyObject(obj, num3)))
-                                If (num3 = CLng(0)) Then
-                                    Stopwatch.Stop()
-                                    Exit For
+                            If DirectISP.SharedUI.eMMCISPWorker.CancellationPending Then
+                                Stopwatch.Stop()
+                                e.Cancel = True
+                                Exit For
+                            Else
+                                If (Operators.ConditionalCompareObjectEqual(i, obj, False)) Then
+                                    num3 = Conversions.ToLong(Operators.SubtractObject(uks, Operators.MultiplyObject(obj, num3)))
+                                    If (num3 = CLng(0)) Then
+                                        Stopwatch.Stop()
+                                        Exit For
+                                    End If
                                 End If
                             End If
                             Dim numArray10(CInt((num3 - CLng(1))) + 1 - 1) As Byte
                             Dim num26 As Long = i * num3
                             karung = num26
                             'Label2.Text = "erasing"
-                            ekse(num26, num3, numArray10)
-                            num5 = num5 + num3
+                            Ekse(num26, num3, numArray10)
+                            num5 += num3
                             num = If(Not Operators.ConditionalCompareObjectEqual(obj, 0, False), Conversions.ToDouble(Operators.DivideObject(num5 * CLng(100), uks)), 100)
 
                             Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(psize), Action))
@@ -2002,7 +2263,6 @@ Public Class eMMCISP
             End Try
         Finally
             fileStream.Close()
-            e.Cancel = True
         End Try
     End Sub
     Public Shared Sub DirectISPWorker_RunWorkerComplete(ByVal sender As Object, ByVal e As RunWorkerCompletedEventArgs)
@@ -2017,8 +2277,139 @@ Public Class eMMCISP
         Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = "0.00 Bytes           ", Action))
         Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = "0.00 Bytes           ", Action))
         Main.SharedUI.label_transferrate.Invoke(CType(Sub() Main.SharedUI.label_transferrate.Text = "0.00 Bytes /s        ", Action))
-        RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
+        Dim CheckUSB As String = ""
+        Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() CheckUSB = Main.SharedUI.comboUSB.Text, Action))
+        Dim ChekGPT As String = ""
+        Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() ChekGPT = Main.SharedUI.RichTextBoxLogs.Text, Action))
+        If ChekGPT.Contains("Applying GPT") Then
+            RichLogs(Environment.NewLine & "[ Info !!! ]", Color.DarkOrchid, True, True)
+            RichLogs("  Please Remove USB " & CheckUSB, Color.DarkOrchid, True, True)
+            RichLogs("  Then Plug-In  USB " & CheckUSB, Color.DarkOrchid, True, True)
+            RichLogs("  Refresh Disk And Then Scan Partition to continue ...", Color.DarkOrchid, True, True)
+            RichLogs("  ", Color.DarkOrchid, True, True)
+        End If
+        RichLogs(Environment.NewLine, Color.WhiteSmoke, True, True)
         TimeSpanElapsed.ElapsedTime(Watch)
         Watch.Stop()
     End Sub
+
+
+    Public Shared Function Getfilenames(label As String) As String
+        If label = "aboot" Then
+            Return "emmc_appsboot.mbn"
+        ElseIf label = "abootbak" Then
+            Return "emmc_appsbootbak.mbn"
+        ElseIf label = "apdp" Then
+            Return "dpAP.mbn"
+        ElseIf label = "BackupGPT" Then
+            Return "gpt_backup0.bin"
+        ElseIf label = "boot" Then
+            Return "boot.img"
+        ElseIf label = "cache" Then
+            Return "cache.img"
+        ElseIf label = "cmnlib" Then
+            Return "cmnlib.mbn"
+        ElseIf label = "cmnlibbak" Then
+            Return "cmnlibbak.mbn"
+        ElseIf label = "cmnlib64" Then
+            Return "cmnlib64.mbn"
+        ElseIf label = "cmnlib64bak" Then
+            Return "cmnlib64bak.mbn"
+        ElseIf label = "devcfg" Then
+            Return "devcfg.mbn"
+        ElseIf label = "devcfgbak" Then
+            Return "devcfgbak.mbn"
+        ElseIf label = "DRIVER" Then
+            Return "DRIVER.ISO"
+        ElseIf label = "dsp" Then
+            Return "adspso.bin"
+        ElseIf label = "dtbo" Then
+            Return "dtbo.img"
+        ElseIf label = "keymaster" Then
+            Return "keymaster.mbn"
+        ElseIf label = "keymasterbak" Then
+            Return "keymasterbak.mbn"
+        ElseIf label = "lksecapp" Then
+            Return "lksecapp.mbn"
+        ElseIf label = "lksecappbak" Then
+            Return "lksecappbak.mbn"
+        ElseIf label = "LOGO" Then
+            Return "logo.bin"
+        ElseIf label = "mdtp" Then
+            Return "mdtp.img"
+        ElseIf label = "misc" Then
+            Return "misc.img"
+        ElseIf label = "modem" Then
+            Return "NON - HLOS.bin"
+        ElseIf label = "oppodycnvbk" Then
+            Return "dynamic_nvbk.bin"
+        ElseIf label = "opporeserve1" Then
+            Return "emmc_fw.bin"
+        ElseIf label = "opporeserve2" Then
+            Return "opporeserve2.img"
+        ElseIf label = "oppostanvbk" Then
+            Return "static_nvbk.bin"
+        ElseIf label = "persist" Then
+            Return "persist.img"
+        ElseIf label = "PrimaryGPT" Then
+            Return "gpt_main0.bin"
+        ElseIf label = "recovery" Then
+            Return "recovery.img"
+        ElseIf label = "rpm" Then
+            Return "rpm.mbn"
+        ElseIf label = "rpmbak" Then
+            Return "rpmbak.mbn"
+        ElseIf label = "sbl1" Then
+            Return "sbl1.mbn"
+        ElseIf label = "sbl1bak" Then
+            Return "sbl1bak.mbn"
+        ElseIf label = "sec" Then
+            Return "sec.dat"
+        ElseIf label = "system" Then
+            Return "system.img"
+        ElseIf label = "tz" Then
+            Return "tz.mbn"
+        ElseIf label = "tzbak" Then
+            Return "tzbak.mbn"
+        ElseIf label = "userdata" Then
+            Return "userdata.img"
+        ElseIf label = "vbmeta" Then
+            Return "vbmeta.img"
+        ElseIf label = "vendor" Then
+            Return "vendor.img"
+        Else
+            Return label & ".bin"
+        End If
+    End Function
+    Public Shared Function GetFileSize(TheSize As Long) As String
+        Dim str As String
+        Dim DoubleBytes As Double
+        Try
+            Dim num As Long = TheSize
+            If num >= 1099511627776L Then
+                DoubleBytes = TheSize / 1099511627776
+                str = String.Concat(FormatNumber(DoubleBytes, 2, TriState.UseDefault, TriState.UseDefault, TriState.UseDefault), " TB")
+            ElseIf num >= 1073741824L AndAlso num <= 1099511627775L Then
+                DoubleBytes = TheSize / 1073741824
+                str = String.Concat(FormatNumber(DoubleBytes, 2, TriState.UseDefault, TriState.UseDefault, TriState.UseDefault), " GB")
+            ElseIf num >= 1048576L AndAlso num <= 1073741823L Then
+                DoubleBytes = TheSize / 1048576
+                str = String.Concat(FormatNumber(DoubleBytes, 2, TriState.UseDefault, TriState.UseDefault, TriState.UseDefault), " MB")
+            ElseIf num >= 1024L AndAlso num <= 1048575L Then
+                DoubleBytes = TheSize / 1024
+                str = String.Concat(FormatNumber(DoubleBytes, 2, TriState.UseDefault, TriState.UseDefault, TriState.UseDefault), " KB")
+            ElseIf num < 0L OrElse num > 1023L Then
+                str = ""
+            Else
+                DoubleBytes = TheSize
+                str = String.Concat(FormatNumber(DoubleBytes, 2, TriState.UseDefault, TriState.UseDefault, TriState.UseDefault), " bytes")
+            End If
+        Catch exception As Exception
+            ProjectData.SetProjectError(exception)
+            str = ""
+            ProjectData.ClearProjectError()
+        End Try
+        Return str
+    End Function
+
 End Class

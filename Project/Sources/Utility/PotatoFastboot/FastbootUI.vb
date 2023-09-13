@@ -17,7 +17,7 @@ Public Class FastbootUI
     Public totalchecked As String
     Public totaldo As String
     Public totallength As Long = 0
-    Public textbox As TextBox = New TextBox()
+    Public textbox As New TextBox()
     Public DevicesName As String = ""
     Public serial As String = ""
     Friend Shared SharedUI As FastbootUI
@@ -56,13 +56,14 @@ Public Class FastbootUI
         If DataView.Rows.Count > 0 Then
             If e.ColumnIndex = 3 Then
                 If DataView.CurrentRow.Cells(1).Value = "flash" OrElse DataView.CurrentRow.Cells(1).Value = "boot" Then
-                    Dim openFileDialog As New OpenFileDialog()
-                    openFileDialog.Title = "Select File Partition " + DataView.CurrentRow.Cells(2).Value
-                    openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer)
-                    openFileDialog.FileName = "*.*"
-                    openFileDialog.Filter = "ALL FILE  (*.*)|*.*"
-                    openFileDialog.FilterIndex = 2
-                    openFileDialog.RestoreDirectory = True
+                    Dim openFileDialog As New OpenFileDialog With {
+                        .Title = "Select File Partition " + DataView.CurrentRow.Cells(2).Value,
+                        .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                        .FileName = "*.*",
+                        .Filter = "ALL FILE  (*.*)|*.*",
+                        .FilterIndex = 2,
+                        .RestoreDirectory = True
+                    }
                     If openFileDialog.ShowDialog() = DialogResult.OK Then
                         DataView.CurrentRow.Cells(4).Value = openFileDialog.SafeFileName
                         DataView.CurrentRow.Cells(5).Value = Path.Combine(New String() {Path.GetDirectoryName(openFileDialog.FileName)})
@@ -74,13 +75,10 @@ Public Class FastbootUI
         End If
     End Sub
     Private Sub MainTab_MouseClick(sender As Object, e As MouseEventArgs) Handles MainTab.MouseClick
-        Dim WorkerMethod As String
         If MainTab.SelectedTabPage.Name = MainTab.TabPages(0).Name Then
-            WorkerMethod = "FLASH"
         End If
 
         If MainTab.SelectedTabPage.Name = MainTab.TabPages(1).Name Then
-            WorkerMethod = "UNIFERSAL"
         End If
     End Sub
     Private Sub VScrollBarFbFlashDataView_Scroll(sender As Object, e As ScrollEventArgs) Handles VScrollBarFbFlashDataView.Scroll
@@ -147,18 +145,18 @@ Public Class FastbootUI
             Dim product As String = str.Substring(str.LastIndexOf("^product: *") + 1)
             product = product.Replace("product: *", "").Replace("""", "").Replace(" || exit /B 1", "")
 
-            Dim resultproduct As New TextBox
+            Dim resultproduct As New TextBox With {
+                .Text = product
+            }
 
-            resultproduct.Text = product
-
-            Dim strs As List(Of String) = New List(Of String)()
+            Dim strs As New List(Of String)()
             Dim lines As String() = resultproduct.Lines
             Dim num As Integer = 0
 
             While num < CInt(lines.Length)
                 Dim textlines As String = lines(num)
                 strs.Add(textlines)
-                num = num + 1
+                num += 1
             End While
 
             product = strs(0)
@@ -169,7 +167,7 @@ Public Class FastbootUI
                 str = str.Substring(str.LastIndexOf(")") + 1)
             End If
 
-            Using stringReader As StringReader = New StringReader(str)
+            Using stringReader As New StringReader(str)
                 While stringReader.Peek() <> -1
                     Dim str1 As String = stringReader.ReadLine()
                     Dim command As String = ""
@@ -223,7 +221,7 @@ Public Class FastbootUI
     End Sub
 
     Public Sub AllIsDone(sender As Object, e As RunWorkerCompletedEventArgs)
-        RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
+        'RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
         TimeSpanElapsed.ElapsedTime(Watch)
         Watch.Stop()
     End Sub
@@ -238,7 +236,7 @@ Public Class FastbootUI
             Next
 
             If flag Then
-                Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+                Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
                 WorkerTodo = "flash"
 
                 TodoCommand = ""
@@ -291,7 +289,7 @@ Public Class FastbootUI
     End Sub
     Private Sub ButtonRebootSYS_Click(sender As Object, e As EventArgs) Handles ButtonRebootSYS.Click
         If Not FastbootWorker.IsBusy Then
-            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+            Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
             WorkerTodo = "reboot"
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
@@ -302,7 +300,7 @@ Public Class FastbootUI
     End Sub
     Private Sub ButtonRebootEDLold_Click(sender As Object, e As EventArgs) Handles ButtonRebootEDLold.Click
         If Not FastbootWorker.IsBusy Then
-            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+            Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
             WorkerTodo = "EDLold"
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
@@ -313,7 +311,7 @@ Public Class FastbootUI
     End Sub
     Private Sub ButtonRebootEDLnew_Click(sender As Object, e As EventArgs) Handles ButtonRebootEDLnew.Click
         If Not FastbootWorker.IsBusy Then
-            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+            Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
             WorkerTodo = "EDLold"
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
@@ -325,7 +323,7 @@ Public Class FastbootUI
     Private Sub ButtonReadInfo_Click(sender As Object, e As EventArgs) Handles ButtonReadInfo.Click
 
         If Not FastbootWorker.IsBusy Then
-            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+            Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
             WorkerTodo = "info"
             FastbootWorker.RunWorkerAsync()
             FastbootWorker.Dispose()
@@ -399,7 +397,7 @@ Public Class FastbootUI
                 Dim Ends As String = ""
                 If Result.ToLower().Contains("okay") OrElse Result.ToLower().Contains("finished") AndAlso Not Result.ToLower().Contains("failed") Then
                     RichLogs("[OK]", Color.Lime, False, True)
-                    Using stringReader As StringReader = New StringReader(Result)
+                    Using stringReader As New StringReader(Result)
                         Dim partition As String = ""
                         Dim partitionType As String = ""
                         Dim partitionSize As String = ""

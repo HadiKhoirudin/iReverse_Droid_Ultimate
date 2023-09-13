@@ -52,8 +52,8 @@ Namespace BismillahAdb
 		End Function
 
 		Public Function ReadAllLines() As String()
-			Dim lines As List(Of String) = New List(Of String)()
-			Using reader As StreamReader = New StreamReader(_tcpStream, _encoding)
+			Dim lines As New List(Of String)()
+			Using reader As New StreamReader(_tcpStream, _encoding)
 				While True
 					Dim line As String = reader.ReadLine()
 					If line Is Nothing Then

@@ -20,109 +20,78 @@ Public Class DirectISP
     End Sub
 
     Private Sub Main_Load(sender As Object, e As EventArgs)
-        eMMCISP.ListBox1 = New ListBox()
-        eMMCISP.ListBox2 = New ListBox()
-        eMMCISP.ListBox3 = New ListBox()
-        eMMCISP.ListBox4 = New ListBox()
-        eMMCISP.ListBox5 = New ListBox()
-        eMMCISP.ListBox6 = New ListBox()
-        eMMCISP.ListBox7 = New ListBox()
-        ComboBox1.Properties.Items.Add("8mb")
-        ComboBox1.Properties.Items.Add("16mb")
-        ComboBox1.Properties.Items.Add("32mb")
-        ComboBox1.Properties.Items.Add("64mb")
-        ComboBox1.Properties.Items.Add("128mb")
-        ComboBox1.Properties.Items.Add("256mb")
-        ComboBox1.Properties.Items.Add("512mb")
-        ComboBox1.Properties.Items.Add("1gb")
-        ComboBox1.Properties.Items.Add("2gb")
-        ComboBox1.Properties.Items.Add("4gb")
-        ComboBox1.Properties.Items.Add("ExcludeUserdata")
-        ComboBox1.Properties.Items.Add("auto")
-        ComboBox1.SelectedItem = "auto"
+        EMMCISP.ListBox1 = New ListBox()
+        EMMCISP.ListBox2 = New ListBox()
+        EMMCISP.ListBox3 = New ListBox()
+        EMMCISP.ListBox4 = New ListBox()
+        EMMCISP.ListBox5 = New ListBox()
+        EMMCISP.ListBox6 = New ListBox()
+        EMMCISP.ListBox7 = New ListBox()
+        ComboBoxSizeDump.Properties.Items.Add("Auto Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("8 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("16 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("32 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("64 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("128 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("256 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("512 MB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("1 GB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("2 GB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("4 GB Size Dump")
+        ComboBoxSizeDump.Properties.Items.Add("Without Userdata Dump")
+        ComboBoxSizeDump.SelectedItem = "Auto Size Dump"
 
-        AddHandler DirectISPWorker.DoWork, AddressOf eMMCISP.DirectISPWorker_DoWork
-        AddHandler DirectISPWorker.RunWorkerCompleted, AddressOf eMMCISP.DirectISPWorker_RunWorkerComplete
+        AddHandler DirectISPWorker.DoWork, AddressOf EMMCISP.DirectISPWorker_DoWork
+        AddHandler DirectISPWorker.RunWorkerCompleted, AddressOf EMMCISP.DirectISPWorker_RunWorkerComplete
+
+        AddHandler eMMCISPWorker.DoWork, AddressOf EMMCISP.EMMCISPWorker_DoWork
+        AddHandler eMMCISPWorker.RunWorkerCompleted, AddressOf EMMCISP.EMMCISPWorker_RunWorkerComplete
+
     End Sub
 
     Public Sub DGV_C()
         DataView.Invoke(CType(Sub() DataView.Rows.Clear(), Action))
     End Sub
     Public Sub Logs1(msg As String)
-        If Main.SharedUI.RichTextBox.InvokeRequired Then
-            Main.SharedUI.RichTextBox.Invoke(Sub()
-                                                 Main.SharedUI.RichTextBox.SelectionColor = Color.WhiteSmoke
-                                                 Main.SharedUI.RichTextBox.SelectionStart = Main.SharedUI.RichTextBox.Text.Length
-                                                 Main.SharedUI.RichTextBox.AppendText(msg)
-                                                 Main.SharedUI.RichTextBox.AppendText(Environment.NewLine)
-                                             End Sub)
+        If Main.SharedUI.RichTextBoxLogs.InvokeRequired Then
+            Main.SharedUI.RichTextBoxLogs.Invoke(Sub()
+                                                     Main.SharedUI.RichTextBoxLogs.SelectionColor = Color.WhiteSmoke
+                                                     Main.SharedUI.RichTextBoxLogs.SelectionStart = Main.SharedUI.RichTextBoxLogs.Text.Length
+                                                     Main.SharedUI.RichTextBoxLogs.AppendText(msg)
+                                                     Main.SharedUI.RichTextBoxLogs.AppendText(Environment.NewLine)
+                                                 End Sub)
         Else
-            Main.SharedUI.RichTextBox.SelectionColor = Color.WhiteSmoke
-            Main.SharedUI.RichTextBox.SelectionStart = Main.SharedUI.RichTextBox.Text.Length
-            Main.SharedUI.RichTextBox.AppendText(msg)
-            Main.SharedUI.RichTextBox.AppendText(Environment.NewLine)
+            Main.SharedUI.RichTextBoxLogs.SelectionColor = Color.WhiteSmoke
+            Main.SharedUI.RichTextBoxLogs.SelectionStart = Main.SharedUI.RichTextBoxLogs.Text.Length
+            Main.SharedUI.RichTextBoxLogs.AppendText(msg)
+            Main.SharedUI.RichTextBoxLogs.AppendText(Environment.NewLine)
         End If
     End Sub
     Public Sub Logs2(msg As String)
-        If RichTextBox2.InvokeRequired Then
-            RichTextBox2.Invoke(Sub()
-                                    RichTextBox2.SelectionStart = RichTextBox2.Text.Length
-                                    RichTextBox2.AppendText(msg)
-                                    RichTextBox2.AppendText(Environment.NewLine)
-                                End Sub)
+        If Main.SharedUI.RichTextBoxOutput.InvokeRequired Then
+            Main.SharedUI.RichTextBoxOutput.Invoke(Sub()
+                                                       Main.SharedUI.RichTextBoxOutput.SelectionStart = Main.SharedUI.RichTextBoxOutput.Text.Length
+                                                       Main.SharedUI.RichTextBoxOutput.AppendText(msg)
+                                                       Main.SharedUI.RichTextBoxOutput.AppendText(Environment.NewLine)
+                                                   End Sub)
         Else
-            RichTextBox2.SelectionStart = RichTextBox2.Text.Length
-            RichTextBox2.AppendText(msg)
-            RichTextBox2.AppendText(Environment.NewLine)
-        End If
-    End Sub
-    Public Sub lb1(txt As String)
-        'If Label1.InvokeRequired Then
-        'Label1.Invoke(CType(Sub() 'Label1.Text = txt, Action))
-        'Else
-        'Label1.Text = txt
-        'End If
-    End Sub
-    Public Sub lb2(txt As String)
-        If Main.SharedUI.label_writensize.InvokeRequired Then
-            Main.SharedUI.label_writensize.Invoke(CType(Sub() Main.SharedUI.label_writensize.Text = txt, Action))
-        Else
-            Main.SharedUI.label_writensize.Text = txt
-        End If
-    End Sub
-    Public Sub lb3(txt As String)
-        'If Label3.InvokeRequired Then
-        'Label3.Invoke(CType(Sub() 'Label3.Text = txt, Action))
-        'Else
-        'Label3.Text = txt
-        'End If
-    End Sub
-    Public Sub lb4(txt As String)
-        'If Label4.InvokeRequired Then
-        'Label4.Invoke(CType(Sub() 'Label4.Text = txt, Action))
-        'Else
-        'Label4.Text = txt
-        'End If
-    End Sub
-    Public Sub lb5(txt As String)
-        If Main.SharedUI.label_totalsize.InvokeRequired Then
-            Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = txt, Action))
-        Else
-            Main.SharedUI.label_totalsize.Text = txt
+            Main.SharedUI.RichTextBoxOutput.SelectionStart = Main.SharedUI.RichTextBoxOutput.Text.Length
+            Main.SharedUI.RichTextBoxOutput.AppendText(msg)
+            Main.SharedUI.RichTextBoxOutput.AppendText(Environment.NewLine)
         End If
     End Sub
     Public Sub Logs1Clear()
-        If Main.SharedUI.RichTextBox.InvokeRequired Then
-            Main.SharedUI.RichTextBox.Invoke(CType(Sub() Main.SharedUI.RichTextBox.Clear(), Action))
+        If Main.SharedUI.RichTextBoxLogs.InvokeRequired Then
+            Main.SharedUI.RichTextBoxLogs.Invoke(CType(Sub() Main.SharedUI.RichTextBoxLogs.Clear(), Action))
         Else
-            Main.SharedUI.RichTextBox.Clear()
+            Main.SharedUI.RichTextBoxLogs.Clear()
         End If
     End Sub
     Public Sub Logs2Clear()
-        If RichTextBox2.InvokeRequired Then
-            RichTextBox2.Invoke(CType(Sub() RichTextBox2.Clear(), Action))
+        If Main.SharedUI.RichTextBoxOutput.InvokeRequired Then
+            Main.SharedUI.RichTextBoxOutput.Invoke(CType(Sub() Main.SharedUI.RichTextBoxOutput.Clear(), Action))
         Else
-            RichTextBox2.Clear()
+            Main.SharedUI.RichTextBoxOutput.Clear()
         End If
     End Sub
     Public Sub PB1(val As Long)
@@ -200,15 +169,17 @@ Public Class DirectISP
     Private Sub DataView_CellDoubleClick(sender As Object, e As DataGridViewCellEventArgs) Handles DataView.CellDoubleClick
         If DataView.Rows.Count > 0 Then
             If e.ColumnIndex = 2 Then
-                Dim openFileDialog As New OpenFileDialog()
-                openFileDialog.Title = "Select File Partition " + DataView.CurrentRow.Cells(1).Value
-                openFileDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer)
-                openFileDialog.FileName = "*.*"
-                openFileDialog.Filter = "ALL FILE  (*.*)|*.*"
-                openFileDialog.FilterIndex = 2
-                openFileDialog.RestoreDirectory = True
+                Dim openFileDialog As New OpenFileDialog With {
+                    .Title = "Select File Partition " + DataView.CurrentRow.Cells(1).Value,
+                    .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                    .FileName = "*.*",
+                    .Filter = "ALL FILE  (*.*)|*.*",
+                    .FilterIndex = 2,
+                    .RestoreDirectory = True
+                }
                 If openFileDialog.ShowDialog() = DialogResult.OK Then
                     DataView.CurrentRow.Cells(5).Value = openFileDialog.FileName
+                    DataView.CurrentRow.Cells(0).Value = True
                 End If
             End If
         End If
@@ -226,180 +197,361 @@ Public Class DirectISP
     End Sub
 
     Private Sub ButtonRefresh_Click(sender As Object, e As EventArgs) Handles ButtonRefresh.Click
-        eMMCISP.Watch.Start()
-        Logs1Clear()
-        Logs2Clear()
-        DGV_C()
-        RichLogs("Operation  : ", Color.White, True, False)
-        RichLogs("REFRESH DISK", Color.Orange, True, True)
-        RichLogs(" Connect   : ", Color.White, True, False)
-        RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-        Delay(3)
-        eMMCISP.Refresh_Disk()
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+            EMMCISP.Watch.Start()
+            Logs1Clear()
+            Logs2Clear()
+            DGV_C()
+            RichLogs("Operation  : ", Color.White, True, False)
+            RichLogs("REFRESH DISK", Color.Orange, True, True)
+            RichLogs(" Connect   : ", Color.White, True, False)
+            RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+            EMMCISP.SelectedCommand = "Refresh_Disk"
+            eMMCISPWorker.RunWorkerAsync()
+            eMMCISPWorker.Dispose()
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
     End Sub
 
     Private Sub ButtonScan_Click(sender As Object, e As EventArgs) Handles ButtonScan.Click
-        eMMCISP.Watch.Start()
-        Logs1Clear()
-        Logs2Clear()
-        DGV_C()
-        RichLogs("Operation  : ", Color.White, True, False)
-        RichLogs("SCAN DISK", Color.Orange, True, True)
-        RichLogs(" Connect   : ", Color.White, True, False)
-        RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-        RichLogs(" Disk      : ", Color.White, True, False)
-        RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
-        RichLogs(" ", Color.DeepSkyBlue, True, True)
-        RichLogs(" ", Color.DeepSkyBlue, True, True)
-        Delay(3)
-        eMMCISP.Scan_Partition()
-    End Sub
-
-    Private Sub Btn_RawXML_Click(sender As Object, e As EventArgs) Handles Btn_RawXML.Click
-        DataView.Rows.Clear()
-        TxtFlashRawXML.Text = ""
-        TxtRawDump.Text = ""
-        TxtScatterFile.Text = ""
-        Dim openFileDialog As System.Windows.Forms.OpenFileDialog = New System.Windows.Forms.OpenFileDialog() With
-        {
-            .Title = "Select RAW Programer XML",
-            .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-            .FileName = "*xml",
-            .FilterIndex = 2,
-            .RestoreDirectory = True
-        }
-        If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+            EMMCISP.Watch.Start()
             Logs1Clear()
             Logs2Clear()
-            eMMCISP.ListView1.Clear()
-            eMMCISP.ListView2.Clear()
-            eMMCISP.ListView1.Items.Clear()
-            eMMCISP.ListView2.Items.Clear()
-            eMMCISP.ListBox1.Items.Clear()
-            eMMCISP.ListBox2.Items.Clear()
-            eMMCISP.ListBox3.Items.Clear()
-            eMMCISP.TodoCommand = ""
-            TxtFlashRawXML.Text = openFileDialog.FileName
-            eMMCISP.Open_RAWXML()
-        End If
-    End Sub
-
-    Private Sub Btn_ScatterTXT_Click(sender As Object, e As EventArgs) Handles Btn_ScatterTXT.Click
-        DataView.Rows.Clear()
-        TxtFlashRawXML.Text = ""
-        TxtRawDump.Text = ""
-        TxtScatterFile.Text = ""
-        Dim openFileDialog As System.Windows.Forms.OpenFileDialog = New System.Windows.Forms.OpenFileDialog() With
-        {
-            .Title = "Select Scatter TEXT",
-            .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-            .FileName = "*txt",
-            .FilterIndex = 2,
-            .RestoreDirectory = True
-        }
-        If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
-            Logs1Clear()
-            Logs2Clear()
-            Logs2Clear()
-            eMMCISP.ListView1.Clear()
-            eMMCISP.ListView2.Clear()
-            eMMCISP.ListView1.Items.Clear()
-            eMMCISP.ListView2.Items.Clear()
-            eMMCISP.ListBox1.Items.Clear()
-            eMMCISP.ListBox2.Items.Clear()
-            eMMCISP.ListBox3.Items.Clear()
-            eMMCISP.TodoCommand = ""
-            TxtScatterFile.Text = openFileDialog.FileName
-            eMMCISP.Open_ScatterTXT()
-        End If
-    End Sub
-
-    Private Sub ButtonOpenDump_Click(sender As Object, e As EventArgs) Handles ButtonOpenDump.Click
-        DataView.Rows.Clear()
-        TxtFlashRawXML.Text = ""
-        TxtRawDump.Text = ""
-        TxtScatterFile.Text = ""
-        Dim openFileDialog As System.Windows.Forms.OpenFileDialog = New System.Windows.Forms.OpenFileDialog() With
-        {
-            .Title = "Select RAW Dump file",
-            .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
-            .FileName = "*bin",
-            .FilterIndex = 2,
-            .RestoreDirectory = True
-        }
-        If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
-            eMMCISP.Watch.Start()
             DGV_C()
-            Logs1Clear()
             RichLogs("Operation  : ", Color.White, True, False)
-            RichLogs("SCAN DUMP", Color.Orange, True, True)
+            RichLogs("SCAN DISK", Color.Orange, True, True)
             RichLogs(" Connect   : ", Color.White, True, False)
             RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
             RichLogs(" Disk      : ", Color.White, True, False)
             RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
             RichLogs(" ", Color.DeepSkyBlue, True, True)
             RichLogs(" ", Color.DeepSkyBlue, True, True)
-            Logs2Clear()
-            eMMCISP.ListView1.Clear()
-            eMMCISP.ListView2.Clear()
-            eMMCISP.ListView1.Items.Clear()
-            eMMCISP.ListView2.Items.Clear()
-            eMMCISP.ListBox1.Items.Clear()
-            eMMCISP.ListBox2.Items.Clear()
-            eMMCISP.ListBox3.Items.Clear()
-            eMMCISP.TodoCommand = ""
-            TxtRawDump.Text = openFileDialog.FileName
-            eMMCISP.openfile = TxtRawDump.Text
-            eMMCISP.filesize = (New FileInfo(eMMCISP.openfile)).Length
-            Delay(3)
-            eMMCISP.Scan_Dump()
+
+            EMMCISP.SelectedCommand = "Scan_Partition"
+            eMMCISPWorker.RunWorkerAsync()
+            eMMCISPWorker.Dispose()
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
+    End Sub
+
+    Private Sub Btn_RawXML_Click(sender As Object, e As EventArgs) Handles Btn_RawXML.Click
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            DataView.Rows.Clear()
+            TxtFlashRawXML.Text = ""
+            TxtRawDump.Text = ""
+            TxtScatterFile.Text = ""
+            Dim openFileDialog As New System.Windows.Forms.OpenFileDialog() With
+            {
+                .Title = "Select RAW Programer XML",
+                .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                .FileName = "*xml",
+                .FilterIndex = 2,
+                .RestoreDirectory = True
+            }
+            If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+                Logs1Clear()
+                Logs2Clear()
+                EMMCISP.ListView1.Clear()
+                EMMCISP.ListView2.Clear()
+                EMMCISP.ListView1.Items.Clear()
+                EMMCISP.ListView2.Items.Clear()
+                EMMCISP.ListBox1.Items.Clear()
+                EMMCISP.ListBox2.Items.Clear()
+                EMMCISP.ListBox3.Items.Clear()
+                EMMCISP.TodoCommand = ""
+                TxtFlashRawXML.Text = openFileDialog.FileName
+                EMMCISP.Open_RAWXML()
+            End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
+    End Sub
+
+    Private Sub Btn_ScatterTXT_Click(sender As Object, e As EventArgs) Handles Btn_ScatterTXT.Click
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            DataView.Rows.Clear()
+            TxtFlashRawXML.Text = ""
+            TxtRawDump.Text = ""
+            TxtScatterFile.Text = ""
+            Dim openFileDialog As New System.Windows.Forms.OpenFileDialog() With
+            {
+                .Title = "Select Scatter TEXT",
+                .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                .FileName = "*txt",
+                .FilterIndex = 2,
+                .RestoreDirectory = True
+            }
+            If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+                Logs1Clear()
+                Logs2Clear()
+                EMMCISP.ListView1.Clear()
+                EMMCISP.ListView2.Clear()
+                EMMCISP.ListView1.Items.Clear()
+                EMMCISP.ListView2.Items.Clear()
+                EMMCISP.ListBox1.Items.Clear()
+                EMMCISP.ListBox2.Items.Clear()
+                EMMCISP.ListBox3.Items.Clear()
+                EMMCISP.TodoCommand = ""
+                TxtScatterFile.Text = openFileDialog.FileName
+                EMMCISP.Open_ScatterTXT()
+            End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
+    End Sub
+
+    Private Sub ButtonOpenDump_Click(sender As Object, e As EventArgs) Handles ButtonOpenDump.Click
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+            DataView.Rows.Clear()
+            TxtFlashRawXML.Text = ""
+            TxtRawDump.Text = ""
+            TxtScatterFile.Text = ""
+            Dim openFileDialog As New System.Windows.Forms.OpenFileDialog() With
+            {
+                .Title = "Select RAW Dump file",
+                .InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyComputer),
+                .FileName = "*bin",
+                .FilterIndex = 2,
+                .RestoreDirectory = True
+            }
+            If (openFileDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+                EMMCISP.Watch.Start()
+                DGV_C()
+                Logs1Clear()
+                Logs2Clear()
+                RichLogs("Operation  : ", Color.White, True, False)
+                RichLogs("SCAN DUMP", Color.Orange, True, True)
+                RichLogs(" Connect   : ", Color.White, True, False)
+                RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+                RichLogs(" Disk      : ", Color.White, True, False)
+                RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
+                RichLogs(" ", Color.DeepSkyBlue, True, True)
+                RichLogs(" ", Color.DeepSkyBlue, True, True)
+                EMMCISP.ListView1.Clear()
+                EMMCISP.ListView2.Clear()
+                EMMCISP.ListView1.Items.Clear()
+                EMMCISP.ListView2.Items.Clear()
+                EMMCISP.ListBox1.Items.Clear()
+                EMMCISP.ListBox2.Items.Clear()
+                EMMCISP.ListBox3.Items.Clear()
+                EMMCISP.TodoCommand = ""
+                TxtRawDump.Text = openFileDialog.FileName
+                EMMCISP.openfile = TxtRawDump.Text
+                EMMCISP.filesize = (New FileInfo(EMMCISP.openfile)).Length
+
+                EMMCISP.SelectedCommand = "Scan_Dump"
+                eMMCISPWorker.RunWorkerAsync()
+                eMMCISPWorker.Dispose()
+            End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
         End If
     End Sub
 
     Private Sub Button_ReadP_Click(sender As Object, e As EventArgs) Handles Button_ReadP.Click
-        Dim flag As Boolean = False
-        If DataView.Rows.Count > 0 Then
-            For Each item As DataGridViewRow In DataView.Rows
-                If (item.Cells(0).Value = True) Then
-                    flag = True
-                End If
-            Next
-        Else
-            XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-        End If
-        If flag Then
-            If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
-                XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Dim flag As Boolean = False
+            If DataView.Rows.Count > 0 Then
+                For Each item As DataGridViewRow In DataView.Rows
+                    If (item.Cells(0).Value = True) Then
+                        Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                        flag = True
+                    End If
+                Next
             Else
-                eMMCISP.cekerror = False
-                Logs1Clear()
-                Logs2Clear()
-                eMMCISP.ListView1.Clear()
-                eMMCISP.ListView2.Clear()
-                eMMCISP.ListView1.Items.Clear()
-                eMMCISP.ListView2.Items.Clear()
-                eMMCISP.ListBox1.Items.Clear()
-                eMMCISP.ListBox2.Items.Clear()
-                eMMCISP.ListBox3.Items.Clear()
-                eMMCISP.TodoCommand = ""
-                eMMCISP.Totaltodo = 0
-                Dim folderBrowserDialog As System.Windows.Forms.FolderBrowserDialog = New System.Windows.Forms.FolderBrowserDialog() With
-            {
-                .ShowNewFolderButton = True
-            }
-                If (folderBrowserDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
-                    eMMCISP.folderdersave = folderBrowserDialog.SelectedPath
-                    Dim rootFolder As Environment.SpecialFolder = folderBrowserDialog.RootFolder
+                XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+            End If
+            If flag Then
+                If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
+                    XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                Else
+                    EMMCISP.cekerror = False
+                    Logs1Clear()
+                    Logs2Clear()
+                    EMMCISP.ListView1.Clear()
+                    EMMCISP.ListView2.Clear()
+                    EMMCISP.ListView1.Items.Clear()
+                    EMMCISP.ListView2.Items.Clear()
+                    EMMCISP.ListBox1.Items.Clear()
+                    EMMCISP.ListBox2.Items.Clear()
+                    EMMCISP.ListBox3.Items.Clear()
+                    EMMCISP.TodoCommand = ""
+                    EMMCISP.Totaltodo = 0
+                    Dim folderBrowserDialog As New System.Windows.Forms.FolderBrowserDialog() With
+                    {
+                        .ShowNewFolderButton = True
+                    }
+                    If (folderBrowserDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+                        EMMCISP.folderdersave = folderBrowserDialog.SelectedPath
+                        Dim rootFolder As Environment.SpecialFolder = folderBrowserDialog.RootFolder
+
+                        RichLogs("Operation  : ", Color.White, True, False)
+                        RichLogs("READ PARTITION", Color.Orange, True, True)
+                        RichLogs(" Connect   : ", Color.White, True, False)
+                        RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+                        RichLogs(" Disk      : ", Color.White, True, False)
+                        RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
+                        RichLogs(" ", Color.DeepSkyBlue, True, True)
+                        RichLogs(" ", Color.DeepSkyBlue, True, True)
+
+
+                        For Each item As DataGridViewRow In DataView.Rows
+
+                            If item.Cells(0).Value = True Then
+                                ' 0 bool
+                                ' 1 custom
+                                ' 2 partition
+                                ' 3 size bytes
+                                ' 4 offset
+                                ' 5 location
+
+                                EMMCISP.Totaltodo += 1
+                                EMMCISP.TodoCommand = String.Concat(EMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
+                                Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & item.Cells(5).Value & " ")
+
+                            End If
+                        Next
+                        EMMCISP.SelectedCommand = "read"
+                        eMMCISPWorker.RunWorkerAsync()
+                        eMMCISPWorker.Dispose()
+                    End If
+                End If
+            End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
+    End Sub
+
+    Private Sub Button_WriteP_Click(sender As Object, e As EventArgs) Handles Button_WriteP.Click
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Dim flag As Boolean = False
+            If DataView.Rows.Count > 0 Then
+                For Each item As DataGridViewRow In DataView.Rows
+                    If (item.Cells(0).Value = True) Then
+                        Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                        flag = True
+                    End If
+                Next
+            Else
+                XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+            End If
+            If flag Then
+                If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
+                    XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                Else
+                    EMMCISP.asu = ""
+                    EMMCISP.cekerror = False
+                    Logs1Clear()
+                    Logs2Clear()
+                    EMMCISP.ListView1.Clear()
+                    EMMCISP.ListView2.Clear()
+                    EMMCISP.ListView1.Items.Clear()
+                    EMMCISP.ListView2.Items.Clear()
+                    EMMCISP.ListBox1.Items.Clear()
+                    EMMCISP.ListBox2.Items.Clear()
+                    EMMCISP.ListBox3.Items.Clear()
+                    EMMCISP.TodoCommand = ""
+                    EMMCISP.Totaltodo = 0
 
                     RichLogs("Operation  : ", Color.White, True, False)
-                    RichLogs("READ PARTITION", Color.Orange, True, True)
+                    RichLogs("WRITE PARTITION", Color.Orange, True, True)
                     RichLogs(" Connect   : ", Color.White, True, False)
                     RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
                     RichLogs(" Disk      : ", Color.White, True, False)
                     RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
                     RichLogs(" ", Color.DeepSkyBlue, True, True)
                     RichLogs(" ", Color.DeepSkyBlue, True, True)
-                    Delay(3)
+
+
+                    Dim location As String = ""
+                    For Each item As DataGridViewRow In DataView.Rows
+
+                        If item.Cells(0).Value = True Then
+                            ' 0 bool
+                            ' 1 custom
+                            ' 2 partition
+                            ' 3 size bytes
+                            ' 4 offset
+                            ' 5 location
+                            If String.IsNullOrEmpty(item.Cells(5).Value) Then
+                                location = "none"
+                            Else
+                                location = item.Cells(5).Value
+                            End If
+                            EMMCISP.Totaltodo += 1
+                            EMMCISP.TodoCommand = String.Concat(EMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", location & Environment.NewLine & "")
+                            Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & location & " ")
+
+                        End If
+                    Next
+                    If File.Exists("unsparse.img") Then
+                        File.Delete("unsparse.img")
+                    End If
+                    EMMCISP.m = "wp"
+
+                    EMMCISP.SelectedCommand = "writeselected"
+                    eMMCISPWorker.RunWorkerAsync()
+                    eMMCISPWorker.Dispose()
+                End If
+            End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
+        End If
+    End Sub
+
+    Private Sub Button_EraseP_Click(sender As Object, e As EventArgs) Handles Button_EraseP.Click
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            Dim flag As Boolean = False
+            If DataView.Rows.Count > 0 Then
+                For Each item As DataGridViewRow In DataView.Rows
+                    If (item.Cells(0).Value = True) Then
+                        Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                        flag = True
+                    End If
+                Next
+            Else
+                XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+            End If
+            If flag Then
+                If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
+                    XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                Else
+                    EMMCISP.asu = ""
+                    EMMCISP.cekerror = False
+                    Logs1Clear()
+                    Logs2Clear()
+                    EMMCISP.ListView1.Clear()
+                    EMMCISP.ListView2.Clear()
+                    EMMCISP.ListView1.Items.Clear()
+                    EMMCISP.ListView2.Items.Clear()
+                    EMMCISP.ListBox1.Items.Clear()
+                    EMMCISP.ListBox2.Items.Clear()
+                    EMMCISP.ListBox3.Items.Clear()
+                    EMMCISP.TodoCommand = ""
+                    EMMCISP.Totaltodo = 0
+
+                    RichLogs("Operation  : ", Color.White, True, False)
+                    RichLogs("ERASE PARTITION", Color.Orange, True, True)
+                    RichLogs(" Connect   : ", Color.White, True, False)
+                    RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+                    RichLogs(" Disk      : ", Color.White, True, False)
+                    RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
+
 
                     For Each item As DataGridViewRow In DataView.Rows
 
@@ -410,215 +562,106 @@ Public Class DirectISP
                             ' 3 size bytes
                             ' 4 offset
                             ' 5 location
-
-                            eMMCISP.Totaltodo += 1
-                            eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
+                            EMMCISP.Totaltodo += 1
+                            EMMCISP.TodoCommand = String.Concat(EMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
                             Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & item.Cells(5).Value & " ")
 
                         End If
                     Next
-                    Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.read)
-                    thread.Start()
-                End If
-            End If
-        End If
-    End Sub
-
-    Private Sub Button_WriteP_Click(sender As Object, e As EventArgs) Handles Button_WriteP.Click
-        Dim flag As Boolean = False
-        If DataView.Rows.Count > 0 Then
-            For Each item As DataGridViewRow In DataView.Rows
-                If (item.Cells(0).Value = True) Then
-                    flag = True
-                End If
-            Next
-        Else
-            XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-        End If
-        If flag Then
-            If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
-                XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-            Else
-                eMMCISP.asu = ""
-                eMMCISP.cekerror = False
-                Logs1Clear()
-                Logs2Clear()
-                eMMCISP.ListView1.Clear()
-                eMMCISP.ListView2.Clear()
-                eMMCISP.ListView1.Items.Clear()
-                eMMCISP.ListView2.Items.Clear()
-                eMMCISP.ListBox1.Items.Clear()
-                eMMCISP.ListBox2.Items.Clear()
-                eMMCISP.ListBox3.Items.Clear()
-                eMMCISP.TodoCommand = ""
-                eMMCISP.Totaltodo = 0
-
-                RichLogs("Operation  : ", Color.White, True, False)
-                RichLogs("WRITE PARTITION", Color.Orange, True, True)
-                RichLogs(" Connect   : ", Color.White, True, False)
-                RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-                RichLogs(" Disk      : ", Color.White, True, False)
-                RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                Delay(3)
-
-                Dim location As String = ""
-                For Each item As DataGridViewRow In DataView.Rows
-
-                    If item.Cells(0).Value = True Then
-                        ' 0 bool
-                        ' 1 custom
-                        ' 2 partition
-                        ' 3 size bytes
-                        ' 4 offset
-                        ' 5 location
-                        If String.IsNullOrEmpty(item.Cells(5).Value) Then
-                            location = "none"
-                        Else
-                            location = item.Cells(5).Value
-                        End If
-                        eMMCISP.Totaltodo += 1
-                        eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", location & Environment.NewLine & "")
-                        Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & location & " ")
-
+                    EMMCISP.m = "erase"
+                    EMMCISP.openfile = "Tools/process/file/zero.img"
+                    If File.Exists("unsparse.img") Then
+                        File.Delete("unsparse.img")
                     End If
-                Next
-                If File.Exists("unsparse.img") Then
-                    File.Delete("unsparse.img")
-                End If
-                eMMCISP.m = "wp"
-                Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.writeselected)
-                thread.Start()
-            End If
-        End If
-    End Sub
 
-    Private Sub Button_EraseP_Click(sender As Object, e As EventArgs) Handles Button_EraseP.Click
-        Dim flag As Boolean = False
-        If DataView.Rows.Count > 0 Then
-            For Each item As DataGridViewRow In DataView.Rows
-                If (item.Cells(0).Value = True) Then
-                    flag = True
+                    EMMCISP.SelectedCommand = "erases"
+                    eMMCISPWorker.RunWorkerAsync()
+                    eMMCISPWorker.Dispose()
+
                 End If
-            Next
+            End If
         Else
-            XtraMessageBox.Show("Please select partition", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-        End If
-        If flag Then
-            If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
-                XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-            Else
-                eMMCISP.asu = ""
-                eMMCISP.cekerror = False
-                Logs1Clear()
-                Logs2Clear()
-                eMMCISP.ListView1.Clear()
-                eMMCISP.ListView2.Clear()
-                eMMCISP.ListView1.Items.Clear()
-                eMMCISP.ListView2.Items.Clear()
-                eMMCISP.ListBox1.Items.Clear()
-                eMMCISP.ListBox2.Items.Clear()
-                eMMCISP.ListBox3.Items.Clear()
-                eMMCISP.TodoCommand = ""
-                eMMCISP.Totaltodo = 0
-
-                RichLogs("Operation  : ", Color.White, True, False)
-                RichLogs("ERASE PARTITION", Color.Orange, True, True)
-                RichLogs(" Connect   : ", Color.White, True, False)
-                RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-                RichLogs(" Disk      : ", Color.White, True, False)
-                RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                Delay(3)
-
-                For Each item As DataGridViewRow In DataView.Rows
-
-                    If item.Cells(0).Value = True Then
-                        ' 0 bool
-                        ' 1 custom
-                        ' 2 partition
-                        ' 3 size bytes
-                        ' 4 offset
-                        ' 5 location
-                        eMMCISP.Totaltodo += 1
-                        eMMCISP.TodoCommand = String.Concat(eMMCISP.TodoCommand, item.Cells(0).Value, "|", item.Cells(1).Value, "|", item.Cells(3).Value, "|", item.Cells(4).Value, "|", item.Cells(5).Value & Environment.NewLine & "")
-                        Console.WriteLine("Checked " & item.Cells(0).Value & " " & item.Cells(1).Value & " " & item.Cells(3).Value & " " & item.Cells(4).Value & " " & item.Cells(5).Value & " ")
-
-                    End If
-                Next
-                eMMCISP.m = "erase"
-                eMMCISP.openfile = "Tools/process/file/zero.img"
-                If File.Exists("unsparse.img") Then
-                    File.Delete("unsparse.img")
-                End If
-                Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.erases)
-                thread.Start()
-            End If
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
         End If
     End Sub
 
     Private Sub Button_ReadD_Click(sender As Object, e As EventArgs) Handles Button_ReadD.Click
-        eMMCISP.cekerror = False
-        If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
-            XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-        Else
-            Dim folderBrowserDialog As System.Windows.Forms.FolderBrowserDialog = New System.Windows.Forms.FolderBrowserDialog() With
-                {
-                    .ShowNewFolderButton = True
-                }
-            If (folderBrowserDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
-                Logs1Clear()
-                Logs2Clear()
-                eMMCISP.folderdersave = folderBrowserDialog.SelectedPath
-                Dim rootFolder As Environment.SpecialFolder = folderBrowserDialog.RootFolder
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            EMMCISP.cekerror = False
+            If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
+                XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+            Else
+                Dim folderBrowserDialog As New System.Windows.Forms.FolderBrowserDialog() With
+                        {
+                            .ShowNewFolderButton = True
+                        }
+                If (folderBrowserDialog.ShowDialog() = System.Windows.Forms.DialogResult.OK) Then
+                    Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                    Logs1Clear()
+                    Logs2Clear()
+                    EMMCISP.folderdersave = folderBrowserDialog.SelectedPath
+                    Dim rootFolder As Environment.SpecialFolder = folderBrowserDialog.RootFolder
 
-                RichLogs("Operation  : ", Color.White, True, False)
-                RichLogs("READ DUMP", Color.Orange, True, True)
-                RichLogs(" Connect   : ", Color.White, True, False)
-                RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-                RichLogs(" Disk      : ", Color.White, True, False)
-                RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                Delay(3)
+                    RichLogs("Operation  : ", Color.White, True, False)
+                    RichLogs("READ DUMP", Color.Orange, True, True)
+                    RichLogs(" Connect   : ", Color.White, True, False)
+                    RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+                    RichLogs(" Disk      : ", Color.White, True, False)
+                    RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
 
-                Dim thread As System.Threading.Thread = New System.Threading.Thread(New ThreadStart(AddressOf eMMCISP.readfull))
-                thread.Start()
+
+                    EMMCISP.SelectedCommand = "readfull"
+                    eMMCISPWorker.RunWorkerAsync()
+                    eMMCISPWorker.Dispose()
+
+                End If
             End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+            RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
         End If
     End Sub
 
     Private Sub Button_WriteD_Click(sender As Object, e As EventArgs) Handles Button_WriteD.Click
-        eMMCISP.cekerror = False
-        If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
-            XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
-        Else
-            If (Equals(TxtRawDump.Text, "")) Then
-                XtraMessageBox.Show("Please select dump file", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+        If Not DirectISPWorker.IsBusy AndAlso Not eMMCISPWorker.IsBusy Then
+            EMMCISP.cekerror = False
+            If (Equals(Main.SharedUI.comboUSB.Text, "")) Then
+                XtraMessageBox.Show("Please select disk", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
             Else
-                Logs1Clear()
-                Logs2Clear()
-                eMMCISP.m = "f"
+                If (Equals(TxtRawDump.Text, "")) Then
+                    XtraMessageBox.Show("Please select dump file", "iREVERSE DROID ULTIMATE", MessageBoxButtons.OK, MessageBoxIcon.Asterisk)
+                Else
+                    Main.SharedUI.ButtonSTOP.ImageOptions.Image = My.Resources.Stop30
+                    Logs1Clear()
+                    Logs2Clear()
+                    EMMCISP.m = "f"
 
-                RichLogs("Operation  : ", Color.White, True, False)
-                RichLogs("WRITE DUMP", Color.Orange, True, True)
-                RichLogs(" Connect   : ", Color.White, True, False)
-                RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
-                RichLogs(" Disk      : ", Color.White, True, False)
-                RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                RichLogs(" ", Color.DeepSkyBlue, True, True)
-                Delay(3)
+                    RichLogs("Operation  : ", Color.White, True, False)
+                    RichLogs("WRITE DUMP", Color.Orange, True, True)
+                    RichLogs(" Connect   : ", Color.White, True, False)
+                    RichLogs("Direct ISP", Color.DeepSkyBlue, True, True)
+                    RichLogs(" Disk      : ", Color.White, True, False)
+                    RichLogs(Main.SharedUI.comboUSB.Text, Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
+                    RichLogs(" ", Color.DeepSkyBlue, True, True)
 
-                If File.Exists("unsparse.img") Then
-                    File.Delete("unsparse.img")
+
+                    If File.Exists("unsparse.img") Then
+                        File.Delete("unsparse.img")
+                    End If
+
+                    EMMCISP.SelectedCommand = "writedump"
+                    eMMCISPWorker.RunWorkerAsync()
+                    eMMCISPWorker.Dispose()
+
                 End If
-
-                Dim thread As System.Threading.Thread = New System.Threading.Thread(AddressOf eMMCISP.writedump)
-                thread.Start()
             End If
+        Else
+            RichLogs(" ", Color.Yellow, True, True)
+        RichLogs("Direct ISP Worker Is Running..", Color.Yellow, True, True)
         End If
     End Sub
 End Class

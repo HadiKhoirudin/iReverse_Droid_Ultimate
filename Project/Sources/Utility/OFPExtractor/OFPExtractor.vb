@@ -89,8 +89,8 @@ Public Class OFPExtractor
             End If
             Double.TryParse(dig, B)
             d = B * (2 ^ p)
-            dec = dec + d
-            p = p + 1
+            dec += d
+            p += 1
         Next x
         Return dec
     End Function
@@ -186,7 +186,7 @@ Public Class OFPExtractor
             File.Delete(foldersave & "\profile.xml")
         End If
         logs("Saving Profile Xml : ", False, putih)
-        Dim reader As StringReader = New StringReader(xmlstring)
+        Dim reader As New StringReader(xmlstring)
         Dim linestring As String
         Dim files As System.IO.StreamWriter
         files = My.Computer.FileSystem.OpenTextFileWriter(foldersave & "\profile.xml", True)
@@ -285,7 +285,7 @@ Public Class OFPExtractor
                         Dim totaldo As Integer = 0
                         totaldo = totalchecked
                         Dim doprosess As Integer = 0
-                        Dim XmlReader As XmlTextReader = New XmlTextReader(New StringReader(StringXML))
+                        Dim XmlReader As New XmlTextReader(New StringReader(StringXML))
                         Do While XmlReader.Read()
                             If OPFWorkerQC.CancellationPending = True Then
                                 'bg worker flash cancel
@@ -368,13 +368,14 @@ Public Class OFPExtractor
         End Try
     End Sub
     Public Shared Function CheckSumsFile(filename As String, HashListCek() As String) As String()
-        Dim retSha256 As String = ""
-        Dim retMd5 As String = ""
+        Dim retSha256 As String
         If Not HashListCek(0) = "" Then
             retSha256 = sha256cek(filename, HashListCek(0))
         Else
             retSha256 = "empty"
         End If
+
+        Dim retMd5 As String
         If Not HashListCek(1) = "" Then
             retMd5 = md5cek(filename, HashListCek(1))
         Else
@@ -448,11 +449,11 @@ Public Class OFPExtractor
 
             Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(size), Action))
 
-            Using fsin As FileStream = New FileStream(fname, FileMode.Open)
-                Using fsout As FileStream = New FileStream(wfilename, FileMode.Create)
+            Using fsin As New FileStream(fname, FileMode.Open)
+                Using fsout As New FileStream(wfilename, FileMode.Create)
                     fsin.Seek(startoffsetofp, SeekOrigin.Begin)
                     'Membuat objek Stopwatch untuk mengukur waktu
-                    Dim stopwatch As Stopwatch = New Stopwatch()
+                    Dim stopwatch As New Stopwatch()
                     stopwatch.Start()
 
                     Do
@@ -498,7 +499,7 @@ Public Class OFPExtractor
         Dim start As Long = -1
         Dim rlength As Long = 0
         Dim decryptsize = &H40000
-        Dim len As Long = 0
+
         If item.Attribute("Path") IsNot Nothing Then
             wfilename = item.Attribute("Path")
         ElseIf item.Attribute("filename") IsNot Nothing Then
@@ -518,6 +519,7 @@ Public Class OFPExtractor
         If item.Attribute("SizeInByteInSrc") IsNot Nothing Then
             rlength = item.Attribute("SizeInByteInSrc").Value
         End If
+        Dim len As Long
         If item.Attribute("SizeInSectorInSrc") IsNot Nothing Then
             len = item.Attribute("SizeInSectorInSrc").Value * pagesize
         Else
@@ -544,7 +546,7 @@ Public Class OFPExtractor
         If Not blocksize Mod 16 = 0 Then
             Dim jkl As Double = (blocksize Mod 16)
             Dim kurangnya As Double = 16 - jkl
-            blocksize = blocksize + kurangnya
+            blocksize += kurangnya
         End If
         Dim byt As Byte() = Encoding.UTF8.GetBytes(key) '   
         Dim byts As Byte() = Encoding.UTF8.GetBytes(iv)
@@ -555,11 +557,11 @@ Public Class OFPExtractor
             Main.SharedUI.label_totalsize.Invoke(CType(Sub() Main.SharedUI.label_totalsize.Text = GetFileSize(lengthSource), Action))
 
             'Membuat objek Stopwatch untuk mengukur waktu
-            Dim stopwatch As Stopwatch = New Stopwatch()
+            Dim stopwatch As New Stopwatch()
             stopwatch.Start()
 
-            Using fsin As FileStream = New FileStream(fname, FileMode.Open)
-                Using fsout As FileStream = New FileStream(wfilename, FileMode.Create)
+            Using fsin As New FileStream(fname, FileMode.Open)
+                Using fsout As New FileStream(wfilename, FileMode.Create)
                     fsin.Seek(start, SeekOrigin.Begin)
                     If LenFileOut < blocksize Then
                         blocksize = LenFileOut
@@ -647,7 +649,7 @@ Public Class OFPExtractor
     End Sub
     Public Shared Function GetXml(ByVal keystring As String, ByVal ivstring As String) As Byte()
         Try
-            Dim fi As FileInfo = New FileInfo(fname)
+            Dim fi As New FileInfo(fname)
             Dim LenFile As String = fi.Length
             pagesize = 0
             Using stream As New FileStream(fname, FileMode.Open, FileAccess.Read)
@@ -716,7 +718,7 @@ Public Class OFPExtractor
         End With
         Dim lenFile As Long = 0
         Dim buffout() As Byte = New Byte((cipherText.Length - 1)) {}
-        Dim s As MemoryStream = New MemoryStream(buffout)
+        Dim s As New MemoryStream(buffout)
         Using Decryptor As ICryptoTransform = Algo.CreateDecryptor()
             Using StreamInput As New MemoryStream(cipherText)
                 Using crypto_stream As New CryptoStream(s, Decryptor, CryptoStreamMode.Write)
@@ -797,7 +799,7 @@ Public Class OFPExtractor
             Else
                 bin = 1
             End If
-            dec = dec \ 2
+            dec \= 2
             output = Convert.ToString(bin) & output
         End While
         If output Is Nothing Then
@@ -867,7 +869,7 @@ Public Class OFPExtractor
         lbofpQcom.Items.Add("V1.5.13,67657963787565E837D226B69A495D21,F6C50203515A2CE7D8C3E1F938B7E94C,42F2D5399137E2B2813CD8ECDF2F4D72")
         lbofpQcom.Items.Add("V2.0.3,E8AE288C0192C54BF10C5707E9C4705B,D64FC385DCD52A3C9B5FBA8650F92EDA,79051FD8D8B6297E2E4559E997F63B7F")
     End Sub
-    Public Shared Sub extractofpmtk(sender As Object, e As DoWorkEventArgs)
+    Public Shared Sub BruteKeyMtk(sender As Object, e As DoWorkEventArgs)
         Dim found As Boolean = False
         Dim byt As Byte() = New Byte() {}
         Dim byts As Byte() = New Byte() {}
@@ -902,7 +904,7 @@ Public Class OFPExtractor
             Return
         End If
         Try
-            Dim fi As FileInfo = New FileInfo(fname)
+            Dim fi As New FileInfo(fname)
             Dim LenFile As String = fi.Length
             Dim hdrLen As Integer = 108
             Dim headerkey As Byte() = Encoding.UTF8.GetBytes("geyixue")
@@ -1126,7 +1128,7 @@ Public Class OFPExtractor
 
 
     Public Shared Sub AllDone(sender As Object, e As RunWorkerCompletedEventArgs)
-        RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
+        'RichLogs(vbCrLf & "All Progress Completed", Color.White, True, True)
         TimeSpanElapsed.ElapsedTime(Watch)
         Watch.Stop()
     End Sub

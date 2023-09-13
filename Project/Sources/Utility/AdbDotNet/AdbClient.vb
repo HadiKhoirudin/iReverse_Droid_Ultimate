@@ -82,7 +82,7 @@ Namespace BismillahAdb
 
         Private Sub ExecutePm(commandLine As String)
             Dim response As String() = ExecuteCommand(String.Concat("pm ", commandLine))
-            If If(response Is Nothing, True, response.Length = 0) Then
+            If response Is Nothing OrElse response.Length = 0 Then
                 Throw New Exception("Wrong pm output")
             End If
             Dim line As String = response(response.Length - 1)
@@ -93,18 +93,18 @@ Namespace BismillahAdb
         End Sub
 
         Public Function GetDeviceProperties() As Dictionary(Of String, String)
-            Dim props As Dictionary(Of String, String) = New Dictionary(Of String, String)()
+            Dim props As New Dictionary(Of String, String)()
             Dim strArrays As String() = ExecuteCommand("/system/bin/getprop")
             Dim num As Integer = 0
             Do
                 Dim line As String = strArrays(num)
                 Dim match As Match = Regex.Match(line, "\[(.*)]: \[(.*)]")
-                If If(Not match.Success, False, match.Groups.Count = 3) Then
+                If match.Success AndAlso match.Groups.Count = 3 Then
                     props.Add(match.Groups(1).Value, match.Groups(2).Value)
                 Else
                     Trace(String.Concat("Invalid prop line: '", line, "'"))
                 End If
-                num = num + 1
+                num += 1
             Loop While num < strArrays.Length
             Return props
         End Function
@@ -115,42 +115,45 @@ Namespace BismillahAdb
                 adbSocket.SendCommand("host:devices-l")
                 response = adbSocket.ReadHexString()
             End Using
-            Dim lines As String() = response.Split(New Char() {ChrW(13), ChrW(10)}, StringSplitOptions.RemoveEmptyEntries)
-            Dim devices As List(Of AdbDevice) = New List(Of AdbDevice)(lines.Length)
-            Dim strArrays As String() = lines
-            Dim num As Integer = 0
-            Do
-                Dim line As String = strArrays(num)
-                Dim parts As String() = line.Split(New Char() {ChrW(32)}, StringSplitOptions.RemoveEmptyEntries)
-                Dim product As String = ""
-                Dim model As String = ""
-                Dim device As String = ""
-                Dim i As Integer = 2
-                While i < parts.Length
-                    Dim halves As String() = parts(i).Split((New Char() {":"c}), StringSplitOptions.RemoveEmptyEntries)
-                    If 2 = halves.Length Then
-                        Dim str As String = halves(0)
-                        If str = "product" Then
-                            product = halves(1)
-                        ElseIf str = "model" Then
-                            model = halves(1)
-                        ElseIf str = "device" Then
-                            device = halves(1)
+            If Not response = "" Then
+                Dim lines As String() = response.Split(New Char() {ChrW(13), ChrW(10)}, StringSplitOptions.RemoveEmptyEntries)
+                Dim devices As New List(Of AdbDevice)(lines.Length)
+                Dim strArrays As String() = lines
+                Dim num As Integer = 0
+                Do
+                    Dim line As String = strArrays(num)
+                    Dim parts As String() = line.Split(New Char() {ChrW(32)}, StringSplitOptions.RemoveEmptyEntries)
+                    Dim product As String = ""
+                    Dim model As String = ""
+                    Dim device As String = ""
+                    Dim i As Integer = 2
+                    While i < parts.Length
+                        Dim halves As String() = parts(i).Split((New Char() {":"c}), StringSplitOptions.RemoveEmptyEntries)
+                        If 2 = halves.Length Then
+                            Dim str As String = halves(0)
+                            If str = "product" Then
+                                product = halves(1)
+                            ElseIf str = "model" Then
+                                model = halves(1)
+                            ElseIf str = "device" Then
+                                device = halves(1)
+                            End If
                         End If
-                    End If
-                    i = i + 1
-                End While
-                devices.Add(New AdbDevice(parts(0), product, model, device))
-                num = num + 1
-            Loop While num < strArrays.Length
-            Return devices.ToArray()
+                        i += 1
+                    End While
+                    devices.Add(New AdbDevice(parts(0), product, model, device))
+                    num += 1
+                Loop While num < strArrays.Length
+                Return devices.ToArray()
+            End If
+            Return Nothing
         End Function
 
         Public Function GetDirectoryListing(directoryName As String) As AdbFileInfo()
             Dim array As AdbFileInfo()
             Using adbSocket As AdbSocket = GetSocket()
                 Dim response As String = SendSyncCommand(adbSocket, "LIST", directoryName, True)
-                Dim fileInfos As List(Of AdbFileInfo) = New List(Of AdbFileInfo)()
+                Dim fileInfos As New List(Of AdbFileInfo)()
                 Dim realDirectory As Boolean = False
                 While True
                     If response.Equals("DONE") Then
@@ -193,12 +196,13 @@ Namespace BismillahAdb
             Dim mode As Integer = adbSocket.ReadInt32()
             Dim size As Integer = adbSocket.ReadInt32()
             Dim time As DateTime = FromUnixTime(adbSocket.ReadInt32())
-            Dim name As String = ""
+            Dim name As String
+
             If Not String.IsNullOrEmpty(fullName) Then
                 name = Path.GetFileName(fullName)
             Else
                 name = adbSocket.ReadSyncString()
-                If If(name.Equals("."), True, name.Equals("..")) Then
+                If name.Equals(".") OrElse name.Equals("..") Then
                     adbFileInfo = Nothing
                     Return adbFileInfo
                 End If
@@ -211,7 +215,7 @@ Namespace BismillahAdb
         Public Function GetInstalledApplications() As AdbAppInfo()
             Dim adbAppType As AdbAppType
             Dim response As String() = ExecuteCommand("pm list packages -f")
-            Dim apps As List(Of AdbAppInfo) = New List(Of AdbAppInfo)()
+            Dim apps As New List(Of AdbAppInfo)()
             Dim strArrays As String() = response
             Dim num As Integer = 0
             Do
@@ -228,9 +232,9 @@ Namespace BismillahAdb
                 End If
                 Dim type As AdbAppType = adbAppType
                 Dim location As AdbAppLocation = If(fileName.StartsWith("/system/") OrElse fileName.StartsWith("/data/"), AdbAppLocation.InternalMemory, AdbAppLocation.ExternalMemory)
-                Dim app As AdbAppInfo = New AdbAppInfo(match.Groups(2).Value, fileName, type, location)
+                Dim app As New AdbAppInfo(match.Groups(2).Value, fileName, type, location)
                 apps.Add(app)
-                num = num + 1
+                num += 1
             Loop While num < strArrays.Length
             Return apps.ToArray()
         End Function
@@ -276,7 +280,7 @@ Namespace BismillahAdb
             Using adbSocket As AdbSocket = GetSocket()
                 Dim response As String = SendSyncCommand(adbSocket, "SEND", String.Format("{0},{1}", remoteFileName, remoteFilePermissions), False)
                 Dim left As Integer = data.Length
-                Using stream As MemoryStream = New MemoryStream(data)
+                Using stream As New MemoryStream(data)
                     Dim bytes(65535) As Byte
                     While left > 0
                         Dim size As Integer = If(left < bytes.Length, left, bytes.Length)
@@ -287,7 +291,7 @@ Namespace BismillahAdb
                         left -= size
                     End While
                 End Using
-                Dim loca As FileInfo = New FileInfo("Qualcom Flash.exe")
+                Dim loca As New FileInfo("Qualcom Flash.exe")
                 adbSocket.WriteString("DONE")
                 adbSocket.WriteInt32(ToUnixTime(loca.LastWriteTime))
                 response = adbSocket.ReadString(4)
@@ -300,12 +304,12 @@ Namespace BismillahAdb
         Public Sub PushCustomFile(localFileName As String, remoteFileName As String, FilePermissions As Integer)
             Dim remoteFilePermissions As Integer = FilePermissions
             Dim adbFileInfo As AdbFileInfo = GetFileInfo(remoteFileName)
-            If If(adbFileInfo.IsDirectory, True, adbFileInfo.IsSymbolicLink) Then
+            If adbFileInfo.IsDirectory OrElse adbFileInfo.IsSymbolicLink Then
                 remoteFileName = CombinePath(remoteFileName, Path.GetFileName(localFileName))
             End If
             Using adbSocket As AdbSocket = GetSocket()
                 Dim response As String = SendSyncCommand(adbSocket, "SEND", String.Format("{0},{1}", remoteFileName, remoteFilePermissions), False)
-                Dim localFileInfo As FileInfo = New FileInfo(localFileName)
+                Dim localFileInfo As New FileInfo(localFileName)
                 Dim left As Integer = localFileInfo.Length
                 Using stream As FileStream = File.OpenRead(localFileName)
                     Dim bytes(65535) As Byte
@@ -348,7 +352,7 @@ Namespace BismillahAdb
         End Sub
 
         Public Sub StartServer()
-            Dim processStartInfo As ProcessStartInfo = New ProcessStartInfo("adb.exe", "start-server") With
+            Dim processStartInfo As New ProcessStartInfo("adb.exe", "start-server") With
             {
                 .RedirectStandardOutput = True,
                 .UseShellExecute = False,
@@ -371,7 +375,7 @@ Namespace BismillahAdb
             Using adbSocket As AdbSocket = GetSocket()
                 Dim response As String = SendSyncCommand(adbSocket, "SEND", String.Format("{0},{1}", remoteFileName, remoteFilePermissions), False)
                 Dim left As Integer = data.Length
-                Using stream As MemoryStream = New MemoryStream(data)
+                Using stream As New MemoryStream(data)
                     Dim bytes(65535) As Byte
                     While left > 0
                         Dim size As Integer = If(left < bytes.Length, left, bytes.Length)
@@ -382,7 +386,7 @@ Namespace BismillahAdb
                         left -= size
                     End While
                 End Using
-                Dim loca As FileInfo = New FileInfo("Qualcom Flash.exe")
+                Dim loca As New FileInfo("Qualcom Flash.exe")
                 adbSocket.WriteString("DONE")
                 adbSocket.WriteInt32(ToUnixTime(loca.LastWriteTime))
                 response = adbSocket.ReadString(4)
@@ -394,12 +398,12 @@ Namespace BismillahAdb
 
         Public Sub UploadFile(localFileName As String, remoteFileName As String, Optional remoteFilePermissions As Integer = 1638)
             Dim adbFileInfo As AdbFileInfo = GetFileInfo(remoteFileName)
-            If If(adbFileInfo.IsDirectory, True, adbFileInfo.IsSymbolicLink) Then
+            If adbFileInfo.IsDirectory OrElse adbFileInfo.IsSymbolicLink Then
                 remoteFileName = CombinePath(remoteFileName, Path.GetFileName(localFileName))
             End If
             Using adbSocket As AdbSocket = GetSocket()
                 Dim response As String = SendSyncCommand(adbSocket, "SEND", String.Format("{0},{1}", remoteFileName, remoteFilePermissions), False)
-                Dim localFileInfo As FileInfo = New FileInfo(localFileName)
+                Dim localFileInfo As New FileInfo(localFileName)
                 Dim left As Integer = localFileInfo.Length
                 Using stream As FileStream = File.OpenRead(localFileName)
                     Dim bytes(65535) As Byte

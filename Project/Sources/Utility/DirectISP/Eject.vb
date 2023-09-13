@@ -1,4 +1,5 @@
 ﻿Imports System
+Imports System.Drawing
 Imports System.Runtime.InteropServices
 Imports System.Threading
 
@@ -16,7 +17,7 @@ Public Class EjectUSB
     Private Shared Function CloseHandle(ByVal hObject As IntPtr) As Boolean
     End Function
     <MarshalAs(UnmanagedType.Bool)>
-    Private handle As IntPtr = IntPtr.Zero
+    Public handle As IntPtr = IntPtr.Zero
     Const GENERIC_READ As Integer = &H80000000
     Const GENERIC_WRITE As Integer = &H40000000
     Const FILE_SHARE_READ As Integer = &H1
@@ -32,12 +33,33 @@ Public Class EjectUSB
     End Function
 
     Public Shared Function Eject(ByVal handle As IntPtr) As Boolean
-        Dim result As Boolean = False
+        Dim LockResult As Boolean = LockVolume(handle)
+        If LockResult Then
+            RichLogs("Prepairing Disk For R/W Access :", Color.WhiteSmoke, True, False)
+        End If
 
-        If LockVolume(handle) AndAlso DismountVolume(handle) Then
-            PreventRemovalOfVolume(handle, False)
+        Dim DismountResult As Boolean = DismountVolume(handle)
+        If DismountResult Then
+            RichLogs(" Done  ✓", Color.FromArgb(97, 197, 84), True, True)
+        Else
+            RichLogs("Failed!", Color.Red, True, True)
+        End If
+
+        Dim result As Boolean
+        If LockResult AndAlso DismountResult Then
+            RichLogs("Get R/W Access From Disk       :", Color.WhiteSmoke, True, False)
+            If PreventRemovalOfVolume(handle, False) Then
+                RichLogs(" Done  ✓", Color.FromArgb(97, 197, 84), True, True)
+                RichLogs(" ", Color.FromArgb(97, 197, 84), True, True)
+                result = True
+            Else
+                RichLogs("Failed!", Color.Red, True, True)
+                RichLogs(" ", Color.FromArgb(97, 197, 84), True, True)
+                result = False
+            End If
             'result = AutoEjectVolume(handle)
-            result = True
+        Else
+            result = False
         End If
 
         CloseHandle(handle)
@@ -46,20 +68,24 @@ Public Class EjectUSB
 
     Public Shared Function LockVolume(ByVal handle As IntPtr) As Boolean
         Dim byteReturned As Integer
-
-        For i As Integer = 0 To 10 - 1
-
+        RichLogs(Environment.NewLine & "Waiting Lock & Dismount Disk   :", Color.WhiteSmoke, True, False)
+        For i As Integer = 1 To 10
             If DeviceIoControl(handle, FSCTL_LOCK_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, byteReturned, IntPtr.Zero) Then
-                Console.WriteLine("Lock success!")
+                RichLogs(" Done  ✓", Color.FromArgb(97, 197, 84), True, True)
                 Return True
             Else
-                Console.WriteLine("Lock failed! " & i)
+                RichLogs(" " & i, Color.Crimson, True, False)
             End If
-
             Thread.Sleep(500)
         Next
-
+        RichLogs("Failed!", Color.Red, True, True)
         Return False
+    End Function
+
+    Public Shared Function DismountVolume(ByVal handle As IntPtr) As Boolean
+        Dim byteReturned As Integer
+        Dim flag As Boolean = DeviceIoControl(handle, FSCTL_DISMOUNT_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, byteReturned, IntPtr.Zero)
+        Return flag
     End Function
 
     Public Shared Function PreventRemovalOfVolume(ByVal handle As IntPtr, ByVal prevent As Boolean) As Boolean
@@ -69,16 +95,6 @@ Public Class EjectUSB
         Return DeviceIoControl(handle, IOCTL_STORAGE_MEDIA_REMOVAL, buf, 1, IntPtr.Zero, 0, retVal, IntPtr.Zero)
     End Function
 
-    Public Shared Function DismountVolume(ByVal handle As IntPtr) As Boolean
-        Dim byteReturned As Integer
-        Dim flag As Boolean = DeviceIoControl(handle, FSCTL_DISMOUNT_VOLUME, IntPtr.Zero, 0, IntPtr.Zero, 0, byteReturned, IntPtr.Zero)
-        If flag Then
-            Console.WriteLine("Dismount success!")
-        Else
-            Console.WriteLine("Dismount failed!")
-        End If
-        Return flag
-    End Function
 
     Public Shared Function AutoEjectVolume(ByVal handle As IntPtr) As Boolean
         Dim byteReturned As Integer

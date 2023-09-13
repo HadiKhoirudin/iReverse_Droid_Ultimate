@@ -61,6 +61,106 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property adk_libusb_1_0() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("adk_libusb_1_0", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusb_1_0_x86() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusb_1_0_x86", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusb0() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusb0", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusb0_sys() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusb0_sys", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusb0_x86() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusb0_x86", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusbK() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusbK", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusbK_sys() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusbK_sys", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_libusbK_x86() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_libusbK_x86", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_WdfCoInstaller01009() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_WdfCoInstaller01009", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property amd64_winusbcoinstaller2() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("amd64_winusbcoinstaller2", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
         Friend ReadOnly Property ButtonFormatUser_ImageOptions_Image() As System.Drawing.Bitmap
@@ -81,12 +181,52 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property cat_SAMSUNG_Android() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cat_SAMSUNG_Android", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
         Friend ReadOnly Property cyber() As System.Drawing.Bitmap
             Get
                 Dim obj As Object = ResourceManager.GetObject("cyber", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property cyggcc_s_1() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cyggcc_s_1", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property cygusb_1_0() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cygusb_1_0", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property cygwin1() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("cygwin1", resourceCulture)
+                Return CType(obj,Byte())
             End Get
         End Property
         
@@ -137,6 +277,36 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("Format22", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property install_x64() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("install_x64", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property install_x86() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("install_x86", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property linux_adk() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("linux_adk", resourceCulture)
+                Return CType(obj,Byte())
             End Get
         End Property
         
@@ -449,6 +619,29 @@ Namespace My.Resources
         End Property
         
         '''<summary>
+        '''  Looks up a localized string similar to ﻿; Copyright (c) 2011 libusbK (GNU LGPL)
+        ''';
+        '''; Module Name: SAMSUNG_Android.inf
+        '''; Description: Installation inf for SAMSUNG_Android device.
+        ''';
+        '''; THIS CODE AND INFORMATION IS PROVIDED &quot;AS IS&quot; WITHOUT WARRANTY OF ANY
+        '''; KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
+        '''; IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
+        '''; PURPOSE.
+        '''
+        '''[Strings]
+        '''DeviceName = &quot;SAMSUNG_Android&quot;
+        '''VendorName = &quot;Samsung Electronics Co., Ltd&quot;
+        '''SourceName = &quot;SAMSUNG_Android Install Disk&quot;
+        '''Dev [rest of string was truncated]&quot;;.
+        '''</summary>
+        Friend ReadOnly Property SAMSUNG_Android() As String
+            Get
+                Return ResourceManager.GetString("SAMSUNG_Android", resourceCulture)
+            End Get
+        End Property
+        
+        '''<summary>
         '''  Looks up a localized resource of type System.Drawing.Bitmap.
         '''</summary>
         Friend ReadOnly Property Save22() As System.Drawing.Bitmap
@@ -520,6 +713,76 @@ Namespace My.Resources
             Get
                 Dim obj As Object = ResourceManager.GetObject("Stop30", resourceCulture)
                 Return CType(obj,System.Drawing.Bitmap)
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_libusb0() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_libusb0", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_libusb0_sys() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_libusb0_sys", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_libusb0_x86() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_libusb0_x86", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_libusbk() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_libusbk", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_libusbk_sys() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_libusbk_sys", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_wdfcoinstaller01009() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_wdfcoinstaller01009", resourceCulture)
+                Return CType(obj,Byte())
+            End Get
+        End Property
+        
+        '''<summary>
+        '''  Looks up a localized resource of type System.Byte[].
+        '''</summary>
+        Friend ReadOnly Property x86_winusbcoinstaller2() As Byte()
+            Get
+                Dim obj As Object = ResourceManager.GetObject("x86_winusbcoinstaller2", resourceCulture)
+                Return CType(obj,Byte())
             End Get
         End Property
     End Module

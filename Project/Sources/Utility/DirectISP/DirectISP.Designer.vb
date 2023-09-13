@@ -43,7 +43,7 @@ Partial Class DirectISP
         Me.ButtonScan = New DevExpress.XtraEditors.SimpleButton()
         Me.ButtonRefresh = New DevExpress.XtraEditors.SimpleButton()
         Me.LabelControl3 = New DevExpress.XtraEditors.LabelControl()
-        Me.ComboBox1 = New DevExpress.XtraEditors.ComboBoxEdit()
+        Me.ComboBoxSizeDump = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.labelControl2 = New DevExpress.XtraEditors.LabelControl()
         Me.ComboBoxChipset = New DevExpress.XtraEditors.ComboBoxEdit()
         Me.panelControl7 = New DevExpress.XtraEditors.PanelControl()
@@ -59,7 +59,6 @@ Partial Class DirectISP
         Me.TxtRawDump = New Bunifu.Framework.UI.BunifuMaterialTextbox()
         Me.Btn_RawXML = New System.Windows.Forms.Button()
         Me.TxtFlashRawXML = New Bunifu.Framework.UI.BunifuMaterialTextbox()
-        Me.CheckEditAutoXML = New CacheBox()
         Me.Button_WriteD = New DevExpress.XtraEditors.SimpleButton()
         Me.Button_ReadP = New DevExpress.XtraEditors.SimpleButton()
         Me.Button_EraseP = New DevExpress.XtraEditors.SimpleButton()
@@ -77,6 +76,7 @@ Partial Class DirectISP
         Me.Column2 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.Column1 = New System.Windows.Forms.DataGridViewTextBoxColumn()
         Me.DirectISPWorker = New System.ComponentModel.BackgroundWorker()
+        Me.eMMCISPWorker = New System.ComponentModel.BackgroundWorker()
         CType(Me.XtraFlash, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.XtraFlash.SuspendLayout()
         CType(Me.MainTab, System.ComponentModel.ISupportInitialize).BeginInit()
@@ -86,7 +86,7 @@ Partial Class DirectISP
         Me.panelControl1.SuspendLayout()
         CType(Me.PanelDownload, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.PanelDownload.SuspendLayout()
-        CType(Me.ComboBox1.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.ComboBoxSizeDump.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.ComboBoxChipset.Properties, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.panelControl7, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.panelControl7.SuspendLayout()
@@ -198,7 +198,7 @@ Partial Class DirectISP
         Me.PanelDownload.Controls.Add(Me.ButtonScan)
         Me.PanelDownload.Controls.Add(Me.ButtonRefresh)
         Me.PanelDownload.Controls.Add(Me.LabelControl3)
-        Me.PanelDownload.Controls.Add(Me.ComboBox1)
+        Me.PanelDownload.Controls.Add(Me.ComboBoxSizeDump)
         Me.PanelDownload.Controls.Add(Me.labelControl2)
         Me.PanelDownload.Controls.Add(Me.ComboBoxChipset)
         Me.PanelDownload.Location = New System.Drawing.Point(5, 4)
@@ -223,7 +223,7 @@ Partial Class DirectISP
         Me.ButtonScan.Name = "ButtonScan"
         Me.ButtonScan.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
         Me.ButtonScan.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonScan.Size = New System.Drawing.Size(83, 28)
+        Me.ButtonScan.Size = New System.Drawing.Size(100, 28)
         Me.ButtonScan.TabIndex = 44
         Me.ButtonScan.Text = "SCAN DISK"
         '
@@ -241,12 +241,12 @@ Partial Class DirectISP
         Me.ButtonRefresh.AppearanceHovered.Options.UseImage = True
         Me.ButtonRefresh.ImageOptions.Image = CType(resources.GetObject("ButtonRefresh.ImageOptions.Image"), System.Drawing.Image)
         Me.ButtonRefresh.ImageOptions.SvgImageColorizationMode = DevExpress.Utils.SvgImageColorizationMode.None
-        Me.ButtonRefresh.Location = New System.Drawing.Point(231, 2)
+        Me.ButtonRefresh.Location = New System.Drawing.Point(195, 2)
         Me.ButtonRefresh.LookAndFeel.UseDefaultLookAndFeel = False
         Me.ButtonRefresh.Name = "ButtonRefresh"
         Me.ButtonRefresh.PaintStyle = DevExpress.XtraEditors.Controls.PaintStyles.Light
         Me.ButtonRefresh.ShowFocusRectangle = DevExpress.Utils.DefaultBoolean.[False]
-        Me.ButtonRefresh.Size = New System.Drawing.Size(97, 28)
+        Me.ButtonRefresh.Size = New System.Drawing.Size(100, 28)
         Me.ButtonRefresh.TabIndex = 43
         Me.ButtonRefresh.Text = "REFRESH DISK"
         '
@@ -254,36 +254,36 @@ Partial Class DirectISP
         '
         Me.LabelControl3.Location = New System.Drawing.Point(6, 9)
         Me.LabelControl3.Name = "LabelControl3"
-        Me.LabelControl3.Size = New System.Drawing.Size(19, 13)
+        Me.LabelControl3.Size = New System.Drawing.Size(27, 13)
         Me.LabelControl3.TabIndex = 42
-        Me.LabelControl3.Text = "Size"
+        Me.LabelControl3.Text = "Dump"
         '
-        'ComboBox1
+        'ComboBoxSizeDump
         '
-        Me.ComboBox1.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
-        Me.ComboBox1.EditValue = "auto"
-        Me.ComboBox1.Location = New System.Drawing.Point(41, 6)
-        Me.ComboBox1.Name = "ComboBox1"
-        Me.ComboBox1.Properties.AllowFocused = False
-        Me.ComboBox1.Properties.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
-        Me.ComboBox1.Properties.Appearance.BorderColor = System.Drawing.Color.DarkRed
-        Me.ComboBox1.Properties.Appearance.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Bold)
-        Me.ComboBox1.Properties.Appearance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(235, Byte), Integer), CType(CType(235, Byte), Integer))
-        Me.ComboBox1.Properties.Appearance.Options.UseBackColor = True
-        Me.ComboBox1.Properties.Appearance.Options.UseBorderColor = True
-        Me.ComboBox1.Properties.Appearance.Options.UseFont = True
-        Me.ComboBox1.Properties.Appearance.Options.UseForeColor = True
-        Me.ComboBox1.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
-        Me.ComboBox1.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.UltraFlat
-        Me.ComboBox1.Properties.LookAndFeel.SkinName = "DevExpress Dark Style"
-        Me.ComboBox1.Properties.LookAndFeel.UseDefaultLookAndFeel = False
-        Me.ComboBox1.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
-        Me.ComboBox1.Size = New System.Drawing.Size(184, 20)
-        Me.ComboBox1.TabIndex = 41
+        Me.ComboBoxSizeDump.Anchor = CType((System.Windows.Forms.AnchorStyles.Top Or System.Windows.Forms.AnchorStyles.Right), System.Windows.Forms.AnchorStyles)
+        Me.ComboBoxSizeDump.EditValue = "auto"
+        Me.ComboBoxSizeDump.Location = New System.Drawing.Point(39, 6)
+        Me.ComboBoxSizeDump.Name = "ComboBoxSizeDump"
+        Me.ComboBoxSizeDump.Properties.AllowFocused = False
+        Me.ComboBoxSizeDump.Properties.Appearance.BackColor = System.Drawing.Color.FromArgb(CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer), CType(CType(64, Byte), Integer))
+        Me.ComboBoxSizeDump.Properties.Appearance.BorderColor = System.Drawing.Color.DarkRed
+        Me.ComboBoxSizeDump.Properties.Appearance.Font = New System.Drawing.Font("Segoe UI", 8.5!, System.Drawing.FontStyle.Bold)
+        Me.ComboBoxSizeDump.Properties.Appearance.ForeColor = System.Drawing.Color.FromArgb(CType(CType(235, Byte), Integer), CType(CType(235, Byte), Integer), CType(CType(235, Byte), Integer))
+        Me.ComboBoxSizeDump.Properties.Appearance.Options.UseBackColor = True
+        Me.ComboBoxSizeDump.Properties.Appearance.Options.UseBorderColor = True
+        Me.ComboBoxSizeDump.Properties.Appearance.Options.UseFont = True
+        Me.ComboBoxSizeDump.Properties.Appearance.Options.UseForeColor = True
+        Me.ComboBoxSizeDump.Properties.Buttons.AddRange(New DevExpress.XtraEditors.Controls.EditorButton() {New DevExpress.XtraEditors.Controls.EditorButton(DevExpress.XtraEditors.Controls.ButtonPredefines.Combo)})
+        Me.ComboBoxSizeDump.Properties.ButtonsStyle = DevExpress.XtraEditors.Controls.BorderStyles.UltraFlat
+        Me.ComboBoxSizeDump.Properties.LookAndFeel.SkinName = "DevExpress Dark Style"
+        Me.ComboBoxSizeDump.Properties.LookAndFeel.UseDefaultLookAndFeel = False
+        Me.ComboBoxSizeDump.Properties.TextEditStyle = DevExpress.XtraEditors.Controls.TextEditStyles.DisableTextEditor
+        Me.ComboBoxSizeDump.Size = New System.Drawing.Size(115, 20)
+        Me.ComboBoxSizeDump.TabIndex = 41
         '
         'labelControl2
         '
-        Me.labelControl2.Location = New System.Drawing.Point(438, 9)
+        Me.labelControl2.Location = New System.Drawing.Point(455, 9)
         Me.labelControl2.Name = "labelControl2"
         Me.labelControl2.Size = New System.Drawing.Size(36, 13)
         Me.labelControl2.TabIndex = 40
@@ -329,7 +329,6 @@ Partial Class DirectISP
         Me.panelControl7.Controls.Add(Me.TxtRawDump)
         Me.panelControl7.Controls.Add(Me.Btn_RawXML)
         Me.panelControl7.Controls.Add(Me.TxtFlashRawXML)
-        Me.panelControl7.Controls.Add(Me.CheckEditAutoXML)
         Me.panelControl7.Location = New System.Drawing.Point(5, 77)
         Me.panelControl7.Name = "panelControl7"
         Me.panelControl7.Size = New System.Drawing.Size(619, 103)
@@ -392,7 +391,7 @@ Partial Class DirectISP
         Me.Btn_ScatterTXT.FlatAppearance.BorderSize = 0
         Me.Btn_ScatterTXT.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Btn_ScatterTXT.Image = CType(resources.GetObject("Btn_ScatterTXT.Image"), System.Drawing.Image)
-        Me.Btn_ScatterTXT.Location = New System.Drawing.Point(518, 60)
+        Me.Btn_ScatterTXT.Location = New System.Drawing.Point(567, 60)
         Me.Btn_ScatterTXT.Name = "Btn_ScatterTXT"
         Me.Btn_ScatterTXT.Size = New System.Drawing.Size(23, 13)
         Me.Btn_ScatterTXT.TabIndex = 41
@@ -400,7 +399,7 @@ Partial Class DirectISP
         '
         'labelControl11
         '
-        Me.labelControl11.Location = New System.Drawing.Point(6, 60)
+        Me.labelControl11.Location = New System.Drawing.Point(22, 60)
         Me.labelControl11.Name = "labelControl11"
         Me.labelControl11.Size = New System.Drawing.Size(54, 13)
         Me.labelControl11.TabIndex = 37
@@ -412,7 +411,7 @@ Partial Class DirectISP
         Me.ButtonOpenDump.FlatAppearance.BorderSize = 0
         Me.ButtonOpenDump.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.ButtonOpenDump.Image = CType(resources.GetObject("ButtonOpenDump.Image"), System.Drawing.Image)
-        Me.ButtonOpenDump.Location = New System.Drawing.Point(518, 35)
+        Me.ButtonOpenDump.Location = New System.Drawing.Point(567, 35)
         Me.ButtonOpenDump.Name = "ButtonOpenDump"
         Me.ButtonOpenDump.Size = New System.Drawing.Size(23, 13)
         Me.ButtonOpenDump.TabIndex = 29
@@ -420,7 +419,7 @@ Partial Class DirectISP
         '
         'labelControl9
         '
-        Me.labelControl9.Location = New System.Drawing.Point(6, 36)
+        Me.labelControl9.Location = New System.Drawing.Point(22, 36)
         Me.labelControl9.Name = "labelControl9"
         Me.labelControl9.Size = New System.Drawing.Size(51, 13)
         Me.labelControl9.TabIndex = 24
@@ -428,7 +427,7 @@ Partial Class DirectISP
         '
         'labelControl10
         '
-        Me.labelControl10.Location = New System.Drawing.Point(6, 84)
+        Me.labelControl10.Location = New System.Drawing.Point(22, 84)
         Me.labelControl10.Name = "labelControl10"
         Me.labelControl10.Size = New System.Drawing.Size(43, 13)
         Me.labelControl10.TabIndex = 23
@@ -446,10 +445,10 @@ Partial Class DirectISP
         Me.TxtScatterFile.LineIdleColor = System.Drawing.Color.DarkRed
         Me.TxtScatterFile.LineMouseHoverColor = System.Drawing.Color.Red
         Me.TxtScatterFile.LineThickness = 2
-        Me.TxtScatterFile.Location = New System.Drawing.Point(90, 51)
+        Me.TxtScatterFile.Location = New System.Drawing.Point(106, 51)
         Me.TxtScatterFile.Margin = New System.Windows.Forms.Padding(4)
         Me.TxtScatterFile.Name = "TxtScatterFile"
-        Me.TxtScatterFile.Size = New System.Drawing.Size(450, 24)
+        Me.TxtScatterFile.Size = New System.Drawing.Size(484, 24)
         Me.TxtScatterFile.TabIndex = 42
         Me.TxtScatterFile.TextAlign = System.Windows.Forms.HorizontalAlignment.Left
         '
@@ -465,10 +464,10 @@ Partial Class DirectISP
         Me.TxtRawDump.LineIdleColor = System.Drawing.Color.DarkRed
         Me.TxtRawDump.LineMouseHoverColor = System.Drawing.Color.Red
         Me.TxtRawDump.LineThickness = 2
-        Me.TxtRawDump.Location = New System.Drawing.Point(90, 26)
+        Me.TxtRawDump.Location = New System.Drawing.Point(106, 26)
         Me.TxtRawDump.Margin = New System.Windows.Forms.Padding(4)
         Me.TxtRawDump.Name = "TxtRawDump"
-        Me.TxtRawDump.Size = New System.Drawing.Size(450, 24)
+        Me.TxtRawDump.Size = New System.Drawing.Size(484, 24)
         Me.TxtRawDump.TabIndex = 43
         Me.TxtRawDump.TextAlign = System.Windows.Forms.HorizontalAlignment.Left
         '
@@ -478,7 +477,7 @@ Partial Class DirectISP
         Me.Btn_RawXML.FlatAppearance.BorderSize = 0
         Me.Btn_RawXML.FlatStyle = System.Windows.Forms.FlatStyle.Flat
         Me.Btn_RawXML.Image = CType(resources.GetObject("Btn_RawXML.Image"), System.Drawing.Image)
-        Me.Btn_RawXML.Location = New System.Drawing.Point(484, 83)
+        Me.Btn_RawXML.Location = New System.Drawing.Point(567, 83)
         Me.Btn_RawXML.Name = "Btn_RawXML"
         Me.Btn_RawXML.Size = New System.Drawing.Size(23, 13)
         Me.Btn_RawXML.TabIndex = 42
@@ -496,26 +495,12 @@ Partial Class DirectISP
         Me.TxtFlashRawXML.LineIdleColor = System.Drawing.Color.DarkRed
         Me.TxtFlashRawXML.LineMouseHoverColor = System.Drawing.Color.Red
         Me.TxtFlashRawXML.LineThickness = 2
-        Me.TxtFlashRawXML.Location = New System.Drawing.Point(90, 74)
+        Me.TxtFlashRawXML.Location = New System.Drawing.Point(106, 74)
         Me.TxtFlashRawXML.Margin = New System.Windows.Forms.Padding(4)
         Me.TxtFlashRawXML.Name = "TxtFlashRawXML"
-        Me.TxtFlashRawXML.Size = New System.Drawing.Size(417, 24)
+        Me.TxtFlashRawXML.Size = New System.Drawing.Size(484, 24)
         Me.TxtFlashRawXML.TabIndex = 43
         Me.TxtFlashRawXML.TextAlign = System.Windows.Forms.HorizontalAlignment.Left
-        '
-        'CheckEditAutoXML
-        '
-        Me.CheckEditAutoXML.AutoSize = True
-        Me.CheckEditAutoXML.CheckedColor = System.Drawing.Color.Red
-        Me.CheckEditAutoXML.Location = New System.Drawing.Point(520, 80)
-        Me.CheckEditAutoXML.MinimumSize = New System.Drawing.Size(0, 21)
-        Me.CheckEditAutoXML.Name = "CheckEditAutoXML"
-        Me.CheckEditAutoXML.Padding = New System.Windows.Forms.Padding(10, 0, 0, 0)
-        Me.CheckEditAutoXML.Size = New System.Drawing.Size(81, 21)
-        Me.CheckEditAutoXML.TabIndex = 40
-        Me.CheckEditAutoXML.Text = " AutoXML"
-        Me.CheckEditAutoXML.UnCheckedColor = System.Drawing.Color.DarkRed
-        Me.CheckEditAutoXML.UseVisualStyleBackColor = True
         '
         'Button_WriteD
         '
@@ -768,6 +753,11 @@ Partial Class DirectISP
         Me.DirectISPWorker.WorkerReportsProgress = True
         Me.DirectISPWorker.WorkerSupportsCancellation = True
         '
+        'eMMCISPWorker
+        '
+        Me.eMMCISPWorker.WorkerReportsProgress = True
+        Me.eMMCISPWorker.WorkerSupportsCancellation = True
+        '
         'DirectISP
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -785,7 +775,7 @@ Partial Class DirectISP
         CType(Me.PanelDownload, System.ComponentModel.ISupportInitialize).EndInit()
         Me.PanelDownload.ResumeLayout(False)
         Me.PanelDownload.PerformLayout()
-        CType(Me.ComboBox1.Properties, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.ComboBoxSizeDump.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.ComboBoxChipset.Properties, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.panelControl7, System.ComponentModel.ISupportInitialize).EndInit()
         Me.panelControl7.ResumeLayout(False)
@@ -814,7 +804,6 @@ Partial Class DirectISP
     Public WithEvents TxtRawDump As Bunifu.Framework.UI.BunifuMaterialTextbox
     Private WithEvents Btn_RawXML As Button
     Public WithEvents TxtFlashRawXML As Bunifu.Framework.UI.BunifuMaterialTextbox
-    Friend WithEvents CheckEditAutoXML As CacheBox
     Private WithEvents Button_WriteD As SimpleButton
     Private WithEvents Button_ReadP As SimpleButton
     Private WithEvents Button_EraseP As SimpleButton
@@ -835,11 +824,12 @@ Partial Class DirectISP
     Private WithEvents ButtonScan As SimpleButton
     Private WithEvents ButtonRefresh As SimpleButton
     Private WithEvents LabelControl3 As LabelControl
-    Public WithEvents ComboBox1 As ComboBoxEdit
+    Public WithEvents ComboBoxSizeDump As ComboBoxEdit
     Private WithEvents labelControl2 As LabelControl
     Public WithEvents ComboBoxChipset As ComboBoxEdit
     Friend WithEvents CacheBoxAutoFormatData As CacheBox
     Friend WithEvents CacheBoxCreateDigest As CacheBox
     Friend WithEvents CekAutoRebootQc As CacheBox
     Public WithEvents DirectISPWorker As System.ComponentModel.BackgroundWorker
+    Public WithEvents eMMCISPWorker As System.ComponentModel.BackgroundWorker
 End Class

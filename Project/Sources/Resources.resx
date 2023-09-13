@@ -119,132 +119,207 @@
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
   <data name="MiCloud22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\MiCloud22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\MiCloud22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Erasefrp" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Erasefrp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Erasefrp.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logoqualcomm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logoqualcomm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logoqualcomm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="ButtonFormatUser.ImageOptions.Image" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\ButtonFormatUser.ImageOptions.Image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\ButtonFormatUser.ImageOptions.Image.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logohuawei" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logohuawei.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logohuawei.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Factory" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Factory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Factory.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logs.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Resources\logs.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="logomediatek" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logomediatek.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logomediatek.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="OpenLock" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\OpenLock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\OpenLock.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logorealme" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logorealme.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logorealme.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logooppo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logooppo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logooppo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Save22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Save22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Save22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Stop_30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Stop_30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Stop_30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Spdata" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Spdata.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Resources\Spdata.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="logosamsung" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logosamsung.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logosamsung.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logochipspreadtrum" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logochipspreadtrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logochipspreadtrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Stop30" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Stop30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Stop30.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logoasus" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logoasus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logoasus.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="skip" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\skip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Resources\skip;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="logs1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logs1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
+    <value>Resources\logs1.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
   <data name="Readinfo22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Readinfo22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Readinfo22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Safe22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Safe22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Safe22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logochipqualcomm" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logochipqualcomm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logochipqualcomm.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="cyber" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\cyber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\cyber.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logoapple" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logoapple.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logoapple.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Erase22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Erase22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Erase22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logoinfinix" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logoinfinix.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logoinfinix.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="C4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\C4.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Resources\C4.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="miremof" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\miremof.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\miremof.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logomi" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logomi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logomi.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Safe22px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Safe22px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Safe22px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="Save22px" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Save22px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Save22px.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logochipmediatek" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logochipmediatek.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logochipmediatek.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="process" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\process.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
+    <value>Resources\process.txt;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
   </data>
   <data name="Format22" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\Format22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\Format22.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logovivo" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logovivo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logovivo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logonokia" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logonokia.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logonokia.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logoireverse" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logoireverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logoireverse.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logomeizu" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logomeizu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logomeizu.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logospreadtrum" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Utility\My\Resources\logospreadtrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>Resources\logospreadtrum.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="safeformat_emmc" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>utility\my\resources\safeformat_emmc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Resources\safeformat_emmc;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="safeformat_ufs" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>utility\my\resources\safeformat_ufs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Resources\safeformat_ufs;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="dd" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>utility\my\resources\dd.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+    <value>Resources\dd.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="adk_libusb_1_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\adk-libusb-1.0.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusb0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusb0.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusb0_sys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusb0_sys.sys;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusb0_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusb0_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusbK" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusbK.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusbK_sys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusbK_sys.sys;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusbK_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusbK_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_libusb_1_0_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_libusb-1.0_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_WdfCoInstaller01009" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_WdfCoInstaller01009.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="amd64_winusbcoinstaller2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\amd64_winusbcoinstaller2.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cat_SAMSUNG_Android" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cat_SAMSUNG_Android.cat;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cyggcc_s_1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cyggcc_s-1.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cygusb_1_0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cygusb-1.0.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="cygwin1" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\cygwin1.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="install_x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\install_x64.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="install_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\install_x86.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="linux_adk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\linux-adk.exe;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="SAMSUNG_Android" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\SAMSUNG_Android.inf;System.String, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-16</value>
+  </data>
+  <data name="x86_libusb0" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_libusb0.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_libusb0_sys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_libusb0_sys.sys;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_libusb0_x86" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_libusb0_x86.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_libusbk" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_libusbk.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_libusbk_sys" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_libusbk_sys.sys;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_wdfcoinstaller01009" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_wdfcoinstaller01009.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="x86_winusbcoinstaller2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\x86_winusbcoinstaller2.dll;System.Byte[], mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

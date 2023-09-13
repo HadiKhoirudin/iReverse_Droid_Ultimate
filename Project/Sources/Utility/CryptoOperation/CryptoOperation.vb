@@ -134,7 +134,7 @@ Public Class CryptoOperation
             If Operators.CompareString(Encoding.UTF8.GetString(numArray), "EndCF", False) = 0 Then
                 Exit While
             End If
-            num = num + 1
+            num += 1
         End While
         Dim array As Byte() = inputdata.Take(inputdata.Length - num).ToArray()
         Return array

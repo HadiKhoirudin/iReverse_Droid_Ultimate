@@ -15,7 +15,7 @@ Namespace BismillahAdb
 		End Function
 
 		Private Function GetUnixEpoch() As System.DateTime
-			Dim dateTime As System.DateTime = New DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+			Dim dateTime As New DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc)
 			Return dateTime
 		End Function
 
