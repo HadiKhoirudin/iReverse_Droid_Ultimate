@@ -7,7 +7,7 @@ iReverse Droid Ultimate for Mediatek &amp; Qualcomm Mobile.
 * Qualcomm & Mediatek Flash & Unlock Available
 * Thanks to : 
 * Mohamad Ikhwan Asmuni Qualcomm Dev Code 
-* Herry Zeabrix's MTK Dev Code
+* Herry Zeabrix's MTK *Legacy Dev Code
 
 [![image-2023-06-01-102812841.png](https://i.postimg.cc/T394bFnh/image-2023-06-01-102812841.png)](https://postimg.cc/DSS6kCjK)
 
