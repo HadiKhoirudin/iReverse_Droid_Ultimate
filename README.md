@@ -7,10 +7,9 @@ iReverse Droid Ultimate for Mediatek &amp; Qualcomm Mobile.
 * Qualcomm & Mediatek Flash & Unlock Available
 * This is for learning purpose.
 
-* For Fix Missing DLL : 
-Pass : DevExpressDLL
-Link Download :
-https://www.mediafire.com/file/9wxsymsjvyfs8gw/DevExpressDLL.7z/file
+* For Fix Missing DLL :
+* Pass : DevExpressDLL
+* Link Download : https://www.mediafire.com/file/9wxsymsjvyfs8gw/DevExpressDLL.7z/file
 
 [![image-2023-06-01-102812841.png](https://i.postimg.cc/T394bFnh/image-2023-06-01-102812841.png)](https://postimg.cc/DSS6kCjK)
 
