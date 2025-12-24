@@ -10,6 +10,7 @@ iReverse Droid Ultimate for Mediatek &amp; Qualcomm Mobile.
 * For Fix Missing DLL :
 * Pass : DevExpressDLL
 * Link Download : https://www.mediafire.com/file/9wxsymsjvyfs8gw/DevExpressDLL.7z/file
+* For able to edit the design (Visual Studio 2019 only) : https://drive.usercontent.google.com/download?id=1yVRz08coqGD0SJrus4mOeUGRkv5QqzEh&export=download
 
 [![image-2023-06-01-102812841.png](https://i.postimg.cc/T394bFnh/image-2023-06-01-102812841.png)](https://postimg.cc/DSS6kCjK)
 
